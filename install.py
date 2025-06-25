@@ -36,7 +36,7 @@ def import_vm(ova_path, vm_name, vms_dir):
     return process.returncode == 0
 
 def main():
-    project_root = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.getcwd()
 
     ova_dir = os.path.join(project_root, "ova")
     vms_dir = os.path.join(project_root, "vms")
