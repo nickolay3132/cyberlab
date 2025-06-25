@@ -1,0 +1,6 @@
+.venv/
+/ova/
+/vms/
+
+.idea/
+.code/
