@@ -6,3 +6,4 @@
 .code/
 
 install.pyz
+__pycache__/
