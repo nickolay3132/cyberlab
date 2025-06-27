@@ -1,10 +1,13 @@
 import os.path
 
 from src import configuration
+from src.utils.Utils import Utils
 from src.utils.VboxManagerAdapter import VboxManagerAdapter
 
 
 def run(args):
+    Utils.print_cli_hello()
+
     cwd = os.getcwd()
 
     vms = configuration.get_virtual_machines(os.path.join(cwd, "config.yaml"))
@@ -15,3 +18,4 @@ def run(args):
 
         if not VboxManagerAdapter.start_vm(vm_name, vm_startup_type):
             print(f"Failed to start virtual machine {vm_name}")
+        print()

@@ -7,6 +7,21 @@ from tqdm import tqdm
 
 class Utils:
     @staticmethod
+    def print_cli_hello():
+        print("=== CyberLab CLI ===\n")
+        print("This utility helps you to manage your CyberLab virtual machines.\n")
+        print(f"{"=" * 64}\n")
+
+    @staticmethod
+    def to_absolute_path(path: str) -> str:
+        expanded_path = os.path.expanduser(path)
+
+        if os.path.isabs(expanded_path):
+            return os.path.normpath(expanded_path)
+        else:
+            return os.path.normpath(os.path.join(os.getcwd(), expanded_path))
+
+    @staticmethod
     def mkdirs(*path):
         for p in path:
             if not os.path.exists(p):
@@ -19,7 +34,7 @@ class Utils:
                 print(f"File {os.path.basename(path)} already exists! Skipping...")
                 return
 
-        print(f"\nDownloading to {os.path.basename(path)}...")
+        print(f"\nDownloading {os.path.basename(path)}...")
         try:
             response = requests.get(url, stream=True)
             response.raise_for_status()
