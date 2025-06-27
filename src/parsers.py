@@ -1,4 +1,4 @@
-from src.commands import install, startup
+from src.commands import install, startup, shutdown
 
 
 def add_install_parser(subparser):
@@ -14,3 +14,7 @@ def add_install_parser(subparser):
 def add_startup_parser(subparser):
     startup_parser = subparser.add_parser('startup', help='Startup all cyberlab virtual machines')
     startup_parser.set_defaults(func=startup.run)
+
+def add_shutdown_parser(subparser):
+    shutdown_parser = subparser.add_parser('shutdown', help='Shutdown all cyberlab virtual machines')
+    shutdown_parser.set_defaults(func=shutdown.run)

@@ -6,10 +6,11 @@ from src import parsers
 
 def main():
     parser = argparse.ArgumentParser(description='CyberLab CLI')
-    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+    subparsers = parser.add_subparsers(dest='')
 
     parsers.add_install_parser(subparsers)
     parsers.add_startup_parser(subparsers)
+    parsers.add_shutdown_parser(subparsers)
 
     args = parser.parse_args()
 

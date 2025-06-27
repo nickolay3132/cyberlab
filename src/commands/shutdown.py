@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from src import configuration
 from src.utils.VboxManagerAdapter import VboxManagerAdapter
@@ -11,7 +11,7 @@ def run(args):
 
     for vm in vms:
         vm_name = vm['name']
-        vm_startup_type = vm['boot_policy']['startup']
+        vm_shutdown_type = vm['boot_policy']['shutdown']
 
-        if not VboxManagerAdapter.start_vm(vm_name, vm_startup_type):
-            print(f"Failed to start virtual machine {vm_name}")
+        if not VboxManagerAdapter.stop_vm(vm_name, vm_shutdown_type):
+            print(f"Failed to stop virtual machine {vm_name}")
