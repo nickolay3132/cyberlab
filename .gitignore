@@ -7,3 +7,6 @@
 
 install.pyz
 __pycache__/
+
+/dist/
+/tmp/
