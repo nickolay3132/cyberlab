@@ -9,6 +9,7 @@ def main():
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
     parsers.add_install_parser(subparsers)
+    parsers.add_startup_parser(subparsers)
 
     args = parser.parse_args()
 

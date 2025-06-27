@@ -1,0 +1,7 @@
+virtual_machines:
+  - name: firewall-1
+    ova_url: https://files.techno-cyber-lab.store/fw1-pfsense.ova
+    startup_type: headless
+    boot_policy:
+      startup: headless
+      shutdown: savestate

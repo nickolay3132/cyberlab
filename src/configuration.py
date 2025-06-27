@@ -1,5 +1,7 @@
 import sys
 
+import yaml
+
 
 def get_vms(path: str) -> list[list[str]]:
     result = []
@@ -28,3 +30,13 @@ def get_vms(path: str) -> list[list[str]]:
         sys.exit(1)
 
     return result
+
+def get_virtual_machines(path: str) -> list[dict[str, any]]:
+    try:
+        with open(path, 'r', encoding='utf-8') as file:
+            config = yaml.safe_load(file)
+            return config.get('virtual_machines', [])
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Configuration file not found: {path}")
+    except yaml.YAMLError as e:
+        raise yaml.YAMLError(f"Error while reading YAML: {e}")

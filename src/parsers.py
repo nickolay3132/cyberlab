@@ -1,4 +1,4 @@
-from src.commands import install
+from src.commands import install, startup
 
 
 def add_install_parser(subparser):
@@ -7,6 +7,10 @@ def add_install_parser(subparser):
         '--skip-fetching',
         action='store_true',
         default=False,
-        help='Skip downloading OVA files (use local copies only)'
+        help='skip downloading OVA files (use local copies only)'
     )
     install_parser.set_defaults(func=install.run)
+
+def add_startup_parser(subparser):
+    startup_parser = subparser.add_parser('startup', help='Startup all cyberlab virtual machines')
+    startup_parser.set_defaults(func=startup.run)
