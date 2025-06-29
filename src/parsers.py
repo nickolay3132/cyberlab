@@ -4,10 +4,16 @@ from src.commands import install, startup, shutdown
 def add_install_parser(subparser):
     install_parser = subparser.add_parser('install', help='Install and import virtual machines')
     install_parser.add_argument(
-        '--skip-fetching',
+        '--skip-download',
         action='store_true',
         default=False,
-        help='skip downloading OVA files (use local copies only)'
+        help='skip downloading OVA files'
+    )
+    install_parser.add_argument(
+        '--no-verify',
+        action='store_true',
+        default=False,
+        help='skip checking OVA file hash if file is already installed'
     )
     install_parser.set_defaults(func=install.run)
 

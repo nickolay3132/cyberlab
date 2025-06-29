@@ -1,11 +1,13 @@
 import argparse
 import sys
+import colorama
 
 from src import parsers
 from src.texts.BaseTexts import BaseTexts
 
 
 def main():
+    colorama.init(autoreset=True)
     parser = argparse.ArgumentParser(description=BaseTexts.hello())
     subparsers = parser.add_subparsers(dest='')
 
