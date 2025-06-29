@@ -2,10 +2,11 @@ import argparse
 import sys
 
 from src import parsers
+from src.texts.BaseTexts import BaseTexts
 
 
 def main():
-    parser = argparse.ArgumentParser(description='CyberLab CLI')
+    parser = argparse.ArgumentParser(description=BaseTexts.hello())
     subparsers = parser.add_subparsers(dest='')
 
     parsers.add_install_parser(subparsers)
