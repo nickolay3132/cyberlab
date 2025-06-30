@@ -1,5 +1,4 @@
 import os
-import sys
 from urllib.parse import urljoin
 
 from src import configuration

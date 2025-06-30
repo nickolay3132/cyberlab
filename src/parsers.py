@@ -23,4 +23,10 @@ def add_startup_parser(subparser):
 
 def add_shutdown_parser(subparser):
     shutdown_parser = subparser.add_parser('shutdown', help='Shutdown all cyberlab virtual machines')
+    shutdown_parser.add_argument(
+        '--force',
+        action='store_true',
+        default=False,
+        help='force shutdown of all cyberlab virtual machines'
+    )
     shutdown_parser.set_defaults(func=shutdown.run)

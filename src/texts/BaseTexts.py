@@ -8,7 +8,7 @@ class BaseTexts:
     @staticmethod
     def hello():
         ascii_title = pyfiglet.figlet_format("CyberLab CLI", font="slant")
-        description = "Cyber lab management tool".rjust(68)
+        description = "Cyber Lab management tool".rjust(68)
         version = __version__.rjust(68)
 
         header = [

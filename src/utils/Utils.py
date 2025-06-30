@@ -8,12 +8,6 @@ from tqdm import tqdm
 
 class Utils:
     @staticmethod
-    def print_cli_hello():
-        print("=== CyberLab CLI ===\n")
-        print("This utility helps you to manage your CyberLab virtual machines.\n")
-        print(f"{"=" * 64}\n")
-
-    @staticmethod
     def to_absolute_path(path: str) -> str:
         expanded_path = os.path.expanduser(path)
 

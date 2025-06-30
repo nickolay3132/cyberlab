@@ -28,17 +28,17 @@ class VboxManagerAdapter:
 
         process = subprocess.Popen(cmd)
         process.wait()
+        print()
         return process.returncode == 0
 
     @staticmethod
     def stop_vm(vm_name: str, shutdown_type: Literal["acpipowerbutton", "poweroff", "savestate"]) -> bool:
-        print(f"\nStopping {vm_name}...")
         cmd = [
             "VBoxManage", "controlvm", vm_name, shutdown_type
         ]
 
         process = subprocess.Popen(cmd)
         process.wait()
-
+        print()
         return process.returncode == 0
 
