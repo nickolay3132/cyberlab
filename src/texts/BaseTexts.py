@@ -19,3 +19,11 @@ class BaseTexts:
         ]
 
         print("\n".join(header))
+
+    @staticmethod
+    def snapshots_description():
+        lines = [
+            f"{Fore.GREEN}Snapshots preserve the entire state (disk, memory, settings) for easy rollback.{Style.RESET_ALL}",
+        ]
+
+        return "\n".join(lines)

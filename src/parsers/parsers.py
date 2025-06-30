@@ -1,4 +1,8 @@
+import sys
+
 from src.commands import install, startup, shutdown
+from src.parsers import snapshot_parsers
+from src.texts.BaseTexts import BaseTexts
 
 
 def add_install_parser(subparser):
@@ -30,3 +34,18 @@ def add_shutdown_parser(subparser):
         help='force shutdown of all cyberlab virtual machines'
     )
     shutdown_parser.set_defaults(func=shutdown.run)
+
+def add_snapshot_parser(subparser):
+    description = BaseTexts.snapshots_description()
+
+    snapshot_parser = subparser.add_parser(
+        'snapshot',
+        help='Manage lab state snapshots',
+        description=description)
+    snapshot_subparser = snapshot_parser.add_subparsers(dest='snapshot_command', metavar='')
+
+    snapshot_parsers.add_create_snapshot_parser(snapshot_subparser)
+
+    snapshot_parser.set_defaults(func=lambda _: snapshot_parser.print_help() and sys.exit(1))
+
+
