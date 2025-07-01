@@ -1,4 +1,5 @@
 import subprocess
+import os
 from typing import Literal
 
 
@@ -15,7 +16,13 @@ class VboxManagerAdapter:
             "--basefolder", vms_dir
         ]
 
-        process = subprocess.Popen(cmd)
+        if not os.path.exists('import_log'):
+            os.makedirs('import_log')
+
+        log_file_name = os.path.join('import_log', f'{vm_name}.log')
+        log_file = open(log_file_name, "w")
+
+        process = subprocess.Popen(cmd, stdout=log_file, stderr=log_file)
         process.wait()
 
         return process.returncode == 0
