@@ -24,7 +24,9 @@ def run(args):
         for vm in config['virtual_machines']:
             vm_name = vm['name']
             ova_url = urljoin(ova_repo, vm['ova_filename'])
-            Utils.fetch_file(ova_url, os.path.join(ova_dir, f"{vm_name}.ova"))
+    
+            ova_file = os.path.join(ova_dir, f"{vm_name}.ova")
+            Utils.fetch_file(ova_url, ova_file, args.check_existing)
 
     print("\n=== IMPORTING VMS ===")
     for vm_name, filepath in Utils.find_files(ova_dir,".ova"):
