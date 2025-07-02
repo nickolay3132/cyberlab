@@ -45,6 +45,7 @@ def add_snapshot_parser(subparser):
     snapshot_subparser = snapshot_parser.add_subparsers(dest='snapshot_command', metavar='')
 
     snapshot_parsers.add_create_snapshot_parser(snapshot_subparser)
+    snapshot_parsers.add_list_snapshot_parser(snapshot_subparser)
 
     snapshot_parser.set_defaults(func=lambda _: snapshot_parser.print_help() and sys.exit(1))
 
