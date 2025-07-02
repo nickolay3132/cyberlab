@@ -9,6 +9,12 @@ def add_install_parser(subparser):
         default=False,
         help='skip downloading OVA files (use local copies only)'
     )
+    install_parser.add_argument(
+            '--check-existing',
+            action='store_true',
+            default=False,
+            help='only download absent OVA files, do NOT update existing ones'
+    )
     install_parser.set_defaults(func=install.run)
 
 def add_startup_parser(subparser):
