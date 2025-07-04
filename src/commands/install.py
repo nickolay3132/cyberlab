@@ -1,4 +1,5 @@
 import os
+import time
 from urllib.parse import urljoin
 
 from src import configuration
@@ -41,6 +42,7 @@ def run(args):
                 InstallTexts.file_already_downloaded(vm_name)
 
     InstallTexts.importing_started()
+    timestamp = int(time.time())
     for vm_name, filepath in Utils.find_files(ova_dir,".ova"):
         try:
             if os.path.exists(os.path.join(vms_dir, 'cyberlab',  vm_name)):
@@ -50,7 +52,7 @@ def run(args):
             if not VboxManagerAdapter.import_vm(filepath, vm_name, vms_dir):
                 InstallTexts.error_importing_vm(vm_name)
             else:
-                SnapshotAdapter.create(vm_name, "initial-snapshot",
+                SnapshotAdapter.create(vm_name, f"{timestamp}-initial-state",
                                        "allows you to return to the original state without reinstalling the CyberLab virtual machines")
 
         except Exception as e:

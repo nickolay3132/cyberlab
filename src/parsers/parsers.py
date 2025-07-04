@@ -47,6 +47,7 @@ def add_snapshot_parser(subparser):
     snapshot_parsers.add_create_snapshot_parser(snapshot_subparser)
     snapshot_parsers.add_list_snapshot_parser(snapshot_subparser)
     snapshot_parsers.add_restore_snapshot_parser(snapshot_subparser)
+    snapshot_parsers.add_delete_snapshot_parser(snapshot_subparser)
 
     snapshot_parser.set_defaults(func=lambda _: snapshot_parser.print_help() and sys.exit(1))
 

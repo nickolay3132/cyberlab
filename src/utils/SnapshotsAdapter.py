@@ -1,24 +1,26 @@
 import subprocess
 import sys
 import time
+from typing import List
 
 from colorama.ansi import Fore
 
 
 class SnapshotAdapter:
     @staticmethod
-    def create(vm_name: str, snapshot_name: str, description: str = "") -> None:
-        fullname = f"{int(time.time())}-{snapshot_name}"
-        cmd = [
-            "VBoxManage", "snapshot", vm_name,
-            "take", fullname,
-            "--description", description,
-        ]
-
+    def _run_base_process(cmd: List[str]) -> None:
         process = subprocess.Popen(cmd)
         process.wait()
         print()
         return None
+
+    @staticmethod
+    def create(vm_name: str, snapshot_name: str, description: str = "") -> None:
+        return SnapshotAdapter._run_base_process([
+            "VBoxManage", "snapshot", vm_name,
+            "take", snapshot_name,
+            "--description", description,
+        ])
 
     @staticmethod
     def list(vm_name: str):
@@ -40,10 +42,12 @@ class SnapshotAdapter:
 
     @staticmethod
     def restore(vm_name: str, snapshot_name: str) -> None:
-        cmd = [
+        return SnapshotAdapter._run_base_process([
             "VBoxManage", "snapshot", vm_name, "restore", snapshot_name,
-        ]
-        process = subprocess.Popen(cmd)
-        process.wait()
-        print()
-        return None
+        ])
+
+    @staticmethod
+    def delete(vm_name: str, snapshot_name: str) -> None:
+        return SnapshotAdapter._run_base_process([
+            "VBoxManage", "snapshot", vm_name, "delete", snapshot_name,
+        ])

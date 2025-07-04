@@ -4,10 +4,22 @@ from typing import List, Tuple, Dict, Optional
 
 from colorama.ansi import Fore, Style
 
-from src.utils.SnapshotsTree import SnapshotData
+from src.utils.SnapshotsAdapter import SnapshotAdapter
+from src.utils.SnapshotsTree import SnapshotData, SnapshotsTree
 
 
 class SnapshotSelector:
+    @staticmethod
+    def find_all_snapshots(vm_names: List[str]):
+        all_snapshots: dict[str, list[SnapshotData]] = {}
+
+        for vm_name in vm_names:
+            vm_snapshots = SnapshotAdapter.list(vm_name)
+            snapshots_list = SnapshotsTree(vm_snapshots).get_list()
+            all_snapshots.update({vm_name: snapshots_list})
+
+        return SnapshotSelector(all_snapshots)
+
     def __init__(self, all_snapshots: Dict[str, List['SnapshotData']]):
         self.all_snapshots = all_snapshots
         self.selected_snapshot = None

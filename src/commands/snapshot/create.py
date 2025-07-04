@@ -11,6 +11,7 @@ def run(args):
     cwd = os.getcwd()
     config = configuration.get_full_config(os.path.join(cwd, 'config.yaml'))
     vm_names = [vm['name'] for vm in config['virtual_machines']]
+    timestamp = int(time.time())
 
     # if args.vm != "":
     #     vm_name = args.vm
@@ -21,4 +22,4 @@ def run(args):
     #     SnapshotAdapter.create(vm_name, snapshot_name, args.description)
     # else:
     for vm_name in vm_names:
-        SnapshotAdapter.create(vm_name, args.name, args.description)
+        SnapshotAdapter.create(vm_name, f"{timestamp}-{args.name}", args.description)

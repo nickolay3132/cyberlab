@@ -1,4 +1,6 @@
-from src.commands.snapshot import create, list_snapshots, restore
+from colorama.ansi import Fore, Style
+
+from src.commands.snapshot import create, list_snapshots, restore, delete
 
 
 def add_create_snapshot_parser(subparser):
@@ -16,3 +18,14 @@ def add_restore_snapshot_parser(subparser):
     restore_parser = subparser.add_parser('restore', help='Restore snapshot')
     restore_parser.add_argument('-n', '--name', required=True, help='snapshot name')
     restore_parser.set_defaults(func=restore.run)
+
+def add_delete_snapshot_parser(subparser):
+    delete_parser = subparser.add_parser('delete', help='Delete snapshot',
+                                         description=f'{Fore.RED}Warning:{Style.RESET_ALL} Deleting a Snapshot Will Remove All Its Child Snapshots')
+    delete_parser.add_argument(
+        '--all',
+        action='store_true',
+        default=False,
+        help='delete all snapshots for CyberLab')
+    delete_parser.add_argument('-n', '--name', help='snapshot name')
+    delete_parser.set_defaults(func=delete.run)
