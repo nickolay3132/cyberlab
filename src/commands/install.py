@@ -1,14 +1,15 @@
 import os
+import time
 from urllib.parse import urljoin
 
 from src import configuration
+from src.texts.InstallTexts import InstallTexts
+from src.utils.SnapshotsAdapter import SnapshotAdapter
 from src.utils.Utils import Utils
 from src.utils.VboxManagerAdapter import VboxManagerAdapter
 
 
 def run(args):
-    Utils.print_cli_hello()
-
     cwd = os.getcwd()
     config = configuration.get_full_config(os.path.join(cwd, 'config.yaml'))
 
@@ -19,22 +20,42 @@ def run(args):
 
     Utils.mkdirs(ova_dir, vms_dir)
 
-    if not args.skip_fetching:
-        print("\n=== DOWNLOADING VMS ===")
+    if not args.skip_download:
+        InstallTexts.downloading_started()
         for vm in config['virtual_machines']:
             vm_name = vm['name']
             ova_url = urljoin(ova_repo, vm['ova_filename'])
-            Utils.fetch_file(ova_url, os.path.join(ova_dir, f"{vm_name}.ova"))
+            md5checksum = vm['md5checksum']
+            download_path = os.path.join(ova_dir, f"{vm_name}.ova")
+            download_needed = False
 
-    print("\n=== IMPORTING VMS ===")
+            if not os.path.exists(download_path):
+                download_needed = True
+            else:
+                if not args.no_verify:
+                    if md5checksum != Utils.calc_md5(download_path):
+                        download_needed = True
+
+            if download_needed:
+                Utils.fetch_file(ova_url, download_path)
+            else:
+                InstallTexts.file_already_downloaded(vm_name)
+
+    InstallTexts.importing_started()
+    timestamp = int(time.time())
     for vm_name, filepath in Utils.find_files(ova_dir,".ova"):
         try:
-            if os.path.exists(os.path.join(vms_dir, vm_name)):
-                print(f"{vm_name} already imported! Skipping...")
+            if os.path.exists(os.path.join(vms_dir, 'cyberlab',  vm_name)):
+                InstallTexts.vm_already_exists(vm_name)
+                continue
 
             if not VboxManagerAdapter.import_vm(filepath, vm_name, vms_dir):
-                print(f"\nError importing {vm_name}!")
+                InstallTexts.error_importing_vm(vm_name)
+            else:
+                SnapshotAdapter.create(vm_name, f"{timestamp}-initial-state",
+                                       "allows you to return to the original state without reinstalling the CyberLab virtual machines")
 
         except Exception as e:
-            print(f"\nError importing {vm_name}: {str(e)}")
-    print("\nAll operations completed!")
+            InstallTexts.error_importing_vm(vm_name, str(e))
+
+    InstallTexts.all_operations_completed()

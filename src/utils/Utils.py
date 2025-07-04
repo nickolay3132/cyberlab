@@ -1,3 +1,4 @@
+import hashlib
 import os
 from pathlib import Path
 
@@ -6,12 +7,6 @@ from tqdm import tqdm
 
 
 class Utils:
-    @staticmethod
-    def print_cli_hello():
-        print("=== CyberLab CLI ===\n")
-        print("This utility helps you to manage your CyberLab virtual machines.\n")
-        print(f"{"=" * 64}\n")
-
     @staticmethod
     def to_absolute_path(path: str) -> str:
         expanded_path = os.path.expanduser(path)
@@ -65,3 +60,11 @@ class Utils:
         except Exception as e:
             print(f"Error scanning directory: {e}")
             return []
+
+    @staticmethod
+    def calc_md5(file_path: str) -> str:
+        md5_hash = hashlib.md5()
+        with open(file_path, 'rb') as f:
+            while chunk := f.read(8192):  # Читаем файл блоками по 8KB
+                md5_hash.update(chunk)
+        return md5_hash.hexdigest()
