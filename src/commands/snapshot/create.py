@@ -12,16 +12,13 @@ def run(args):
     config = configuration.get_full_config(os.path.join(cwd, 'config.yaml'))
     vm_names = [vm['name'] for vm in config['virtual_machines']]
 
-    timestamp = int(time.time())
-    snapshot_name = f"{timestamp}-{args.name}"
-
-    if args.vm != "":
-        vm_name = args.vm
-        if not vm_name in vm_names:
-            CreateTexts.vm_not_exist(vm_name)
-            sys.exit(1)
-
-        SnapshotAdapter.create(vm_name, snapshot_name, args.description)
-    else:
-        for vm_name in vm_names:
-            SnapshotAdapter.create(vm_name, snapshot_name, args.description)
+    # if args.vm != "":
+    #     vm_name = args.vm
+    #     if not vm_name in vm_names:
+    #         CreateTexts.vm_not_exist(vm_name)
+    #         sys.exit(1)
+    #
+    #     SnapshotAdapter.create(vm_name, snapshot_name, args.description)
+    # else:
+    for vm_name in vm_names:
+        SnapshotAdapter.create(vm_name, args.name, args.description)

@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 
 from src import configuration
 from src.texts.InstallTexts import InstallTexts
+from src.utils.SnapshotsAdapter import SnapshotAdapter
 from src.utils.Utils import Utils
 from src.utils.VboxManagerAdapter import VboxManagerAdapter
 
@@ -42,11 +43,15 @@ def run(args):
     InstallTexts.importing_started()
     for vm_name, filepath in Utils.find_files(ova_dir,".ova"):
         try:
-            if os.path.exists(os.path.join(vms_dir, vm_name)):
+            if os.path.exists(os.path.join(vms_dir, 'cyberlab',  vm_name)):
                 InstallTexts.vm_already_exists(vm_name)
+                continue
 
             if not VboxManagerAdapter.import_vm(filepath, vm_name, vms_dir):
                 InstallTexts.error_importing_vm(vm_name)
+            else:
+                SnapshotAdapter.create(vm_name, "initial-snapshot",
+                                       "allows you to return to the original state without reinstalling the CyberLab virtual machines")
 
         except Exception as e:
             InstallTexts.error_importing_vm(vm_name, str(e))
