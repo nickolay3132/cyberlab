@@ -30,6 +30,7 @@ class Utils:
                 return
 
         print(f"\nDownloading {os.path.basename(path)}...")
+        temp_path = f'{path}.tmp'
         try:
             response = requests.get(url, stream=True)
             response.raise_for_status()
@@ -37,13 +38,27 @@ class Utils:
             total_size = int(response.headers.get('content-length', 0))
             block_size = 8192
 
-            with open(path, 'wb') as f:
+            # instead of writing directly into file, we first write it into
+            # a temporary buffer and only if the download is completed
+            # successfully, we rename it afterwards.
+            # It allows us to determine which files are corrupted if download
+            # gets interrupted.
+            with open(temp_path, 'wb') as f:
                 with tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as pbar:
                     for chunk in response.iter_content(chunk_size=block_size):
                         f.write(chunk)
                         pbar.update(len(chunk))
+
+            os.rename(temp_path, path)
+
+        except KeyboardInterrupt as interrupt:
+            # (Andrew) TODO: add keyboard interruption handling
+            print("Download has been interrupted")
+            os.remove(temp_path)
+
         except Exception as e:
             print(f"\nError fetching url: {url}\n{str(e)}")
+            os.remove(temp_path)
 
     @staticmethod
     def find_files(directory: str, *extensions: str) -> list[tuple[str, str]]:

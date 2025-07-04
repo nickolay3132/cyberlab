@@ -7,6 +7,7 @@ from src.texts.InstallTexts import InstallTexts
 from src.utils.SnapshotsAdapter import SnapshotAdapter
 from src.utils.Utils import Utils
 from src.utils.VboxManagerAdapter import VboxManagerAdapter
+from src.utils.ConcurrentImporter import ConcurrentImporter
 
 
 def run(args):
@@ -43,19 +44,17 @@ def run(args):
 
     InstallTexts.importing_started()
     timestamp = int(time.time())
+    concurrent_importer = ConcurrentImporter()
     for vm_name, filepath in Utils.find_files(ova_dir,".ova"):
         try:
             if os.path.exists(os.path.join(vms_dir, 'cyberlab',  vm_name)):
                 InstallTexts.vm_already_exists(vm_name)
                 continue
 
-            if not VboxManagerAdapter.import_vm(filepath, vm_name, vms_dir):
-                InstallTexts.error_importing_vm(vm_name)
-            else:
-                SnapshotAdapter.create(vm_name, f"{timestamp}-initial-state",
-                                       "allows you to return to the original state without reinstalling the CyberLab virtual machines")
+            concurrent_importer.import_vm(filepath, vm_name, vms_dir)
 
         except Exception as e:
             InstallTexts.error_importing_vm(vm_name, str(e))
 
+    concurrent_importer.wait()
     InstallTexts.all_operations_completed()

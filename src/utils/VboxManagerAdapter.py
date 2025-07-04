@@ -1,11 +1,14 @@
 import subprocess
+import threading
+import os
+import time
+
 from typing import Literal
 
 
 class VboxManagerAdapter:
     @staticmethod
-    def import_vm(ova_path: str, vm_name: str, vms_dir: str) -> bool:
-        print(f"\nImporting {vm_name}...")
+    def import_vm(ova_path: str, vm_name: str, vms_dir: str, log_file: str) -> bool:
         cmd = [
             "VBoxManage", "import", ova_path,
             "--vsys", "0",
@@ -15,10 +18,26 @@ class VboxManagerAdapter:
             "--basefolder", vms_dir
         ]
 
-        process = subprocess.Popen(cmd)
-        process.wait()
+        try:
+            with open(log_file, "w") as log:
+                log.write(f"Starting import of {vm_name} from {ova_path}\n")
 
-        return process.returncode == 0
+                process = subprocess.Popen(
+                    cmd,
+                    stdout=log,
+                    stderr=log,
+                    text=True,
+                    encoding="utf-8"
+                )
+
+                process.wait()
+                return process.returncode == 0
+
+        except Exception as e:
+            with open(log_file, "a") as log:
+                log.write(f"Exception during import: {str(e)}\n")
+            return False
+
 
     @staticmethod
     def start_vm(vm_name: str, launch_type: Literal["gui", "headless", "separate"] = "gui") -> bool:

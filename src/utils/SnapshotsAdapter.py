@@ -8,8 +8,11 @@ from colorama.ansi import Fore
 
 class SnapshotAdapter:
     @staticmethod
-    def _run_base_process(cmd: List[str]) -> None:
-        process = subprocess.Popen(cmd)
+    def _run_base_process(cmd: List[str], no_print=False) -> None:
+        if no_print:
+            process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            process = subprocess.Popen(cmd)
         process.wait()
         print()
         return None
@@ -20,7 +23,7 @@ class SnapshotAdapter:
             "VBoxManage", "snapshot", vm_name,
             "take", snapshot_name,
             "--description", description,
-        ])
+        ], no_print=True)
 
     @staticmethod
     def list(vm_name: str):
