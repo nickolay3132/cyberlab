@@ -6,14 +6,14 @@
 
 
 CyberLab CLI is a powerful automation layer built on top of ```VBoxManage```, designed to streamline the deployment and 
-management of cyber lab (virtual training environment). It eliminates manual steps by providing:
+management of CyberLab (virtual training environment). It eliminates manual steps by providing:
 
 ### 🔧 Core Automation Features
 - **One-command OVA deployment:** 
 Download and import pre-configured virtual machine templates that simulate a real corporate network from remote repositories.
 
 - **Bulk operations:**
-Start/stop/reset an entire cyber lab (multiple VMs) with a single CLI command.
+Start/stop/reset an entire CyberLab (multiple VMs) with a single CLI command.
 
 - **Consistency:**
 Ensure identical lab environments across teams via version-controlled OVA imports.
@@ -104,26 +104,83 @@ python cyberlab.py  # See available commands
 ```bash
 python cyberlab.py [COMMAND] [OPTIONS]
 ```
+---
 
 **Install Virtual Machines**   
-Download and import VMs (skip fetching OVA files if `--skip-fetching` is set):
+Download and import VMs from OVA files:
 ```bash
-python cyberlab.py install [--skip-fetching]
+python cyberlab.py install [--skip-download] [--no-verify]
 ```
-* Without `--skip-fetching`: Downloads OVA files before importing.
-* With `--skip-fetching`: Imports only (assumes OVA files already present).  
+* **Without flags**: Downloads OVA files (if missing) and verifies their integrity before import.
+* `--skip-download`: Skips downloading OVA files (assumes files are already present locally). 
+* `--no-verify`: Skips hash verification for existing OVA files (faster but less secure).
+---
 
-**Start the Cyber Lab**  
+**Start the CyberLab**  
 Launch all configured VMs:  
 ```bash
 python cyberlab.py startup
 ```
+---
 
-**Stop the Cyber Lab**  
+**Stop the CyberLab**  
 Gracefully shut down all VMs:
 ```bash
-python cyberlab.py shutdown
+python cyberlab.py shutdown [--force]
 ```
+* **Without flags:** Graceful shutdown (sends ACPI power-off signal to VMs).
+* `--force`: Force immediate shutdown of all VMs (equivalent to pulling the power).
+---
+
+### 📸 Manage CyberLab Snapshots
+Snapshots preserve the entire VM state (disk, memory, settings) for easy rollback.   
+#### **Usage:**
+```bash
+python cyberlab.py snapshot <command> [options]
+```
+---
+**Subcommands:**
+
+**Create snapshot**   
+Save current state of all VMs.
+```bash
+python cyberlab.py snapshot create -n <NAME> [-d <DESCRIPTION>]
+```
+| Short | Long            | Description                                   | Required |
+|-------|-----------------|-----------------------------------------------|----------|
+| `-n`  | `--name`        | Snapshot name (non-unique allowed)            | Yes      |
+| `-d`  | `--description` | Contextual details (e.g., "Pre-update state") | No       |
+---
+
+**List Snapshots**   
+Display all available snapshots with their metadata.
+```bash
+python cyberlab.py snapshot list 
+```
+---
+
+**Restore Snapshot**   
+Roll back all VMs to a previously saved state.
+```bash
+python cyberlab.py snapshot restore -n <NAME>
+```
+| Short | Long     | Description                     | Required |
+|-------|----------|---------------------------------|----------|
+| `-n`  | `--name` | Name of the snapshot to restore | Yes      |
+
+---
+
+**Delete Snapshot**   
+Remove a snapshot (⚠️ child snapshots will be deleted recursively).
+```bash
+python cyberlab.py snapshot delete [-h] [--all] [-n NAME]
+```
+| Short | Long     | Description              | Required |
+|-------|----------|--------------------------|----------|
+| `-n`  | `--name` | Delete specific snapshot | No*      |
+|       | `--all`  | Delete ALL snapshots     | No*      |
+
+> *Either `--name` or `--all` must be specified
 
 ### ⚙️ Configuration
 The tool uses the current working directory (`cwd`) to:
@@ -200,7 +257,7 @@ chmod +x ./dist/cyberlab  # Make executable
 3. No Python Required
     - The executable runs independently - no Python installation needed on target machines.
 4. Configuration Files
-    - Cyber Lab CLI uses current working directory (`cwd`) to look for config file (`config.yaml`)
+    - CyberLab CLI uses current working directory (`cwd`) to look for config file (`config.yaml`)
 
 
 
