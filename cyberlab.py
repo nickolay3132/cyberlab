@@ -7,7 +7,7 @@ from src.texts.BaseTexts import BaseTexts
 
 
 def main():
-    colorama.init(autoreset=True)
+    colorama.init(autoreset=True, convert=True)
     parser = argparse.ArgumentParser(description=BaseTexts.hello())
     subparsers = parser.add_subparsers(dest='', metavar='')
 
