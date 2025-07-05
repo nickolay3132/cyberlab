@@ -9,6 +9,10 @@ virtual_machines:
   - name: firewall-1
     ova_filename: fw1-pfsense.ova
     md5checksum: 551ca208a8a18458e6f0b6096500a99c
+    nics:
+      - nic_index: 1
+        type: natnetwork
+        name: cyberlab
     boot_policy:
       startup: headless
       shutdown: savestate
@@ -37,6 +41,10 @@ virtual_machines:
   - name: wan-client
     ova_filename: kali-client.ova
     md5checksum: 6835d3dfe1e7baebd750b5a2cdd87ce2
+    nics:
+      - nic_index: 1
+        type: natnetwork
+        name: cyberlab
     boot_policy:
       startup: gui
       shutdown: acpipowerbutton

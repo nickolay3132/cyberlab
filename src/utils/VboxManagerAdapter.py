@@ -8,6 +8,44 @@ from typing import Literal
 
 class VboxManagerAdapter:
     @staticmethod
+    def create_nat_network() -> bool:
+        nat_networks = subprocess.run(
+            ["VBoxManage", "list", "natnetworks"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8"
+        )
+
+        if not 'cyberlab' in nat_networks.stdout.lower():
+            cmd = [
+                "VBoxManage", "natnetwork", "add",
+                "--netname", "cyberlab",
+                "--network", "10.0.2.0/24",
+                "--enable",
+                "--dhcp", "on"
+            ]
+
+            process = subprocess.Popen(cmd)
+            process.wait()
+            print()
+            return process.returncode == 0
+        else:
+            return True
+
+    @staticmethod
+    def enable_nat_network(vm_name: str, nic_index: int, nat_name: str) -> bool:
+        cmd = [
+            "VBoxManage", "modifyvm", vm_name,
+            f"--nic{nic_index}", "natnetwork",
+            f"--nat-network{nic_index}", nat_name,
+            f"--cableconnected{nic_index}", "on"
+        ]
+        process = subprocess.Popen(cmd)
+        process.wait()
+        print()
+        return process.returncode == 0
+
+    @staticmethod
     def import_vm(ova_path: str, vm_name: str, vms_dir: str, log_file: str) -> bool:
         cmd = [
             "VBoxManage", "import", ova_path,

@@ -1,10 +1,13 @@
 import os
+import pprint
+import sys
 import time
 from urllib.parse import urljoin
 
+from colorama.ansi import Fore
+
 from src import configuration
 from src.texts.InstallTexts import InstallTexts
-from src.utils.SnapshotsAdapter import SnapshotAdapter
 from src.utils.Utils import Utils
 from src.utils.VboxManagerAdapter import VboxManagerAdapter
 from src.utils.ConcurrentImporter import ConcurrentImporter
@@ -42,6 +45,9 @@ def run(args):
             else:
                 InstallTexts.file_already_downloaded(vm_name)
 
+    if not VboxManagerAdapter.create_nat_network():
+        print(f"{Fore.RED} Unable to create NAT network")
+
     InstallTexts.importing_started()
     timestamp = int(time.time())
     concurrent_importer = ConcurrentImporter()
@@ -57,4 +63,13 @@ def run(args):
             InstallTexts.error_importing_vm(vm_name, str(e))
 
     concurrent_importer.wait()
+
+    for vm in config['virtual_machines']:
+        vm_name = vm['name']
+
+        if "nics" in vm:
+            for nic in vm['nics']:
+                if nic['type'] == "natnetwork":
+                    VboxManagerAdapter.enable_nat_network(vm_name, nic['nic_index'], nic['name'])
+
     InstallTexts.all_operations_completed()
