@@ -214,18 +214,8 @@ To package `cyberlab.py` into a single executable file (`cyberlab.exe` on Window
 using PyInstaller, run the following command:
 ```bash
 pip install pyinstaller
-pyinstaller --onefile --name=cyberlab --workpath=./tmp --specpath=./tmp cyberlab.py
+python build.py
 ```
-
-### 🤔 What This Command Does
-
-| Option           | Purpose                                                                     |
-|------------------|-----------------------------------------------------------------------------|
-| --onefile        | Packages everything into a single executable (no separate dependency files) |
-| --name=cyberlab  | Sets the output filename (`cyberlab` or `cyberlab.exe`)                     |
-| --workpath=./tmp | Stores temporary build files in `./tmp`                                     |
-| --specpath=./tmp | Places PyInstaller's `.spec` configuration file in `./tmp`                  |
-| cyberlab.py      | Source script to package                                                    |
 
 ### 📂 Output Files
 * The executable will be in `./dist/`:
