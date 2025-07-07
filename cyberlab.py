@@ -3,6 +3,7 @@ import sys
 import colorama
 
 from src.parsers import parsers
+from src.presentation import init_cli
 from src.texts.BaseTexts import BaseTexts
 
 
@@ -25,4 +26,5 @@ def main():
     args.func(args)
 
 if __name__ == '__main__':
-    main()
+    # main()
+    init_cli.init()
