@@ -9,4 +9,5 @@ class UseCases(containers.DeclarativeContainer):
     install_command=providers.Factory(
         InstallCommand,
         virtual_machines_installer_service=services.virtual_machines_installer_service,
+        vboxmanage_service=services.vboxmanage_service,
     )

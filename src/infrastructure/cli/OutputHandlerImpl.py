@@ -1,4 +1,4 @@
-from colorama.ansi import Fore
+from colorama.ansi import Fore, Style
 
 from src.core.interfaces.output.OutputHandler import OutputHandler
 from src.core.interfaces.output.ProgressBar import ProgressBar
@@ -10,7 +10,16 @@ class OutputHandlerImpl (OutputHandler):
         self._pbar = None
 
     def show_error(self, message) -> None:
-        print(f"{Fore.RED}Error occurred! Message: {message}")
+        print(f"{Fore.RED}Error occurred! Message: {message}{Style.RESET_ALL}")
+
+    def show_warning(self, message) -> None:
+        print(f"{Fore.Yellow}{message}{Style.RESET_ALL}")
+
+    def show(self, text: str) -> None:
+        print(f"{Fore.CYAN}{text}{Style.RESET_ALL}")
+
+    def space(self) -> None:
+        print()
 
     def new_progress_bar(self) -> None:
         self._pbar = ProgressBarImpl()

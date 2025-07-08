@@ -33,14 +33,19 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
     def install(self, no_verify_checksum: bool = False) -> None:
         self.prepare()
 
+        self._output_handler.show("Downloading OVA files")
+
         for vm in self._virtual_machines_repository.get_all():
             ova_url = urljoin(self._ova_repo, vm.ova_filename)
             download_path = os.path.join(self._ova_dir, f"{vm.name}.ova")
             download_needed = self._is_download_needed(vm, download_path, no_verify_checksum)
 
             if download_needed:
+                self._output_handler.show(f"Downloading {vm.name}")
                 self._output_handler.new_progress_bar()
                 self._file_system_service.download_file(ova_url, download_path, self._output_handler)
+            else:
+                self._output_handler.show_warning(f"{vm.name} already exists. Skipping...")
 
 
 

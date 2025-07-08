@@ -8,6 +8,15 @@ class OutputHandler (ABC):
     def show_error(self, message) -> None: pass
 
     @abstractmethod
+    def show_warning(self, message) -> None: pass
+
+    @abstractmethod
+    def show(self, text: str) -> None: pass
+
+    @abstractmethod
+    def space(self) -> None: pass
+
+    @abstractmethod
     def new_progress_bar(self) -> ProgressBar: pass
 
     @abstractmethod

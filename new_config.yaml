@@ -16,41 +16,41 @@ virtual_machines:
       startup: headless
       shutdown: savestate
 
-  - name: firewall-2
-    ova_filename: fw2-pfsense.ova
-    md5checksum: 999093de88cd385198352e1517ae48c4
-    boot_policy:
-      startup: headless
-      shutdown: savestate
-
-  - name: web-server
-    ova_filename: dmz-serv.ova
-    md5checksum: a79edb0b734fd55cfec281913c561664
-    boot_policy:
-      startup: headless
-      shutdown: acpipowerbutton
-
-  - name: database-server
-    ova_filename: db-serv.ova
-    md5checksum: b3b16b0b8771d94f2de070c92b62556c
-    boot_policy:
-      startup: headless
-      shutdown: acpipowerbutton
-
-  - name: wan-client
-    ova_filename: kali-client.ova
-    md5checksum: 6835d3dfe1e7baebd750b5a2cdd87ce2
-    nics:
-      - nic_index: 1
-        type: natnetwork
-        network_name: cyberlab
-    boot_policy:
-      startup: gui
-      shutdown: acpipowerbutton
-
-  - name: lan-client
-    ova_filename: kali-lan-client.ova
-    md5checksum: 911302ff6d4a3ccb74484669b5ad0d6a
-    boot_policy:
-      startup: gui
-      shutdown: acpipowerbutton
+#  - name: firewall-2
+#    ova_filename: fw2-pfsense.ova
+#    md5checksum: 999093de88cd385198352e1517ae48c4
+#    boot_policy:
+#      startup: headless
+#      shutdown: savestate
+#
+#  - name: web-server
+#    ova_filename: dmz-serv.ova
+#    md5checksum: a79edb0b734fd55cfec281913c561664
+#    boot_policy:
+#      startup: headless
+#      shutdown: acpipowerbutton
+#
+#  - name: database-server
+#    ova_filename: db-serv.ova
+#    md5checksum: b3b16b0b8771d94f2de070c92b62556c
+#    boot_policy:
+#      startup: headless
+#      shutdown: acpipowerbutton
+#
+#  - name: wan-client
+#    ova_filename: kali-client.ova
+#    md5checksum: 6835d3dfe1e7baebd750b5a2cdd87ce2
+#    nics:
+#      - nic_index: 1
+#        type: natnetwork
+#        network_name: cyberlab
+#    boot_policy:
+#      startup: gui
+#      shutdown: acpipowerbutton
+#
+#  - name: lan-client
+#    ova_filename: kali-lan-client.ova
+#    md5checksum: 911302ff6d4a3ccb74484669b5ad0d6a
+#    boot_policy:
+#      startup: gui
+#      shutdown: acpipowerbutton
