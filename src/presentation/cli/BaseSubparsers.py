@@ -1,13 +1,15 @@
 from argparse import _SubParsersAction
 
+from src.infrastructure.containers.Commands import Commands
 from src.presentation.cli.Subparsers import Subparsers
 from src.presentation.commands.BaseCommands import BaseCommands
 
 
 class BaseSubparsers (Subparsers):
-    def __init__(self, subparsers: _SubParsersAction, config_path: str):
+    def __init__(self, subparsers: _SubParsersAction, containers: dict):
         super().__init__(subparsers)
-        self.base_commands = BaseCommands(config_path)
+        base_commands_container: Commands = containers.get('base_commands')
+        self.base_commands: BaseCommands = base_commands_container.base_commands()
 
     def add_install_subparser(self):
         parser = self.subparsers.add_parser('install', help='Install and import virtual machines')

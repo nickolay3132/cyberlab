@@ -1,22 +1,28 @@
-from src.core.interfaces.repositories.StorageRepository import StorageRepository
-from src.core.use_cases.vm_commands.InstallCommand import InstallCommand
-from src.infrastructure.repositories.StorageRepositoryImpl import StorageRepositoryImpl
-from src.infrastructure.repositories.VirtualMachinesRepositoryImpl import VirtualMachinesRepositoryImpl
-from src.infrastructure.repositories.common.YamlLoader import YamlLoader
+from src.core.use_cases.vm_commands.InstallCommand import InstallCommand, InstallCommandDTO
+from src.infrastructure.containers.Repos import Repos
 
 
 class BaseCommands:
-    def __init__(self, config_path: str):
-        self.yaml_loader = YamlLoader(file_path=config_path)
+    def __init__(self,
+                 install_command: InstallCommand,
+    ):
+        self.install_command=install_command
 
     def install(self, args):
-        # print(f"Configuration path: {self.config_path}")
         print("Installing...")
 
-        storage_repository = StorageRepositoryImpl(self.yaml_loader)
-        virtual_machines_repository = VirtualMachinesRepositoryImpl(self.yaml_loader)
+        install_use_case_dto = InstallCommandDTO(
+            skip_download=args.skip_download,
+            no_verify=args.no_verify,
+        )
 
-        InstallCommand(storage_repository, virtual_machines_repository).execute()
+        self.install_command.execute(install_use_case_dto)
+
+        # install_use_case = InstallCommand(self.repos.storage_repository(), self.repos.virtual_machines_repository())
+        # install_use_case.execute(InstallCommandDTO(
+        #     skip_download=args.skip_download,
+        #     no_verify=args.no_verify,
+        # ))
 
     def startup(self, args):
         # print(f"Configuration path: {self.config_path}")

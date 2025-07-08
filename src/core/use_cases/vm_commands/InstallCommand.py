@@ -1,18 +1,19 @@
-from pprint import pprint
+from dataclasses import dataclass
+from src.core.interfaces.services.VirtualMachinesInstallerService import VirtualMachinesInstallerService
 
-from src.core.interfaces.repositories.StorageRepository import StorageRepository
-from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 
+@dataclass
+class InstallCommandDTO:
+    skip_download: bool = False
+    no_verify: bool = False
 
 class InstallCommand:
     def __init__(
             self,
-            storage_repository: StorageRepository,
-            virtual_machines_repository: VirtualMachinesRepository
+            virtual_machines_installer_service: VirtualMachinesInstallerService,
     ):
-        self.storage_repository = storage_repository
-        self.virtual_machines_repository = virtual_machines_repository
+        self.virtual_machines_installer_service = virtual_machines_installer_service
 
-    def execute(self):
-        print(f"ova_store_to: {self.storage_repository.get().ova_store_to}")
-        pprint(self.virtual_machines_repository.get_all())
+    def execute(self, dto: InstallCommandDTO):
+        if not dto.skip_download:
+            self.virtual_machines_installer_service.install()
