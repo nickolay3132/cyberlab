@@ -20,6 +20,6 @@ class InstallCommand:
 
     def execute(self, dto: InstallCommandDTO):
         if not dto.skip_download:
-            self.virtual_machines_installer_service.install()
+            self.virtual_machines_installer_service.install(no_verify_checksum=dto.no_verify)
 
         self.vboxmanage_service.import_vms()

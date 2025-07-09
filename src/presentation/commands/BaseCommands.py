@@ -9,20 +9,12 @@ class BaseCommands:
         self.install_command=install_command
 
     def install(self, args):
-        print("Installing...")
-
         install_use_case_dto = InstallCommandDTO(
             skip_download=args.skip_download,
             no_verify=args.no_verify,
         )
 
         self.install_command.execute(install_use_case_dto)
-
-        # install_use_case = InstallCommand(self.repos.storage_repository(), self.repos.virtual_machines_repository())
-        # install_use_case.execute(InstallCommandDTO(
-        #     skip_download=args.skip_download,
-        #     no_verify=args.no_verify,
-        # ))
 
     def startup(self, args):
         # print(f"Configuration path: {self.config_path}")

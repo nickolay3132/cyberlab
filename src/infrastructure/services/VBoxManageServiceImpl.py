@@ -23,7 +23,7 @@ class VBoxManageServiceImpl (VBoxManageService):
     def import_vms(self) -> None:
         storage = self.storage_repository.get()
         log_dir = self.file_system_service.to_absolute_path(storage.import_log_store_to)
-        vms_dir = self.file_system_service.to_absolute_path(storage.ova_store_to)
+        vms_dir = self.file_system_service.to_absolute_path(storage.vms_store_to)
         ova_path = self.file_system_service.to_absolute_path(storage.ova_store_to)
 
         self.file_system_service.mkdirs(log_dir, vms_dir)
@@ -44,8 +44,7 @@ class VBoxManageServiceImpl (VBoxManageService):
                 "--basefolder", vms_dir
             ]
 
-            self.output_handler.space()
-            self.output_handler.show(f"Importing VM: {vm.name}")
+            self.output_handler.text(f"Importing VM: {vm.name}")
             try:
                 with open(log_file, "w") as log:
                     log.write(f"Starting import of {vm.name} from {ova_path}\n")
@@ -59,10 +58,15 @@ class VBoxManageServiceImpl (VBoxManageService):
                     )
 
                     process.wait()
-                    return process.returncode == 0
+
+                    if process.returncode == 0:
+                        self.output_handler.success(f"{vm.name} successfully imported")
+                    else:
+                        self.output_handler.show_error(f"{vm.name} failed to import. Log file: {log_file}")
 
             except Exception as e:
                 with open(log_file, "a") as log:
                     log.write(f"Exception during import: {str(e)}\n")
+                self.output_handler.show_error(f"{vm.name} failed to import. Log file: {log_file}")
 
         return None

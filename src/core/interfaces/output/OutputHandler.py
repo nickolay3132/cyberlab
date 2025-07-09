@@ -14,6 +14,12 @@ class OutputHandler (ABC):
     def show(self, text: str) -> None: pass
 
     @abstractmethod
+    def text(self, text: str) -> None: pass
+
+    @abstractmethod
+    def success(self, text: str) -> None: pass
+
+    @abstractmethod
     def space(self) -> None: pass
 
     @abstractmethod

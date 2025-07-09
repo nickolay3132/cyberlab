@@ -1,6 +1,8 @@
 import argparse
 import sys
 
+from src.core.exceptions.VirtualMachineNotFound import VirtualMachineNotFoundError
+from src.core.exceptions.YamlLoaderError import YamlLoaderError
 from src.infrastructure.containers.Commands import Commands
 from src.infrastructure.containers.Output import Output
 from src.infrastructure.containers.Repos import Repos
@@ -14,15 +16,21 @@ def init():
     subparsers = parser.add_subparsers(dest='', metavar='')
 
     containers = _init_containers()
+    output = containers.get('output').cli_output_handler()
 
-    BaseSubparsers(subparsers=subparsers, containers=containers).init()
-    args = parser.parse_args()
+    try:
+        BaseSubparsers(subparsers=subparsers, containers=containers).init()
+        args = parser.parse_args()
 
-    if not hasattr(args, 'func'):
-        parser.print_help()
-        sys.exit(1)
+        if not hasattr(args, 'func'):
+            parser.print_help()
+            sys.exit(1)
 
-    args.func(args)
+        args.func(args)
+    except YamlLoaderError as e:
+        output.show_error(f"{e.error.message} in {e.error.file_path}")
+    except VirtualMachineNotFoundError as e:
+        output.show_error(f"{e.error.message} ({e.error.vm_name})")
 
 def _init_containers():
     repos_container = Repos()

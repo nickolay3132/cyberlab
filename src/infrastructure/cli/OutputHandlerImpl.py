@@ -10,13 +10,19 @@ class OutputHandlerImpl (OutputHandler):
         self._pbar = None
 
     def show_error(self, message) -> None:
-        print(f"{Fore.RED}Error occurred! Message: {message}{Style.RESET_ALL}")
+        print(f"{Fore.RED}Error occurred! {message}{Style.RESET_ALL}")
 
     def show_warning(self, message) -> None:
-        print(f"{Fore.Yellow}{message}{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}{message}{Style.RESET_ALL}")
 
     def show(self, text: str) -> None:
         print(f"{Fore.CYAN}{text}{Style.RESET_ALL}")
+
+    def text(self, text: str) -> None:
+        print(text)
+
+    def success(self, text: str) -> None:
+        print(f"{Fore.GREEN}{text}{Style.RESET_ALL}")
 
     def space(self) -> None:
         print()

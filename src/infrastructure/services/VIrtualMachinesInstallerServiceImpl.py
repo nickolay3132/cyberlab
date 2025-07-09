@@ -41,7 +41,7 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
             download_needed = self._is_download_needed(vm, download_path, no_verify_checksum)
 
             if download_needed:
-                self._output_handler.show(f"Downloading {vm.name}")
+                self._output_handler.text(f"Downloading {vm.name}")
                 self._output_handler.new_progress_bar()
                 self._file_system_service.download_file(ova_url, download_path, self._output_handler)
             else:

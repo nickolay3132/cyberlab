@@ -1,5 +1,6 @@
 import hashlib
 import os
+import sys
 from pathlib import Path
 import requests
 
@@ -28,14 +29,17 @@ class FileSystemServiceImpl(FileSystemService):
             os.rename(temp_file, download_path)
             output_handler.progress_bar().close()
 
-        except KeyboardInterrupt as interrupt:
-            # (Andrew) TODO: add keyboard interruption handling
-            print("Download has been interrupted")
+        except KeyboardInterrupt as _:
+            output_handler.progress_bar().close()
+            output_handler.show_warning("Downloading has been interrupted.")
             os.remove(temp_file)
+            sys.exit(1)
 
-        except Exception as e:
-            print(f"\nError fetching url: {url}\n{str(e)}")
+        except Exception or ConnectionError as e:
+            output_handler.progress_bar().close()
+            output_handler.show_error(f"Cannot fetch url: {url}. Message: {str(e)}")
             os.remove(temp_file)
+            sys.exit(1)
 
     def mkdirs(self, *paths: str):
         for p in paths:
@@ -63,7 +67,7 @@ class FileSystemServiceImpl(FileSystemService):
 
         except Exception as e:
             raise CantScanDirectoryError(CantScanDirectory(
-                message=f"Error scanning directory: {e}",
+                message=f"Cannot scanning directory: {e}",
                 dir_path=directory,
             ))
 
