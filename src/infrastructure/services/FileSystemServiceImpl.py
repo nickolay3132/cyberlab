@@ -37,9 +37,8 @@ class FileSystemServiceImpl(FileSystemService):
 
         except Exception or ConnectionError as e:
             output_handler.progress_bar().close()
-            output_handler.show_error(f"Cannot fetch url: {url}. Message: {str(e)}")
+            output_handler.show_error(f"Cannot fetch url: {url}. Message: {str(e)}", terminate=True)
             os.remove(temp_file)
-            sys.exit(1)
 
     def mkdirs(self, *paths: str):
         for p in paths:

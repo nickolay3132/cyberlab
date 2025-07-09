@@ -5,9 +5,11 @@ from src.core.use_cases.vm_commands.InstallCommand import InstallCommand
 
 class UseCases(containers.DeclarativeContainer):
     services = providers.DependenciesContainer()
+    output = providers.DependenciesContainer()
 
     install_command=providers.Factory(
         InstallCommand,
         virtual_machines_installer_service=services.virtual_machines_installer_service,
         vboxmanage_service=services.vboxmanage_service,
+        output_handler=output.cli_output_handler,
     )

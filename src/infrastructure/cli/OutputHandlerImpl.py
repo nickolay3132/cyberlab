@@ -1,3 +1,5 @@
+import sys
+
 from colorama.ansi import Fore, Style
 
 from src.core.interfaces.output.OutputHandler import OutputHandler
@@ -9,8 +11,10 @@ class OutputHandlerImpl (OutputHandler):
     def __init__(self):
         self._pbar = None
 
-    def show_error(self, message) -> None:
+    def show_error(self, message: str, terminate: bool = False) -> None:
         print(f"{Fore.RED}Error occurred! {message}{Style.RESET_ALL}")
+        if terminate:
+            sys.exit(1)
 
     def show_warning(self, message) -> None:
         print(f"{Fore.YELLOW}{message}{Style.RESET_ALL}")

@@ -28,15 +28,15 @@ def init():
 
         args.func(args)
     except YamlLoaderError as e:
-        output.show_error(f"{e.error.message} in {e.error.file_path}")
+        output.show_error(f"{e.error.message} in {e.error.file_path}", terminate=True)
     except VirtualMachineNotFoundError as e:
-        output.show_error(f"{e.error.message} ({e.error.vm_name})")
+        output.show_error(f"{e.error.message} ({e.error.vm_name})", terminate=True)
 
 def _init_containers():
     repos_container = Repos()
     output_container = Output()
     services_container = Services(repos=repos_container, output=output_container)
-    use_cases_container = UseCases(services=services_container)
+    use_cases_container = UseCases(services=services_container, output=output_container)
     base_commands_container = Commands(use_cases=use_cases_container)
 
     return {

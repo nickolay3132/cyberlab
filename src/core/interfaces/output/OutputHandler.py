@@ -5,7 +5,7 @@ from src.core.interfaces.output.ProgressBar import ProgressBar
 
 class OutputHandler (ABC):
     @abstractmethod
-    def show_error(self, message) -> None: pass
+    def show_error(self, message, terminate: bool = False) -> None: pass
 
     @abstractmethod
     def show_warning(self, message) -> None: pass
