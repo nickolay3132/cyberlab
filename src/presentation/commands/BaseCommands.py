@@ -1,31 +1,29 @@
 from dataclasses import dataclass
 
-from src.core.use_cases.vm_commands.InstallCommand import InstallCommand, InstallCommandDTO
+
+from src.core.use_cases.vm_commands.InstallUseCase import InstallUseCase, InstallUseCaseDTO
 from src.core.use_cases.vm_commands.ShutdownCommand import ShutdownCommand, ShutdownCommandDTO
-from src.core.use_cases.vm_commands.StartupCommand import StartupCommand, StartupCommandDTO
+
+from src.core.use_cases.vm_commands.ShutdownUseCase import ShutdownUseCase
+from src.core.use_cases.vm_commands.StartupUseCase import StartupCommand, StartupCommandDTO, StartupUseCase
 
 
 @dataclass
 class BaseCommands:
-    install_command: InstallCommand
-    startup_command: StartupCommand
-    shutdown_command: ShutdownCommand
+    install_use_case: InstallUseCase
+    startup_use_case: StartupUseCase
+    shutdown_use_case: ShutdownUseCase
 
     def install(self, args):
-        install_use_case_dto = InstallCommandDTO(
+        self.install_use_case.execute(InstallUseCaseDTO(
             skip_download=args.skip_download,
             no_verify=args.no_verify,
-        )
-
-        self.install_command.execute(install_use_case_dto)
+        ))
 
     def startup(self, args):
-        startup_use_case_dto = StartupCommandDTO()
-
-        self.startup_command.execute(startup_use_case_dto)
+        self.startup_use_case.execute(StartupCommandDTO())
 
     def shutdown(self, args):
-        shutdown_use_case_dto = ShutdownCommandDTO(
+        self.startup_use_case.execute(ShutdownCommandDTO(
             force=args.force,
-        )
-        self.shutdown_command.execute(shutdown_use_case_dto)
+        ))

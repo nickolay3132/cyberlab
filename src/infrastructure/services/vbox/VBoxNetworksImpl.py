@@ -1,10 +1,15 @@
 import subprocess
+from dataclasses import dataclass
+from typing import Callable, Tuple
 
 from src.core.entities.VirtualMachine import VirtualMachine, Nic
+from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 from src.core.interfaces.services.vbox.VBoxNetworksService import VBoxNetworksService
 
-
+@dataclass
 class VBoxNetworksImpl(VBoxNetworksService):
+    virtual_machines_repository: VirtualMachinesRepository
+
     def create_nat_net(self) -> bool:
         nat_networks = subprocess.run(
             ["VBoxManage", "list", "natnetworks"],
@@ -38,3 +43,15 @@ class VBoxNetworksImpl(VBoxNetworksService):
         process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         process.wait()
         return process.returncode == 0
+
+    def enable_networks(self) -> Tuple[bool]:
+        handlers: dict[str, Callable[[VirtualMachine, Nic], bool]] = {
+            "natnetwork": self.enable_nat_network,
+        }
+        success_operations = []
+        for vm in self.virtual_machines_repository.get_all():
+            for nic in vm.nics:
+                handler = handlers.get(nic.type, lambda: None)
+                success_operations.append(handler(vm, nic))
+
+        return tuple(success_operations)

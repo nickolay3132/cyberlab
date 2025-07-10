@@ -6,22 +6,17 @@ from src.core.interfaces.services.VirtualMachinesInstallerService import Virtual
 
 
 @dataclass
-class InstallCommandDTO:
+class InstallUseCaseDTO:
     skip_download: bool = False
     no_verify: bool = False
 
-class InstallCommand:
-    def __init__(
-            self,
-            virtual_machines_installer_service: VirtualMachinesInstallerService,
-            vboxmanage_service: VBoxManageService,
-            output_handler: OutputHandler,
-    ):
-        self.virtual_machines_installer_service = virtual_machines_installer_service
-        self.vboxmanage_service = vboxmanage_service
-        self.output_handler = output_handler
+@dataclass
+class InstallUseCase:
+    virtual_machines_installer_service: VirtualMachinesInstallerService
+    vboxmanage_service: VBoxManageService
+    output_handler: OutputHandler
 
-    def execute(self, dto: InstallCommandDTO):
+    def execute(self, dto: InstallUseCaseDTO):
         if not dto.skip_download:
             self.virtual_machines_installer_service.install(no_verify_checksum=dto.no_verify)
 
@@ -29,4 +24,6 @@ class InstallCommand:
             self.output_handler.show_error("Could not create NAT network", terminate=True)
 
         self.vboxmanage_service.import_vms()
-        self.vboxmanage_service.enable_networks()
+
+        if False in self.vboxmanage_service.networks().enable_networks():
+            self.output_handler.show_error("Not all network adapters could be configured")

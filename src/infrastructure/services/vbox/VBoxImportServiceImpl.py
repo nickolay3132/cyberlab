@@ -1,26 +1,44 @@
 import os
 import subprocess
 from dataclasses import dataclass
+from typing import Optional
 
 from src.core.entities.ParrallelTask import ParallelTaskData
 from src.core.interfaces.output.OutputHandler import OutputHandler
+from src.core.interfaces.repositories.StorageRepository import StorageRepository
+from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
+from src.core.interfaces.services.FileSystemService import FileSystemService
 from src.core.interfaces.services.ParallelTasksService import ParallelTasksService
-from src.core.interfaces.services.vbox.VBoxImportService import VBoxImportService, ImportVMsDTO
+from src.core.interfaces.services.vbox.VBoxImportService import VBoxImportService
 
 @dataclass
 class VBoxImportServiceImpl(VBoxImportService):
     output_handler: OutputHandler
-    parallel_tasks_service: ParallelTasksService
 
-    def import_vms(self, dto: ImportVMsDTO) -> None:
-        for vm in dto.vms:
-            ova_path = os.path.join(dto.ova_dir, f"{vm.name}.ova")
-            log_file = os.path.join(dto.log_dir, f"{vm.name}.log")
+    parallel_tasks_service: ParallelTasksService
+    file_system_service: FileSystemService
+
+    storage_repository: StorageRepository
+    virtual_machines_repository: VirtualMachinesRepository
+
+    log_dir: Optional[str] = None
+    vms_dir: Optional[str] = None
+    ova_dir: Optional[str] = None
+
+    def import_vms(self) -> None:
+        self.prepare_storage()
+
+        self.output_handler.space()
+        self.output_handler.show("Importing VMS")
+
+        for vm in self.virtual_machines_repository.get_all():
+            ova_path = os.path.join(self.ova_dir, f"{vm.name}.ova")
+            log_file = os.path.join(self.log_dir, f"{vm.name}.log")
 
             args = {
                 'vm_name': vm.name,
                 'ova_path': ova_path,
-                'vms_dir': dto.vms_dir,
+                'vms_dir': self.vms_dir,
                 'log_file': log_file
             }
             self.output_handler.text(f"Importing VM: {vm.name}")
@@ -28,6 +46,14 @@ class VBoxImportServiceImpl(VBoxImportService):
 
         self.parallel_tasks_service.run()
         self.parallel_tasks_service.wait(self._check_import_task)
+
+    def prepare_storage(self) -> None:
+        storage = self.storage_repository.get()
+        self.log_dir = self.file_system_service.to_absolute_path(storage.import_log_store_to)
+        self.vms_dir = self.file_system_service.to_absolute_path(storage.vms_store_to)
+        self.ova_dir = self.file_system_service.to_absolute_path(storage.ova_store_to)
+
+        self.file_system_service.mkdirs(self.log_dir, self.vms_dir)
 
     @staticmethod
     def _import_task(task_data: ParallelTaskData) -> None:

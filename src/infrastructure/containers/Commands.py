@@ -8,7 +8,7 @@ class Commands (containers.DeclarativeContainer):
 
     base_commands = providers.Factory(
         BaseCommands,
-        install_command = use_cases.install_command,
-        startup_command = use_cases.startup_command,
-        shutdown_command = use_cases.shutdown_command,
+        install_use_case = use_cases.install_use_case,
+        startup_use_case = use_cases.startup_use_case,
+        shutdown_use_case = use_cases.shutdown_use_case,
     )

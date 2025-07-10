@@ -4,12 +4,12 @@ from src.core.interfaces.services.vbox.VBoxManageService import VBoxManageServic
 
 
 @dataclass
-class ShutdownCommandDTO:
+class ShutdownUseCaseDTO:
     force: bool
 
 @dataclass
-class ShutdownCommand:
+class ShutdownUseCase:
     vboxmanage_service: VBoxManageService
 
-    def execute(self, dto: ShutdownCommandDTO) -> None:
+    def execute(self, dto: ShutdownUseCaseDTO) -> None:
         self.vboxmanage_service.boot().shutdown(force=dto.force)

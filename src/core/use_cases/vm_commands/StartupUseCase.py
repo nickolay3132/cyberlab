@@ -4,12 +4,12 @@ from src.core.interfaces.services.vbox.VBoxManageService import VBoxManageServic
 
 
 @dataclass
-class StartupCommandDTO:
+class StartupUseCaseDTO:
     pass
 
 @dataclass
-class StartupCommand:
+class StartupUseCase:
     vboxmanage_service: VBoxManageService
 
-    def execute(self, dto: StartupCommandDTO):
+    def execute(self, dto: StartupUseCaseDTO):
         self.vboxmanage_service.boot().startup()

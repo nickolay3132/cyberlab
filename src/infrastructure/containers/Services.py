@@ -18,7 +18,8 @@ class Services (containers.DeclarativeContainer):
     )
 
     vbox_networks_service = providers.Factory(
-        VBoxNetworksImpl
+        VBoxNetworksImpl,
+        virtual_machines_repository=repos.virtual_machines_repository,
     )
 
     parallel_tasks_service = providers.Factory(
@@ -28,7 +29,12 @@ class Services (containers.DeclarativeContainer):
     vbox_import_service = providers.Factory(
         VBoxImportServiceImpl,
         output_handler=output.cli_output_handler,
+
         parallel_tasks_service=parallel_tasks_service,
+        file_system_service=file_system_service,
+
+        storage_repository=repos.storage_repository,
+        virtual_machines_repository=repos.virtual_machines_repository,
     )
 
     vbox_boot_service = providers.Factory(
@@ -47,11 +53,7 @@ class Services (containers.DeclarativeContainer):
 
     vboxmanage_service = providers.Factory(
         VBoxManageServiceImpl,
-        storage_repository=repos.storage_repository,
-        virtual_machines_repository=repos.virtual_machines_repository,
-        file_system_service=file_system_service,
         vbox_networks_service=vbox_networks_service,
         vbox_import_service=vbox_import_service,
         vbox_boot_service=vbox_boot_service,
-        output_handler=output.cli_output_handler,
     )
