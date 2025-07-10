@@ -2,8 +2,10 @@ from dependency_injector import containers, providers
 
 from src.infrastructure.services.FileSystemServiceImpl import FileSystemServiceImpl
 from src.infrastructure.services.ParallelTasksServiceImpl import ParallelTasksServiceImpl
-from src.infrastructure.services.VBoxManageServiceImpl import VBoxManageServiceImpl
-from src.infrastructure.services.VBoxNetworksImpl import VBoxNetworksImpl
+from src.infrastructure.services.vbox.VBoxBootServiceImpl import VBoxBootServiceImpl
+from src.infrastructure.services.vbox.VBoxImportServiceImpl import VBoxImportServiceImpl
+from src.infrastructure.services.vbox.VBoxManageServiceImpl import VBoxManageServiceImpl
+from src.infrastructure.services.vbox.VBoxNetworksImpl import VBoxNetworksImpl
 from src.infrastructure.services.VIrtualMachinesInstallerServiceImpl import VirtualMachinesInstallerServiceImpl
 
 
@@ -23,6 +25,18 @@ class Services (containers.DeclarativeContainer):
         ParallelTasksServiceImpl,
     )
 
+    vbox_import_service = providers.Factory(
+        VBoxImportServiceImpl,
+        output_handler=output.cli_output_handler,
+        parallel_tasks_service=parallel_tasks_service,
+    )
+
+    vbox_boot_service = providers.Factory(
+        VBoxBootServiceImpl,
+        virtual_machines_repository=repos.virtual_machines_repository,
+        output_handler=output.cli_output_handler,
+    )
+
     virtual_machines_installer_service = providers.Factory(
         VirtualMachinesInstallerServiceImpl,
         storage_repository=repos.storage_repository,
@@ -37,6 +51,7 @@ class Services (containers.DeclarativeContainer):
         virtual_machines_repository=repos.virtual_machines_repository,
         file_system_service=file_system_service,
         vbox_networks_service=vbox_networks_service,
-        parallel_tasks_service=parallel_tasks_service,
+        vbox_import_service=vbox_import_service,
+        vbox_boot_service=vbox_boot_service,
         output_handler=output.cli_output_handler,
     )

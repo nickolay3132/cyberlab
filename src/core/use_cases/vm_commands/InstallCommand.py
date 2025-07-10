@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from src.core.interfaces.output.OutputHandler import OutputHandler
-from src.core.interfaces.services.VBoxManageService import VBoxManageService
+from src.core.interfaces.services.vbox.VBoxManageService import VBoxManageService
 from src.core.interfaces.services.VirtualMachinesInstallerService import VirtualMachinesInstallerService
 
 

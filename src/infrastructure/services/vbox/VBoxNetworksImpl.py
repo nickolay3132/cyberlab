@@ -1,7 +1,7 @@
 import subprocess
 
 from src.core.entities.VirtualMachine import VirtualMachine, Nic
-from src.core.interfaces.services.VBoxNetworksService import VBoxNetworksService
+from src.core.interfaces.services.vbox.VBoxNetworksService import VBoxNetworksService
 
 
 class VBoxNetworksImpl(VBoxNetworksService):
