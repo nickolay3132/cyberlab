@@ -1,6 +1,7 @@
 from dependency_injector import containers, providers
 
 from src.presentation.commands.BaseCommands import BaseCommands
+from src.presentation.commands.SnapshotCommands import SnapshotCommands
 
 
 class Commands (containers.DeclarativeContainer):
@@ -11,4 +12,8 @@ class Commands (containers.DeclarativeContainer):
         install_use_case = use_cases.install_use_case,
         startup_use_case = use_cases.startup_use_case,
         shutdown_use_case = use_cases.shutdown_use_case,
+    )
+
+    snapshot_commands = providers.Factory(
+        SnapshotCommands
     )

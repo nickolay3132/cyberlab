@@ -6,10 +6,9 @@ from src.presentation.commands.BaseCommands import BaseCommands
 
 
 class BaseSubparsers (Subparsers):
-    def __init__(self, subparsers: _SubParsersAction, containers: dict):
-        super().__init__(subparsers)
-        base_commands_container: Commands = containers.get('base_commands')
-        self.base_commands: BaseCommands = base_commands_container.base_commands()
+    def __init__(self, subparsers: _SubParsersAction, commands: Commands):
+        self.subparsers = subparsers
+        self.base_commands: BaseCommands = commands.base_commands()
 
     def add_install_subparser(self):
         parser = self.subparsers.add_parser('install', help='Install and import virtual machines')

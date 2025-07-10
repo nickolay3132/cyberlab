@@ -2,10 +2,8 @@ from dataclasses import dataclass
 
 
 from src.core.use_cases.vm_commands.InstallUseCase import InstallUseCase, InstallUseCaseDTO
-from src.core.use_cases.vm_commands.ShutdownCommand import ShutdownCommand, ShutdownCommandDTO
-
-from src.core.use_cases.vm_commands.ShutdownUseCase import ShutdownUseCase
-from src.core.use_cases.vm_commands.StartupUseCase import StartupCommand, StartupCommandDTO, StartupUseCase
+from src.core.use_cases.vm_commands.ShutdownUseCase import ShutdownUseCase, ShutdownUseCaseDTO
+from src.core.use_cases.vm_commands.StartupUseCase import StartupUseCase, StartupUseCaseDTO
 
 
 @dataclass
@@ -21,9 +19,9 @@ class BaseCommands:
         ))
 
     def startup(self, args):
-        self.startup_use_case.execute(StartupCommandDTO())
+        self.startup_use_case.execute(StartupUseCaseDTO())
 
     def shutdown(self, args):
-        self.startup_use_case.execute(ShutdownCommandDTO(
+        self.shutdown_use_case.execute(ShutdownUseCaseDTO(
             force=args.force,
         ))
