@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
-from src.presentation.commands.BaseCommands import BaseCommands
-from src.presentation.commands.SnapshotCommands import SnapshotCommands
+from src.presentation.cli.commands.BaseCommands import BaseCommands
+from src.presentation.cli.commands.SnapshotCommands import SnapshotCommands
 
 
 class Commands (containers.DeclarativeContainer):

@@ -4,8 +4,8 @@ from argparse import _SubParsersAction
 from colorama.ansi import Fore, Style
 
 from src.infrastructure.containers.Commands import Commands
-from src.presentation.cli.Subparsers import Subparsers
-from src.presentation.commands.SnapshotCommands import SnapshotCommands
+from src.presentation.cli.subparsers.Subparsers import Subparsers
+from src.presentation.cli.commands.SnapshotCommands import SnapshotCommands
 
 
 class SnapshotSubparsers(Subparsers):
@@ -16,7 +16,7 @@ class SnapshotSubparsers(Subparsers):
         parser = subparsers.add_parser('snapshot', help='Manage lab state snapshots', description=parser_description)
         parser.set_defaults(func=lambda _: parser.print_help() and sys.exit(1))
 
-        self.subparsers = parser.add_subparsers(dest='snapshot_command', metavar='[COMMAND]')
+        self.subparsers = parser.add_subparsers(dest='snapshot_command', metavar='<command>')
 
     def add_create_subparser(self):
         parser = self.subparsers.add_parser('create', help='Save current state of all VMs')

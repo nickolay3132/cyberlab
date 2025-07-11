@@ -1,8 +1,8 @@
 from argparse import _SubParsersAction
 
 from src.infrastructure.containers.Commands import Commands
-from src.presentation.cli.Subparsers import Subparsers
-from src.presentation.commands.BaseCommands import BaseCommands
+from src.presentation.cli.subparsers.Subparsers import Subparsers
+from src.presentation.cli.commands.BaseCommands import BaseCommands
 
 
 class BaseSubparsers (Subparsers):
