@@ -2,7 +2,8 @@ from dependency_injector import containers, providers
 
 from src.infrastructure.services.FileSystemServiceImpl import FileSystemServiceImpl
 from src.infrastructure.services.ParallelTasksServiceImpl import ParallelTasksServiceImpl
-from src.infrastructure.services.snapshots.VBoxSnapshotsServiceImpl import VBoxSnapshotServiceImpl
+from src.infrastructure.services.snapshots.SnapshotsTreeServiceImpl import SnapshotsTreeServiceImpl
+from src.infrastructure.services.snapshots.VBoxSnapshotsServiceImpl import VBoxSnapshotsServiceImpl
 from src.infrastructure.services.vbox.VBoxBootServiceImpl import VBoxBootServiceImpl
 from src.infrastructure.services.vbox.VBoxImportServiceImpl import VBoxImportServiceImpl
 from src.infrastructure.services.vbox.VBoxManageServiceImpl import VBoxManageServiceImpl
@@ -59,8 +60,13 @@ class Services (containers.DeclarativeContainer):
         vbox_boot_service=vbox_boot_service,
     )
 
-    vbox_snapshot_service = providers.Factory(
-        VBoxSnapshotServiceImpl,
+    snapshots_tree_service = providers.Factory(
+        SnapshotsTreeServiceImpl,
+    )
+
+    vbox_snapshots_service = providers.Factory(
+        VBoxSnapshotsServiceImpl,
         virtual_machines_repository=repos.virtual_machines_repository,
+        snapshots_tree_service=snapshots_tree_service,
         output_handler=output.cli_output_handler,
     )

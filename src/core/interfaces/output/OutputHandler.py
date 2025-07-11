@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+from typing import List
 
+from src.core.entities.Snapshot import Snapshot
 from src.core.interfaces.output.ProgressBar import ProgressBar
 
 
@@ -27,3 +29,6 @@ class OutputHandler (ABC):
 
     @abstractmethod
     def progress_bar(self) -> ProgressBar: pass
+
+    @abstractmethod
+    def snapshots_tree(self, nodes: List[Snapshot]) -> None: pass

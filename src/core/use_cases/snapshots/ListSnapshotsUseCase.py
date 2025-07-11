@@ -1,0 +1,15 @@
+from dataclasses import dataclass
+
+from src.core.interfaces.services.snapshots import VBoxSnapshotsService
+
+
+@dataclass
+class ListSnapshotsUseCaseDTO:
+    pass
+
+@dataclass
+class ListSnapshotsUseCase:
+    vbox_snapshots_service: VBoxSnapshotsService
+
+    def execute(self, dto: ListSnapshotsUseCaseDTO) -> None:
+        self.vbox_snapshots_service.list_snapshots()
