@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-
+from src.core.use_cases.snapshots.CreateSnapshotUseCase import CreateSnapshotUseCase
 from src.core.use_cases.vm_commands.InstallUseCase import InstallUseCase
 from src.core.use_cases.vm_commands.ShutdownUseCase import ShutdownUseCase
 from src.core.use_cases.vm_commands.StartupUseCase import StartupUseCase
@@ -25,4 +25,9 @@ class UseCases(containers.DeclarativeContainer):
     shutdown_use_case=providers.Factory(
         ShutdownUseCase,
         vboxmanage_service=services.vboxmanage_service,
+    )
+
+    create_snapshot_use_case=providers.Factory(
+        CreateSnapshotUseCase,
+        vbox_snapshot_service=services.vbox_snapshot_service,
     )

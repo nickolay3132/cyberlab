@@ -15,5 +15,6 @@ class Commands (containers.DeclarativeContainer):
     )
 
     snapshot_commands = providers.Factory(
-        SnapshotCommands
+        SnapshotCommands,
+        create_snapshot_use_case = use_cases.create_snapshot_use_case,
     )
