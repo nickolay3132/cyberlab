@@ -18,4 +18,5 @@ class Commands (containers.DeclarativeContainer):
         SnapshotCommands,
         create_snapshot_use_case = use_cases.create_snapshot_use_case,
         list_snapshots_use_case = use_cases.list_snapshots_use_case,
+        restore_snapshot_use_case = use_cases.restore_snapshot_use_case,
     )

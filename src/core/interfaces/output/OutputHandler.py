@@ -31,4 +31,4 @@ class OutputHandler (ABC):
     def progress_bar(self) -> ProgressBar: pass
 
     @abstractmethod
-    def snapshots_tree(self, nodes: List[Snapshot]) -> None: pass
+    def snapshots_tree(self, root_snapshot: Snapshot) -> None: pass

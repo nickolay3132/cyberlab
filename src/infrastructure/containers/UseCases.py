@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 
+from src.core.use_cases.snapshots.RestoreSnapshotUseCase import RestoreSnapshotUseCase
 from src.core.use_cases.snapshots.ListSnapshotsUseCase import ListSnapshotsUseCase
 from src.core.use_cases.snapshots.CreateSnapshotUseCase import CreateSnapshotUseCase
 from src.core.use_cases.vm_commands.InstallUseCase import InstallUseCase
@@ -35,5 +36,10 @@ class UseCases(containers.DeclarativeContainer):
 
     list_snapshots_use_case=providers.Factory(
         ListSnapshotsUseCase,
+        vbox_snapshots_service=services.vbox_snapshots_service,
+    )
+
+    restore_snapshot_use_case=providers.Factory(
+        RestoreSnapshotUseCase,
         vbox_snapshots_service=services.vbox_snapshots_service,
     )

@@ -41,8 +41,8 @@ class OutputHandlerImpl (OutputHandler):
             self.new_progress_bar()
         return self._pbar
 
-    def snapshots_tree(self, nodes: List[Snapshot]) -> None:
-        formatted_snapshots = self._format_snapshots_tree(nodes)
+    def snapshots_tree(self, root_snapshot: Snapshot) -> None:
+        formatted_snapshots = self._format_snapshots_tree([root_snapshot])
 
         for line in formatted_snapshots:
             print(line)

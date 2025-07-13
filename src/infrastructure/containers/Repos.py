@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 import src
 from src.infrastructure.repositories.StorageRepositoryImpl import StorageRepositoryImpl
 from src.infrastructure.repositories.VirtualMachinesRepositoryImpl import VirtualMachinesRepositoryImpl
+from src.infrastructure.repositories.YamlSnapshotsRepositoryImpl import YamlSnapshotsRepositoryImpl
 from src.infrastructure.repositories.common.YamlLoader import YamlLoader
 
 
@@ -12,6 +13,11 @@ class Repos(containers.DeclarativeContainer):
         file_path=src.__config_path__
     )
 
+    snapshots_yaml_loader = providers.Singleton(
+        YamlLoader,
+        file_path=src.__snapshots_path__
+    )
+
     storage_repository = providers.Factory(
         StorageRepositoryImpl,
         yaml_loader=yaml_loader)
@@ -19,4 +25,9 @@ class Repos(containers.DeclarativeContainer):
     virtual_machines_repository = providers.Factory(
         VirtualMachinesRepositoryImpl,
         yaml_loader=yaml_loader
+    )
+
+    snapshots_repository = providers.Factory(
+        YamlSnapshotsRepositoryImpl,
+        yaml_loader=snapshots_yaml_loader
     )
