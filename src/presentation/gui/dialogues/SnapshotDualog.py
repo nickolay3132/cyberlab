@@ -54,7 +54,7 @@ class SnapshotDialog(Dialog):
         if subcommand in ["create", "restore"]:
             name = self.name_input.text().strip()
             if name:
-                self.cmd.extend(["--name", name.replace(" ", "-")])
+                self.cmd.extend(["--name", name])
             else:
                 QtWidgets.QMessageBox.warning(self, "Missing Name", "Please provide snapshot name.")
                 return

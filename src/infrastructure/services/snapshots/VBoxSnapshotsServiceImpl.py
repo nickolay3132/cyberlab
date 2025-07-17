@@ -25,7 +25,7 @@ class VBoxSnapshotsServiceImpl(VBoxSnapshotsService):
     def create_snapshot(self, vm: VirtualMachine, snapshot_name: str, description: str = '') -> None:
         cmd = [
             "VBoxManage", "snapshot", vm.name,
-            "take", f"{self.timestamp}-{snapshot_name}",
+            "take", f"{self.timestamp}-{snapshot_name.replace(' ', '')}",
             "--description", description,
         ]
         process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

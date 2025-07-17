@@ -1,37 +1,43 @@
 import os
 import subprocess
-import sys
 from pathlib import Path
+
+import pkg_resources
+
 import pyfiglet
 
+class Build:
+    @staticmethod
+    def run() -> None:
+        cli_path = Path(__file__).parent / "cyberlab_cli.py"
+        gui_path = Path(__file__).parent / "cyberlab.py"
 
-def build_cyberlab():
-    script_path = Path(__file__).parent / "cyberlab.py"
+        Build.build_script(cli_path, 'cyberlab_cli')
+        Build.build_script(gui_path, 'cyberlab')
 
-    fonts_dir = Path(pyfiglet.__file__).parent / "fonts"
-    fonts_src = str(fonts_dir)
-    fonts_dest = "pyfiglet/fonts"
+    @staticmethod
+    def build_script(filepath: Path, binary_name: str) -> None:
+        fonts_dir = Path(pyfiglet.__file__).parent / "fonts"
+        fonts_src = str(fonts_dir)
+        fonts_dest = "pyfiglet/fonts"
 
-    cmd = [
-        "pyinstaller",
-        "--onefile",
-        "--name", "cyberlab",  # Имя выходного файла (без .exe)
-        f"--add-data={fonts_src}{os.pathsep}{fonts_dest}",
-        "--hidden-import=pyfiglet.fonts",
-        "--workpath", "./tmp",
-        "--specpath", "./tmp",
-        str(script_path)
-    ]
+        packages = [dist.key for dist in pkg_resources.working_set]
+        hidden_imports = [f"--hidden-import={p}" for p in packages]
 
-    print("Start Packaging...")
-    print("Command:", " ".join(cmd))
-    result = subprocess.run(cmd, check=False)
+        cmd = [
+            "pyinstaller",
+            "--onefile",
+            "--name", binary_name,
+            "--collect-submodules=dependency_injector",
+            ''.join(hidden_imports),
+            f"--add-data={fonts_src}{os.pathsep}{fonts_dest}",
+            "--hidden-import=pyfiglet.fonts",
+            "--workpath", f"./tmp/{binary_name}",
+            "--specpath", f"./tmp/{binary_name}",
+            str(filepath)
+        ]
 
-    if result.returncode == 0:
-        print(f"Packaging finished!")
-    else:
-        print("Error during packaging!")
-        sys.exit(1)
+        subprocess.run(cmd, check=True)
 
 if __name__ == "__main__":
-    build_cyberlab()
+    Build.run()

@@ -1,5 +1,6 @@
 import platform
 import sys
+from pathlib import Path
 
 from PyQt6.QtWidgets import QApplication
 
@@ -30,8 +31,17 @@ class Main:
 
     @staticmethod
     def button_callback(button_label: str) -> None:
+        base_path = Path(__file__).parent
+
+        if sys.platform.startswith("win") and (base_path / "cyberlab_cli.exe").exists():
+            cmd = ['cyberlab_cli.exe']
+        elif (base_path / "cyberlab_cli").exists():
+            cmd = ['cyberlab_cli']
+        else:
+            cmd = ['python', 'cyberlab_cli.py']
+
         dialog = Main.buttons.get(button_label)(
-            cmd=['python', 'cyberlab_cli.py'],
+            cmd=cmd,
             command_executor=Main.run_terminal_command,
             parent=Main.window,
         )
