@@ -1,3 +1,6 @@
+import sys
+from typing import io
+
 import colorama
 
 from src.core.exceptions.VirtualMachineNotFound import VirtualMachineNotFoundError

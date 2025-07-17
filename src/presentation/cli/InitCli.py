@@ -7,7 +7,7 @@ from src import __version__
 
 
 from src.infrastructure.containers.Commands import Commands
-from src.infrastructure.containers.Output import Output
+from src.infrastructure.containers.CLIOutput import CLIOutput
 from src.infrastructure.containers.Repos import Repos
 from src.infrastructure.containers.Services import Services
 from src.infrastructure.containers.UseCases import UseCases
@@ -35,7 +35,7 @@ class InitCli:
     @staticmethod
     def _init_containers() -> Dict[str, Any]:
         repos_container = Repos()
-        output_container = Output()
+        output_container = CLIOutput()
         services_container = Services(repos=repos_container, output=output_container)
         use_cases_container = UseCases(services=services_container, output=output_container)
         commands_container = Commands(use_cases=use_cases_container)

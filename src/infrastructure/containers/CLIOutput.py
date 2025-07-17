@@ -4,7 +4,7 @@ from src.infrastructure.cli.CLIInputHandlerImpl import CLIInputHandlerImpl
 from src.infrastructure.cli.OutputHandlerImpl import OutputHandlerImpl
 
 
-class Output(containers.DeclarativeContainer):
+class CLIOutput(containers.DeclarativeContainer):
 
     cli_output_handler=providers.Factory(
         OutputHandlerImpl
