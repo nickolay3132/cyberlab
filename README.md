@@ -117,9 +117,10 @@ Download and import VMs from OVA files:
 ```bash
 python cyberlab.py install [--skip-download] [--no-verify]
 ```
-* **Without flags**: Downloads OVA files (if missing) and verifies their integrity before import.
-* `--skip-download`: Skips downloading OVA files (assumes files are already present locally). 
-* `--no-verify`: Skips hash verification for existing OVA files (faster but less secure).
+| Short | Long              | Description                                                             | Required |
+|-------|-------------------|-------------------------------------------------------------------------|----------|
+|       | `--skip-download` | Skips downloading OVA files (assumes files are already present locally) | No       | 
+|       | `--no-verify`     | Skips hash verification for existing OVA files (faster but less secure) | No       |
 ---
 
 **Start the CyberLab**  
@@ -134,8 +135,10 @@ Gracefully shut down all VMs:
 ```bash
 python cyberlab.py shutdown [--force]
 ```
-* **Without flags:** Graceful shutdown (sends ACPI power-off signal to VMs).
-* `--force`: Force immediate shutdown of all VMs (equivalent to pulling the power).
+| Short | Long      | Description                                                           | Required |
+|-------|-----------|-----------------------------------------------------------------------|----------|
+|       | `--force` | Force immediate shutdown of all VMs (equivalent to pulling the power) | No       |
+
 ---
 
 ### 📸 Manage CyberLab Snapshots
@@ -235,8 +238,8 @@ python build.py
 
 ### 📂 Output Files
 * The executable will be in `./dist/`:
-    - **Windows:** `dist/cyberlab.exe`
-    - **Linux/macOS:** `dist/cyberlab`
+    - **Windows:** `dist\CyberLab.exe` and `dist\CyberLabCli.exe`
+    - **Linux/macOS:** `dist/CyberLab` and `dist/CyberLabCli`
 * Temporary files (`./tmp`) can be deleted after building:
 ```bash
 rm -rf ./tmp  # Linux/macOS
