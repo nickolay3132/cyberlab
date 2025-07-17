@@ -12,8 +12,8 @@ class Build:
         cli_path = Path(__file__).parent / "cyberlab_cli.py"
         gui_path = Path(__file__).parent / "cyberlab.py"
 
-        Build.build_script(cli_path, 'cyberlab_cli')
-        Build.build_script(gui_path, 'cyberlab')
+        Build.build_script(cli_path, 'CyberLabCli')
+        Build.build_script(gui_path, 'CyberLab')
 
     @staticmethod
     def build_script(filepath: Path, binary_name: str) -> None:

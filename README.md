@@ -1,27 +1,33 @@
-# CyberLab CLI
+# CyberLab Management Tool
 
 
 
 ## 1. 🎯Project Goal
 
 
-CyberLab CLI is a powerful automation layer built on top of ```VBoxManage```, designed to streamline the deployment and 
-management of CyberLab (virtual training environment). It eliminates manual steps by providing:
+CyberLab Management Tool is a powerful automation layer built on top of VBoxManage, designed to streamline the 
+deployment and management of CyberLab — a virtual training environment tailored for cybersecurity labs and 
+experimentation. It eliminates manual steps by providing:
 
 ### 🔧 Core Automation Features
-- **One-command OVA deployment:** 
-Download and import pre-configured virtual machine templates that simulate a real corporate network from remote repositories.
+- One-command OVA deployment: Download and import pre-configured virtual machine templates that simulate a real 
+corporate network from remote repositories.
+- Bulk operations: Start/stop/reset an entire CyberLab (multiple VMs) with a single CLI command.
+- Consistency: Ensure identical lab environments across teams via version-controlled OVA imports.
 
-- **Bulk operations:**
-Start/stop/reset an entire CyberLab (multiple VMs) with a single CLI command.
+### 🧭 Interface Options
+CyberLab is available in two flavors:
+- cyberlab_cli: A command-line interface (CLI) that exposes the full power of VBoxManage-backed automation. Perfect 
+for scripting, integration into CI pipelines, and experienced operators.
+- cyberlab (GUI): A graphical user interface that simplifies usage and makes CyberLab accessible to non-technical 
+users. Under the hood, it wraps and delegates tasks to the CLI component — providing visual interaction with CLI features.
 
-- **Consistency:**
-Ensure identical lab environments across teams via version-controlled OVA imports.
+✅ The GUI version is built directly atop the CLI, ensuring consistent behavior and compatibility across both modes of operation.
 
 ### 🚩 Use Cases
-- **Cybersecurity training:** Rapidly deploy vulnerable VMs for pentesting practice.
+Cybersecurity training: Rapidly deploy vulnerable VMs for pentesting practice.
 
-- **Research/Development:** Test exploits in isolated, reproducible environments.
+Research/Development: Test exploits in isolated, reproducible environments.
 
 
 
@@ -168,34 +174,44 @@ python cyberlab.py snapshot restore -n <NAME>
 |-------|----------|---------------------------------|----------|
 | `-n`  | `--name` | Name of the snapshot to restore | Yes      |
 
----
+[//]: # (---)
 
-**Delete Snapshot**   
-Remove a snapshot (⚠️ child snapshots will be deleted recursively).
-```bash
-python cyberlab.py snapshot delete [-h] [--all] [-n NAME]
-```
-| Short | Long     | Description              | Required |
-|-------|----------|--------------------------|----------|
-| `-n`  | `--name` | Delete specific snapshot | No*      |
-|       | `--all`  | Delete ALL snapshots     | No*      |
+[//]: # ()
+[//]: # (**Delete Snapshot**   )
 
-> *Either `--name` or `--all` must be specified
+[//]: # (Remove a snapshot &#40;⚠️ child snapshots will be deleted recursively&#41;.)
+
+[//]: # (```bash)
+
+[//]: # (python cyberlab.py snapshot delete [-h] [--all] [-n NAME])
+
+[//]: # (```)
+
+[//]: # (| Short | Long     | Description              | Required |)
+
+[//]: # (|-------|----------|--------------------------|----------|)
+
+[//]: # (| `-n`  | `--name` | Delete specific snapshot | No*      |)
+
+[//]: # (|       | `--all`  | Delete ALL snapshots     | No*      |)
+
+[//]: # ()
+[//]: # (> *Either `--name` or `--all` must be specified)
 
 ### ⚙️ Configuration
 The tool uses the current working directory (`cwd`) to:
 1. Look for the config file (`config.yaml`).
 2. Store files by default in:
    - OVA files: `./ova/`
-   - -Virtual machines: `./vms/`
+   - Virtual machines: `./vms/`
+   - Import Log: `./import_log/`
 
 To customize paths, modify these settings in `config.yaml` file:
 ```yaml
 storage:
-  ova: 
-    store_to: /custom/path/for/ova_files
-  virtual_machines:
-    store_to: /custom/path/for/vms
+  ova_store_to: /custom/path/for/ova_files
+  vms_store_to: /custom/path/for/vms
+  import_log_store_to: /custom/path/for/import_log
 ```
 
 ### 📚 Help & Documentation
@@ -227,16 +243,37 @@ rm -rf ./tmp  # Linux/macOS
 rmdir /s /q tmp  # Windows (CMD)
 ```
 
-### 🚀 How to Run the Executable
-Windows:
+### 🚀 How to Run the Executables
+CyberLab is distributed in two variants:
+- CyberLab CLI: A command-line interface for automation and scripting.
+- CyberLab GUI: A graphical user interface built on top of the CLI for visual interaction.
+
+After building with PyInstaller, the executables will appear in the dist folder:
+
+🪟 Windows:
 ```powershell
-.\dist\cyberlab.exe [command] [arguments]
+# Run CLI
+.\dist\CyberLabCli.exe [command] [arguments]
+
+# Run GUI
+.\dist\CyberLab.exe
 ```
-Linux/macOS:
+
+🐧 Linux / 🍎 macOS:
 ```bash
-chmod +x ./dist/cyberlab  # Make executable
-./dist/cyberlab [command] [arguments]
+# Make both files executable
+chmod +x ./dist/CyberLabCli
+chmod +x ./dist/CyberLab
+
+# Run CLI
+./dist/CyberLabCli [command] [arguments]
+
+# Run GUI
+./dist/CyberLab
 ```
+
+
+📌 The GUI wraps around the CLI — make sure both executables are present in the same directory so that GUI operations can invoke the CLI correctly.
 
 ### ⚠️ Important Notes
 1. Platform-Specific Builds

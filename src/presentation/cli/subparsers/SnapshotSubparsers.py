@@ -34,13 +34,13 @@ class SnapshotSubparsers(Subparsers):
         parser.add_argument('-n', '--name', required=True, help='snapshot name')
         parser.set_defaults(func=self.snapshot_commands.restore)
 
-    def add_delete_subparser(self):
-        parser = self.subparsers.add_parser('delete', help='Delete snapshot',
-                                             description=f'{Fore.RED}Warning:{Style.RESET_ALL} Deleting a Snapshot Will Remove All Its Child Snapshots')
-        parser.add_argument(
-            '--all',
-            action='store_true',
-            default=False,
-            help='delete all snapshots for CyberLab')
-        parser.add_argument('-n', '--name', help='snapshot name')
-        parser.set_defaults(func=self.snapshot_commands.delete)
+    # def add_delete_subparser(self):
+    #     parser = self.subparsers.add_parser('delete', help='Delete snapshot',
+    #                                          description=f'{Fore.RED}Warning:{Style.RESET_ALL} Deleting a Snapshot Will Remove All Its Child Snapshots')
+    #     parser.add_argument(
+    #         '--all',
+    #         action='store_true',
+    #         default=False,
+    #         help='delete all snapshots for CyberLab')
+    #     parser.add_argument('-n', '--name', help='snapshot name')
+    #     parser.set_defaults(func=self.snapshot_commands.delete)
