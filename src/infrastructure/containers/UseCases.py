@@ -17,7 +17,6 @@ class UseCases(containers.DeclarativeContainer):
         virtual_machines_installer_service=services.virtual_machines_installer_service,
         vboxmanage_service=services.vboxmanage_service,
         vbox_snapshots_service=services.vbox_snapshots_service,
-        output_handler=output.cli_output_handler,
     )
 
     startup_use_case=providers.Factory(

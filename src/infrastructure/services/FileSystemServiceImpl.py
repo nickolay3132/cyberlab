@@ -4,14 +4,19 @@ import sys
 from pathlib import Path
 import requests
 
+from src.core.entities.observer import Subject, ObserverEvent
+from src.core.entities.progress_bar_data import ProgressBarData, ProgressBarStates
 from src.core.exceptions.CantScanDirectory import CantScanDirectoryError, CantScanDirectory
 from src.core.interfaces.output.OutputHandler import OutputHandler
 from src.core.interfaces.services.FileSystemService import FileSystemService
 
 
 class FileSystemServiceImpl(FileSystemService):
-    def download_file(self, url: str, download_path: str, output_handler: OutputHandler) -> None:
+    def download_file(self, url: str, download_path: str, download_id: str, subject: Subject) -> None:
         temp_file = f"{download_path}.tmp"
+        pb_data = ProgressBarData(
+            state=ProgressBarStates.INIT
+        )
         try:
             response = requests.get(url, stream=True)
             response.raise_for_status()
@@ -19,25 +24,41 @@ class FileSystemServiceImpl(FileSystemService):
             total_size = int(response.headers.get("content-length", 0))
             block_size = 8192
 
+            pb_data.total = total_size
+            subject.notify(ObserverEvent.progress(id=download_id, data=pb_data))
+
             with open(temp_file, "wb") as file:
                 downloaded = 0
                 for chunk in response.iter_content(chunk_size=block_size):
                     file.write(chunk)
                     downloaded += block_size
-                    output_handler.progress_bar().update(downloaded, total_size)
+
+                    pb_data.state = ProgressBarStates.IN_PROGRESS
+                    pb_data.actual = downloaded
+                    subject.notify(ObserverEvent.progress(
+                        id=download_id,
+                        data=pb_data,
+                    ))
 
             os.rename(temp_file, download_path)
-            output_handler.progress_bar().close()
+
+            pb_data.state = ProgressBarStates.COMPLETED
+            subject.notify(ObserverEvent.progress(
+                id=download_id,
+                data=pb_data,
+            ))
 
         except KeyboardInterrupt as _:
-            output_handler.progress_bar().close()
-            output_handler.show_warning("Downloading has been interrupted.")
+            pb_data.state = ProgressBarStates.ERROR
+            pb_data.error_msg = "Downloading has been interrupted."
+            subject.notify(ObserverEvent.progress(id=download_id, data=pb_data))
             os.remove(temp_file)
             sys.exit(1)
 
         except Exception or ConnectionError as e:
-            output_handler.progress_bar().close()
-            output_handler.show_error(f"Cannot fetch url: {url}. Message: {str(e)}", terminate=True)
+            pb_data.state = ProgressBarStates.ERROR
+            pb_data.error_msg = f"Cannot fetch url: {url}, Message: {str(e)}"
+            subject.notify(ObserverEvent.progress(id=download_id, data=pb_data))
             os.remove(temp_file)
 
     def mkdirs(self, *paths: str):

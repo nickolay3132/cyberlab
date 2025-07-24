@@ -6,6 +6,7 @@ from src.presentation.cli.commands.SnapshotCommands import SnapshotCommands
 
 class Commands (containers.DeclarativeContainer):
     use_cases = providers.DependenciesContainer()
+    output = providers.DependenciesContainer()
 
     base_commands = providers.Factory(
         BaseCommands,

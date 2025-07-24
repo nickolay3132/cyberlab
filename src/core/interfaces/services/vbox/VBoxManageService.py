@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from src.core.entities.observer import Subject
 from src.core.interfaces.services.vbox.VBoxBootService import VBoxBootService
 from src.core.interfaces.services.vbox.VBoxImportService import VBoxImportService
 from src.core.interfaces.services.vbox.VBoxNetworksService import VBoxNetworksService
@@ -7,7 +8,7 @@ from src.core.interfaces.services.vbox.VBoxNetworksService import VBoxNetworksSe
 
 class VBoxManageService (ABC):
     @abstractmethod
-    def import_vms(self) -> None: pass
+    def import_vms(self, subject: Subject) -> None: pass
 
     @abstractmethod
 

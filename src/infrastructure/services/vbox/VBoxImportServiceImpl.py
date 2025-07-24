@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from src.core.entities.ParrallelTask import ParallelTaskData
-from src.core.interfaces.output.OutputHandler import OutputHandler
+from src.core.entities.observer import Subject, ObserverEvent
 from src.core.interfaces.repositories.StorageRepository import StorageRepository
 from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 from src.core.interfaces.services.FileSystemService import FileSystemService
@@ -13,8 +13,6 @@ from src.core.interfaces.services.vbox.VBoxImportService import VBoxImportServic
 
 @dataclass
 class VBoxImportServiceImpl(VBoxImportService):
-    output_handler: OutputHandler
-
     parallel_tasks_service: ParallelTasksService
     file_system_service: FileSystemService
 
@@ -25,11 +23,14 @@ class VBoxImportServiceImpl(VBoxImportService):
     vms_dir: Optional[str] = None
     ova_dir: Optional[str] = None
 
-    def import_vms(self) -> None:
-        self.prepare_storage()
+    subject: Optional[Subject] = None
 
-        self.output_handler.space()
-        self.output_handler.show("Importing VMS")
+    def import_vms(self, subject: Subject) -> None:
+        self.prepare_storage()
+        self.subject = subject
+
+        subject.notify(ObserverEvent.space(id='main'))
+        subject.notify(ObserverEvent.title(id='main', data='Importing VMS'))
 
         for vm in self.virtual_machines_repository.get_all():
             ova_path = os.path.join(self.ova_dir, f"{vm.name}.ova")
@@ -41,7 +42,7 @@ class VBoxImportServiceImpl(VBoxImportService):
                 'vms_dir': self.vms_dir,
                 'log_file': log_file
             }
-            self.output_handler.text(f"Importing VM: {vm.name}")
+            subject.notify(ObserverEvent.text(id=vm.name, data=f"Importing VM: {vm.name}"))
             self.parallel_tasks_service.add_task(self._import_task, args=args)
 
         self.parallel_tasks_service.run()
@@ -100,10 +101,15 @@ class VBoxImportServiceImpl(VBoxImportService):
                 task_data.error = str(e)
 
     def _check_import_task(self, task_data: ParallelTaskData) -> None:
+        vm_name = task_data.args.get('vm_name')
+
         if task_data.is_completed:
-            self.output_handler.success(f"{task_data.args.get('vm_name')} successfully imported.")
+            self.subject.notify(ObserverEvent.success(id=vm_name, data=f"{vm_name} successfully imported."))
         else:
-            self.output_handler.show_error(f"Error importing {task_data.args.get('vm_name')}.")
+            self.subject.notify(ObserverEvent.error(id=vm_name, data=f"{vm_name} failed to import."))
             if task_data.error:
-                self.output_handler.text(f"Reason: {task_data.error}")
-            self.output_handler.text(f"Log file: {task_data.args.get('log_file')}")
+                self.subject.notify(ObserverEvent.error(
+                    id='main',
+                    data=f"Reason for failure importing {vm_name}: {task_data.error}"
+                ))
+            self.subject.notify(ObserverEvent.text(id='main', data=f"Log file: {task_data.args.get('log_file')}"))
