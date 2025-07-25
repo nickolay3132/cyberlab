@@ -60,6 +60,4 @@ class Services (containers.DeclarativeContainer):
         VBoxSnapshotsServiceImpl,
         virtual_machines_repository=repos.virtual_machines_repository,
         snapshots_repository=repos.snapshots_repository,
-        output_handler=output.cli_output_handler,
-        input_handler=output.input_handler,
     )

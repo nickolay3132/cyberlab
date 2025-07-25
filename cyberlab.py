@@ -1,4 +1,5 @@
 import sys
+from typing import Dict, Tuple, List, Type
 
 from PyQt6.QtWidgets import QApplication
 
@@ -7,20 +8,23 @@ from src.infrastructure.containers.Repos import Repos
 from src.infrastructure.containers.Services import Services
 from src.infrastructure.containers.UseCases import UseCases
 from src.presentation.gui.MainWindow import MainWindow
+from src.presentation.gui.dialogues.Dialog import Dialog
 from src.presentation.gui.dialogues.InstallDialog import InstallDialog
 from src.presentation.gui.dialogues.ShutdownDialog import ShutdownDialog
 from src.presentation.gui.dialogues.SnapshotDualog import SnapshotDialog
 from src.presentation.gui.dialogues.StartupDialog import StartupDialog
-from src.presentation.gui.gui_observer import GUIObserver
+from src.presentation.gui.observers.gui_observer_invoker import GUIObserverInvoker
+from src.presentation.gui.observers.progressbar_gui_observer import ProgressBarGuiObserver
+from src.presentation.gui.observers.texts_gui_observer import TextsGuiObserver
 
 
 class Main:
     window: MainWindow
-    buttons = {
-        'install': InstallDialog,
-        'startup': StartupDialog,
-        'shutdown': ShutdownDialog,
-        'snapshot': SnapshotDialog,
+    buttons: Dict[str, Tuple[Type[Dialog], List[Type[GUIObserverInvoker]]]] = {
+        'install': (InstallDialog, [TextsGuiObserver, ProgressBarGuiObserver]),
+        'startup': (StartupDialog, [TextsGuiObserver]),
+        'shutdown': (ShutdownDialog, [TextsGuiObserver]),
+        'snapshot': (SnapshotDialog, [TextsGuiObserver]),
     }
     containers = {}
 
@@ -34,10 +38,12 @@ class Main:
 
     @staticmethod
     def button_callback(button_label: str) -> None:
-        dialog = Main.buttons.get(button_label)(
+        button = Main.buttons[button_label]
+
+        dialog = button[0](
             parent=Main.window,
             use_cases=Main.containers['use_cases'],
-            observer=GUIObserver(Main.window.statuses_panel.vm_logs)
+            observers=[observer(Main.window.statuses_panel.vm_logs) for observer in button[1]],
         )
         dialog.exec()
 

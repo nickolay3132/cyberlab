@@ -18,7 +18,6 @@ from src.presentation.cli.subparsers.SnapshotSubparsers import SnapshotSubparser
 class InitCli:
     def __init__(self):
         self.containers = self._init_containers()
-        self.output = self.containers["output"].cli_output_handler()
 
     def run(self):
         parser = argparse.ArgumentParser(description=self._show_cli_header(__version__))

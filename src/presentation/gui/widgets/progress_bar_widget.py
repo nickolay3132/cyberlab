@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QProgressBar
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QProgressBar, QSizePolicy
 
 from src.core.entities.progress_bar_data import ProgressBarData, ProgressBarStates
 
@@ -16,30 +16,33 @@ class ProgressBarWidget(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        # Основной вертикальный layout
+        # Основной layout
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setContentsMargins(0, 0, 0, 15)
+        self.main_layout.setSpacing(0)  # Убираем промежутки между элементами
 
-        # Горизонтальный layout для прогресс-бара и процентов
+        # Горизонтальный layout для элементов прогресс-бара
         self.progress_layout = QHBoxLayout()
         self.progress_layout.setContentsMargins(0, 0, 0, 0)
-        self.progress_layout.setSpacing(10)  # Отступ между элементами
+        self.progress_layout.setSpacing(5)
 
-        # Label перед прогресс-баром
+        # Настройка метки статуса
         self.status_label = QLabel("Downloading:")
         self.status_label.setFont(QFont("Courier", 11))
+        self.status_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
 
-        # Сам прогресс-бар
+        # Настройка прогресс-бара
         self.progress_bar = QProgressBar()
         self.progress_bar.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.progress_bar.setMinimum(0)
         self.progress_bar.setMaximum(100)
-        self.progress_bar.setTextVisible(False)  # Скрываем текст внутри бара
+        self.progress_bar.setTextVisible(False)
+        self.progress_bar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
-        # Label для отображения процентов
+        # Настройка метки процентов
         self.percent_label = QLabel("0%")
         self.percent_label.setFont(QFont("Arial", 9))
-        self.percent_label.setMinimumWidth(40)  # Фиксированная ширина для выравнивания
+        self.percent_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
 
         # Добавляем элементы в горизонтальный layout
         self.progress_layout.addWidget(self.status_label)
@@ -49,7 +52,13 @@ class ProgressBarWidget(QWidget):
         # Добавляем горизонтальный layout в основной
         self.main_layout.addLayout(self.progress_layout)
 
-        # Начальное состояние
+        # Устанавливаем выравнивание по верхнему краю
+        self.main_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.progress_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+
+        # Устанавливаем фиксированную высоту для виджета
+        self.setFixedHeight(30)
+
         self.update_progress(ProgressBarData(state=ProgressBarStates.INIT))
 
     def update_progress(self, data: ProgressBarData):

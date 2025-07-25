@@ -1,12 +1,6 @@
-from typing import Dict
-
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QLabel
 
-from src.infrastructure.containers.UseCases import UseCases
 from src.presentation.gui.dialogues.Dialog import Dialog
-from src.presentation.gui.gui_observer import GUIObserver
-from src.presentation.gui.widgets.statuses_panel import StatusesPanel
 
 
 class SnapshotDialog(Dialog):
@@ -23,8 +17,8 @@ class SnapshotDialog(Dialog):
     description_label: QtWidgets.QLabel
     description_input: QtWidgets.QLineEdit
 
-    def __init__(self, use_cases: UseCases, observer: GUIObserver, parent=None):
-        super().__init__(use_cases, observer, parent)
+    def __init__(self, use_cases, observers, parent=None):
+        super().__init__(use_cases, observers, parent)
         self.setWindowTitle("Manage Snapshots")
 
     def setup_ui(self):

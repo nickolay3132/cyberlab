@@ -16,3 +16,4 @@ class ShutdownUseCase:
 
     def execute(self, dto: ShutdownUseCaseDTO) -> None:
         self.vboxmanage_service.boot().shutdown(self.subject, force=dto.force)
+        [self.subject.detach(observer) for observer in self.subject.observers]

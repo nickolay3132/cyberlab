@@ -37,3 +37,5 @@ class InstallUseCase:
             self.subject.notify(ObserverEvent.error(id="main", data="Not all network adapters could be configured"))
 
         # self.vbox_snapshots_service.create_snapshot_for_all("initial-snapshot")
+
+        [self.subject.detach(observer) for observer in self.subject.observers]

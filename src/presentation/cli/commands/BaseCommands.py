@@ -46,6 +46,8 @@ class InstallObserver(Observer):
     def __init__(self):
         self.pbar = None
 
+    def on_detach(self) -> None: pass
+
     def update(self, data: ObserverEvent) -> None:
         item_id = data.id
         ev_type = data.type
@@ -82,3 +84,29 @@ class InstallObserver(Observer):
                 case ProgressBarStates.ERROR:
                     self.pbar.close()
                     print(f"Error: {pb_data.error_msg}")
+
+        if ev_type == "select_option":
+            for index, value in enumerate(data['options']):
+                print(f"{index + 1}: {value}")
+
+            selected_index = self._get_valid_index(min=1, max=len(data))
+            data['future'].set_result(selected_index - 1)
+
+    @staticmethod
+    def _get_valid_index(min: int = 0, max: int = 1) -> int:
+        while True:
+            user_input = input(f"Select from {min} to {max}: ")
+
+            if not user_input.isdigit():
+                print(f"Invalid input. Try again.")
+                continue
+
+            index = int(user_input)
+
+            if min <= index <= max:
+                return index
+            else:
+                print(f"Index must be between {min} and {max}.")
+                continue
+
+        return -1

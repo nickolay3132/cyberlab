@@ -5,11 +5,11 @@ from src.infrastructure.cli.OutputHandlerImpl import OutputHandlerImpl
 
 
 class CLIOutput(containers.DeclarativeContainer):
-
-    cli_output_handler=providers.Factory(
-        OutputHandlerImpl
-    )
-
-    input_handler=providers.Factory(
-        CLIInputHandlerImpl
-    )
+    pass
+    # cli_output_handler=providers.Factory(
+    #     OutputHandlerImpl
+    # )
+    #
+    # input_handler=providers.Factory(
+    #     CLIInputHandlerImpl
+    # )
