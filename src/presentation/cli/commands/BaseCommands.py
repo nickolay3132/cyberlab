@@ -47,6 +47,7 @@ class InstallObserver(Observer):
         self.pbar = None
 
     def update(self, data: ObserverEvent) -> None:
+        item_id = data.id
         ev_type = data.type
         data = data.data
 
@@ -72,6 +73,7 @@ class InstallObserver(Observer):
             pb_data = cast(ProgressBarData, data)
             match pb_data.state:
                 case ProgressBarStates.INIT:
+                    print(f'Downloading {item_id}...')
                     self.pbar = tqdm(total=pb_data.total, unit="B", unit_scale=True)
                 case ProgressBarStates.IN_PROGRESS:
                     self.pbar.update(pb_data.actual - self.pbar.n)

@@ -6,16 +6,17 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSizePolicy, QScrollAr
 import pyfiglet
 
 import src
+from src.presentation.gui.widgets.statuses_panel import StatusesPanel
 
 
 class MainWindow(QWidget):
     def __init__(self, buttons: Dict[str, Any], callback: Callable[[str], None]):
         super().__init__()
         self.setWindowTitle("CyberLab Management Tool")
-        self.setMinimumSize(400, 180)
+        self.setMinimumSize(600, 300)
 
+        self.statuses_panel = StatusesPanel(['Main', 'Firewall-1', 'Firewall-2', "Web-Server"], self)
         self.app_version = src.__version__
-
         self.buttons = buttons
         self.callback = callback
 
@@ -24,13 +25,23 @@ class MainWindow(QWidget):
     def setup_ui(self):
         layout = QVBoxLayout(self)
 
+        layout.addWidget(self._get_art_label())
+
+        layout.addWidget(self.statuses_panel, stretch=1)
+
+        scroll = QScrollArea()
+        scroll.setWidget(self._get_buttons_grid())
+        scroll.setWidgetResizable(True)
+        layout.addWidget(scroll)
+
+    def _get_art_label(self) -> QLabel:
         art_label = QLabel(self._show_gui_header(self.app_version))
         art_label.setFont(QFont("Courier", 10))
         art_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         art_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        layout.addWidget(art_label)
+        return art_label
 
-        scroll = QScrollArea()
+    def _get_buttons_grid(self) -> QWidget:
         button_container = QWidget()
         grid_layout = QGridLayout(button_container)
 
@@ -41,18 +52,13 @@ class MainWindow(QWidget):
             btn.clicked.connect(lambda _, text=label: self.callback(text))
             grid_layout.addWidget(btn, i // cols, i % cols)
 
-        scroll.setWidget(button_container)
-        scroll.setWidgetResizable(True)
-
-        layout.addWidget(scroll)
+        return button_container
 
     @staticmethod
     def _show_gui_header(version: str):
         ascii_title = pyfiglet.figlet_format("CyberLab", font="slant")
         description = "Cyber Lab management tool"
         version = version.rjust(55)
-
-
 
         header = f"""
         <pre><font color="cyan">{ascii_title}</font></pre>

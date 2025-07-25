@@ -1,19 +1,24 @@
-from typing import List
+from typing import List, Dict
 
 from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QLabel
 
+from src.infrastructure.containers.UseCases import UseCases
 from src.presentation.gui.RunTerminalCommand import RunTerminalCommand
+from src.presentation.gui.gui_observer import GUIObserver
 
 
 class Dialog(QtWidgets.QDialog):
     execute_button: QtWidgets.QPushButton
     cancel_button: QtWidgets.QPushButton
 
-    def __init__(self, cmd: List[str], command_executor: RunTerminalCommand, parent=None):
+    def __init__(self, use_cases: UseCases, observer: GUIObserver,  parent=None):
         super().__init__(parent)
         self.setModal(True)
-        self.cmd = cmd
-        self.command_executor = command_executor
+
+        self.use_cases = use_cases
+        self.observer = observer
+
         self.setup_ui()
 
     def buttons_layout(self) -> QtWidgets.QHBoxLayout:

@@ -10,7 +10,6 @@ from src.core.use_cases.vm_commands.StartupUseCase import StartupUseCase
 
 class UseCases(containers.DeclarativeContainer):
     services = providers.DependenciesContainer()
-    output = providers.DependenciesContainer()
 
     install_use_case=providers.Factory(
         InstallUseCase,

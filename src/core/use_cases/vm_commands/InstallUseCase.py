@@ -22,6 +22,8 @@ class InstallUseCase:
     subject: Subject = Subject()
 
     def execute(self, dto: InstallUseCaseDTO):
+        # self.subject.notify(ObserverEvent.error(id="main", data="Could not create NAT network"))
+
         if not dto.skip_download:
             self.virtual_machines_installer_service.set_subject(self.subject)
             self.virtual_machines_installer_service.install(no_verify_checksum=dto.no_verify)

@@ -37,7 +37,7 @@ class InitCli:
         repos_container = Repos()
         output_container = CLIOutput()
         services_container = Services(repos=repos_container, output=output_container)
-        use_cases_container = UseCases(services=services_container, output=output_container)
+        use_cases_container = UseCases(services=services_container)
         commands_container = Commands(use_cases=use_cases_container)
 
         return {

@@ -16,19 +16,19 @@ virtual_machines:
       startup: headless
       shutdown: savestate
 
-#  - name: firewall-2
-#    ova_filename: fw2-pfsense.ova
-#    md5checksum: 999093de88cd385198352e1517ae48c4
-#    boot_policy:
-#      startup: headless
-#      shutdown: savestate
-#
-#  - name: web-server
-#    ova_filename: dmz-serv.ova
-#    md5checksum: a79edb0b734fd55cfec281913c561664
-#    boot_policy:
-#      startup: headless
-#      shutdown: acpipowerbutton
+  - name: firewall-2
+    ova_filename: fw2-pfsense.ova
+    md5checksum: 999093de88cd385198352e1517ae48c4
+    boot_policy:
+      startup: headless
+      shutdown: savestate
+
+  - name: web-server
+    ova_filename: dmz-serv.ova
+    md5checksum: a79edb0b734fd55cfec281913c561664
+    boot_policy:
+      startup: headless
+      shutdown: acpipowerbutton
 #
 #  - name: database-server
 #    ova_filename: db-serv.ova

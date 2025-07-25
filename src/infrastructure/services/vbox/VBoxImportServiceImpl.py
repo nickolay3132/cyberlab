@@ -107,9 +107,10 @@ class VBoxImportServiceImpl(VBoxImportService):
             self.subject.notify(ObserverEvent.success(id=vm_name, data=f"{vm_name} successfully imported."))
         else:
             self.subject.notify(ObserverEvent.error(id=vm_name, data=f"{vm_name} failed to import."))
-            if task_data.error:
-                self.subject.notify(ObserverEvent.error(
-                    id='main',
-                    data=f"Reason for failure importing {vm_name}: {task_data.error}"
-                ))
-            self.subject.notify(ObserverEvent.text(id='main', data=f"Log file: {task_data.args.get('log_file')}"))
+            self.subject.notify(ObserverEvent.text(id='main', data=f"Log files at {self.log_dir}"))
+            # if task_data.error:
+            #     self.subject.notify(ObserverEvent.error(
+            #         id='main',
+            #         data=f"Reason for failure importing {vm_name}: {task_data.error}"
+            #     ))
+            # self.subject.notify(ObserverEvent.text(id='main', data=f"Log file: {task_data.args.get('log_file')}"))

@@ -45,7 +45,7 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
             download_needed = self._is_download_needed(vm, download_path, no_verify_checksum)
 
             if download_needed:
-                self._subject.notify(ObserverEvent.text(id=vm.name, data = f"Downloading {vm.name}",))
+                # self._subject.notify(ObserverEvent.text(id=vm.name, data = f"Downloading {vm.name}",))
                 self.file_system_service.download_file(
                     url=ova_url,
                     download_path=download_path,

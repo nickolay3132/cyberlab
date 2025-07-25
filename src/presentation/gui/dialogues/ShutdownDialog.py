@@ -1,15 +1,20 @@
-from PyQt6 import QtWidgets
+from typing import Dict
 
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QLabel
+
+from src.infrastructure.containers.UseCases import UseCases
 from src.presentation.gui.dialogues.Dialog import Dialog
+from src.presentation.gui.gui_observer import GUIObserver
+from src.presentation.gui.widgets.statuses_panel import StatusesPanel
 
 
 class ShutdownDialog(Dialog):
     shutdown_force: QtWidgets.QCheckBox
 
-    def __init__(self, cmd, command_executor, parent=None):
-        super().__init__(cmd, command_executor, parent)
+    def __init__(self, use_cases: UseCases, observer: GUIObserver, parent=None):
+        super().__init__(use_cases, observer, parent)
         self.setWindowTitle("Shutdown Parameters")
-        self.cmd.extend(['shutdown'])
 
     def setup_ui(self):
         layout = QtWidgets.QVBoxLayout(self)
@@ -20,7 +25,5 @@ class ShutdownDialog(Dialog):
 
     def execute(self):
         if self.shutdown_force.isChecked():
-            self.cmd.extend(['--force'])
-
-        self.command_executor.exec(self.cmd)
+            pass
         self.accept()

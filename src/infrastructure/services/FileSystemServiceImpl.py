@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import hashlib
 import os
 import sys
@@ -17,6 +18,9 @@ class FileSystemServiceImpl(FileSystemService):
         pb_data = ProgressBarData(
             state=ProgressBarStates.INIT
         )
+        last_notify_time = datetime.now()
+        notify_interval = timedelta(seconds=0.5)
+
         try:
             response = requests.get(url, stream=True)
             response.raise_for_status()
@@ -33,12 +37,15 @@ class FileSystemServiceImpl(FileSystemService):
                     file.write(chunk)
                     downloaded += block_size
 
-                    pb_data.state = ProgressBarStates.IN_PROGRESS
-                    pb_data.actual = downloaded
-                    subject.notify(ObserverEvent.progress(
-                        id=download_id,
-                        data=pb_data,
-                    ))
+                    current_time = datetime.now()
+                    if current_time - last_notify_time >= notify_interval:
+                        pb_data.state = ProgressBarStates.IN_PROGRESS
+                        pb_data.actual = downloaded
+                        subject.notify(ObserverEvent.progress(
+                            id=download_id,
+                            data=pb_data,
+                        ))
+                        last_notify_time = current_time
 
             os.rename(temp_file, download_path)
 
