@@ -12,7 +12,7 @@ class RestoreSnapshotUseCaseDTO:
 class RestoreSnapshotUseCase:
     vbox_snapshots_service: VBoxSnapshotsService
 
-    subject = Subject()
+    subject: Subject
 
     def execute(self, dto: RestoreSnapshotUseCaseDTO) -> None:
         self.vbox_snapshots_service.restore_snapshot(dto.name, self.subject)

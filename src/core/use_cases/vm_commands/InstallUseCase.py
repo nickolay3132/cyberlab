@@ -2,7 +2,6 @@ from dataclasses import dataclass, field
 from typing import Any, List
 
 from src.core.entities.observer import Subject, Observer, ObserverEvent
-from src.core.interfaces.output.OutputHandler import OutputHandler
 from src.core.interfaces.services.snapshots.VBoxSnapshotsService import VBoxSnapshotsService
 from src.core.interfaces.services.vbox.VBoxManageService import VBoxManageService
 from src.core.interfaces.services.VirtualMachinesInstallerService import VirtualMachinesInstallerService
@@ -18,8 +17,7 @@ class InstallUseCase:
     virtual_machines_installer_service: VirtualMachinesInstallerService
     vboxmanage_service: VBoxManageService
     vbox_snapshots_service: VBoxSnapshotsService
-
-    subject: Subject = Subject()
+    subject: Subject
 
     def execute(self, dto: InstallUseCaseDTO):
         # self.subject.notify(ObserverEvent.error(id="main", data="Could not create NAT network"))

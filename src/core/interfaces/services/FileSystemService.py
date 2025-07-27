@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from src.core.entities.observer import Subject
-from src.core.interfaces.output.OutputHandler import OutputHandler
 
 
 class FileSystemService(ABC):

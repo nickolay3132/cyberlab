@@ -12,7 +12,7 @@ class ListSnapshotsUseCaseDTO:
 class ListSnapshotsUseCase:
     vbox_snapshots_service: VBoxSnapshotsService
 
-    subject = Subject()
+    subject: Subject
 
     def execute(self, dto: ListSnapshotsUseCaseDTO) -> None:
         self.vbox_snapshots_service.list_snapshots(self.subject)

@@ -12,7 +12,7 @@ class StartupUseCaseDTO:
 class StartupUseCase:
     vboxmanage_service: VBoxManageService
 
-    subject: Subject = Subject()
+    subject: Subject
 
     def execute(self, dto: StartupUseCaseDTO):
         self.vboxmanage_service.boot().startup(self.subject)

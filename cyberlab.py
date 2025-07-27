@@ -3,7 +3,6 @@ from typing import Dict, Tuple, List, Type
 
 from PyQt6.QtWidgets import QApplication
 
-from src.infrastructure.containers.CLIOutput import CLIOutput
 from src.infrastructure.containers.Repos import Repos
 from src.infrastructure.containers.Services import Services
 from src.infrastructure.containers.UseCases import UseCases
@@ -50,13 +49,11 @@ class Main:
     @staticmethod
     def init_gui_containers() -> dict:
         repos_container = Repos()
-        output_container = CLIOutput()
-        services_container = Services(repos=repos_container, output=output_container)
+        services_container = Services(repos=repos_container)
         use_cases_container = UseCases(services=services_container)
 
         return {
             "repos": repos_container,
-            "output": output_container,
             "services": services_container,
             "use_cases": use_cases_container,
         }

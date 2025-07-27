@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import List
 
 from src.core.entities.observer import Subject, ObserverEvent
-from src.core.interfaces.output.OutputHandler import OutputHandler
 from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 from src.core.interfaces.services.vbox.VBoxBootService import VBoxBootService
 

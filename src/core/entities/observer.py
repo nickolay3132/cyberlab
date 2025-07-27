@@ -64,8 +64,11 @@ class Subject:
         self.observers.append(observer)
         
     def detach(self, observer: Observer) -> None:
-        observer.on_detach()
-        self.observers.remove(observer)
+        try:
+            observer.on_detach()
+        finally:
+            if observer in self.observers:
+                self.observers.remove(observer)
 
     def notify(self, data: ObserverEvent) -> None:
         for observer in self.observers:

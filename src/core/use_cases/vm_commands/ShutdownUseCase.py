@@ -12,7 +12,7 @@ class ShutdownUseCaseDTO:
 class ShutdownUseCase:
     vboxmanage_service: VBoxManageService
 
-    subject: Subject = Subject()
+    subject: Subject
 
     def execute(self, dto: ShutdownUseCaseDTO) -> None:
         self.vboxmanage_service.boot().shutdown(self.subject, force=dto.force)

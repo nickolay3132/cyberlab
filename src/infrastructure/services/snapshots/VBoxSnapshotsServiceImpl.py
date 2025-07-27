@@ -8,12 +8,9 @@ from typing import List
 from src.core.entities.Snapshot import Snapshot
 from src.core.entities.VirtualMachine import VirtualMachine
 from src.core.entities.observer import Subject, ObserverEvent
-from src.core.interfaces.input.InputHandler import InputHandler
-from src.core.interfaces.output.OutputHandler import OutputHandler
 from src.core.interfaces.repositories.SnapshotsRepository import SnapshotsRepository
 from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 from src.core.interfaces.services.snapshots.VBoxSnapshotsService import VBoxSnapshotsService
-from src.core.interfaces.services.snapshots.SnapshotsTreeService import SnapshotsTreeService
 
 @dataclass
 class VBoxSnapshotsServiceImpl(VBoxSnapshotsService):

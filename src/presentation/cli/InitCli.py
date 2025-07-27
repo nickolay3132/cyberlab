@@ -7,10 +7,10 @@ from src import __version__
 
 
 from src.infrastructure.containers.Commands import Commands
-from src.infrastructure.containers.CLIOutput import CLIOutput
 from src.infrastructure.containers.Repos import Repos
 from src.infrastructure.containers.Services import Services
 from src.infrastructure.containers.UseCases import UseCases
+from src.infrastructure.containers.observers import Observers
 from src.presentation.cli.subparsers.BaseSubparsers import BaseSubparsers
 from src.presentation.cli.subparsers.SnapshotSubparsers import SnapshotSubparsers
 
@@ -33,15 +33,15 @@ class InitCli:
 
     @staticmethod
     def _init_containers() -> Dict[str, Any]:
+        observers_container = Observers()
         repos_container = Repos()
-        output_container = CLIOutput()
-        services_container = Services(repos=repos_container, output=output_container)
-        use_cases_container = UseCases(services=services_container)
+        services_container = Services(repos=repos_container)
+        use_cases_container = UseCases(services=services_container, observers=observers_container)
         commands_container = Commands(use_cases=use_cases_container)
 
         return {
+            "observers": observers_container,
             "repos": repos_container,
-            "output": output_container,
             "services": services_container,
             "use_cases": use_cases_container,
             "commands": commands_container

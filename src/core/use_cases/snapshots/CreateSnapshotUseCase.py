@@ -13,7 +13,7 @@ class CreateSnapshotUseCaseDTO:
 class CreateSnapshotUseCase:
     vbox_snapshots_service: VBoxSnapshotsService
 
-    subject = Subject()
+    subject: Subject
 
     def execute(self, dto: CreateSnapshotUseCaseDTO):
         self.vbox_snapshots_service.create_snapshot_for_all(self.subject, dto.name, dto.description)

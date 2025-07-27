@@ -2,7 +2,6 @@ from dependency_injector import containers, providers
 
 from src.infrastructure.services.FileSystemServiceImpl import FileSystemServiceImpl
 from src.infrastructure.services.ParallelTasksServiceImpl import ParallelTasksServiceImpl
-from src.infrastructure.services.snapshots.SnapshotsTreeServiceImpl import SnapshotsTreeServiceImpl
 from src.infrastructure.services.snapshots.VBoxSnapshotsServiceImpl import VBoxSnapshotsServiceImpl
 from src.infrastructure.services.vbox.VBoxBootServiceImpl import VBoxBootServiceImpl
 from src.infrastructure.services.vbox.VBoxImportServiceImpl import VBoxImportServiceImpl
@@ -13,7 +12,6 @@ from src.infrastructure.services.VIrtualMachinesInstallerServiceImpl import Virt
 
 class Services (containers.DeclarativeContainer):
     repos = providers.DependenciesContainer()
-    output = providers.DependenciesContainer()
 
     file_system_service = providers.Factory(
         FileSystemServiceImpl,

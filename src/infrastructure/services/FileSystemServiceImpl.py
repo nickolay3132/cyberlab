@@ -8,7 +8,6 @@ import requests
 from src.core.entities.observer import Subject, ObserverEvent
 from src.core.entities.progress_bar_data import ProgressBarData, ProgressBarStates
 from src.core.exceptions.CantScanDirectory import CantScanDirectoryError, CantScanDirectory
-from src.core.interfaces.output.OutputHandler import OutputHandler
 from src.core.interfaces.services.FileSystemService import FileSystemService
 
 
