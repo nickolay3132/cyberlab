@@ -12,9 +12,11 @@ from src.infrastructure.services.VIrtualMachinesInstallerServiceImpl import Virt
 
 class Services (containers.DeclarativeContainer):
     repos = providers.DependenciesContainer()
+    event_buses = providers.DependenciesContainer()
 
     file_system_service = providers.Factory(
         FileSystemServiceImpl,
+        progress_event_bus=event_buses.progress_event_bus,
     )
 
     vbox_networks_service = providers.Factory(
@@ -33,11 +35,15 @@ class Services (containers.DeclarativeContainer):
 
         storage_repository=repos.storage_repository,
         virtual_machines_repository=repos.virtual_machines_repository,
+
+        str_event_bus=event_buses.str_event_bus,
     )
 
     vbox_boot_service = providers.Factory(
         VBoxBootServiceImpl,
         virtual_machines_repository=repos.virtual_machines_repository,
+
+        str_event_bus=event_buses.str_event_bus,
     )
 
     virtual_machines_installer_service = providers.Factory(
@@ -45,6 +51,7 @@ class Services (containers.DeclarativeContainer):
         storage_repository=repos.storage_repository,
         virtual_machines_repository=repos.virtual_machines_repository,
         file_system_service=file_system_service,
+        str_event_bus=event_buses.str_event_bus,
     )
 
     vboxmanage_service = providers.Factory(
@@ -58,4 +65,7 @@ class Services (containers.DeclarativeContainer):
         VBoxSnapshotsServiceImpl,
         virtual_machines_repository=repos.virtual_machines_repository,
         snapshots_repository=repos.snapshots_repository,
+        str_event_bus=event_buses.str_event_bus,
+        select_option_event_bus=event_buses.select_option_event_bus,
+        snapshots_tree_event_bus=event_buses.snapshots_tree_event_bus,
     )

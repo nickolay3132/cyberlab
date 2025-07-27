@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from src.core.entities.observer import Subject
 from src.core.interfaces.services.vbox.VBoxManageService import VBoxManageService
 
 
@@ -12,7 +11,6 @@ class StartupUseCaseDTO:
 class StartupUseCase:
     vboxmanage_service: VBoxManageService
 
-    subject: Subject
-
     def execute(self, dto: StartupUseCaseDTO):
-        self.vboxmanage_service.boot().startup(self.subject)
+        self.vboxmanage_service.boot().startup()
+        pass

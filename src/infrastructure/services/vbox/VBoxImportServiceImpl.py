@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 from src.core.entities.ParrallelTask import ParallelTaskData
-from src.core.entities.observer import Subject, ObserverEvent
+from src.core.entities.event_bus import EventBus
+from src.core.entities.event_bus.events import StrEvent, StrEventTypes
 from src.core.interfaces.repositories.StorageRepository import StorageRepository
 from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 from src.core.interfaces.services.FileSystemService import FileSystemService
@@ -19,18 +20,17 @@ class VBoxImportServiceImpl(VBoxImportService):
     storage_repository: StorageRepository
     virtual_machines_repository: VirtualMachinesRepository
 
+    str_event_bus: EventBus[StrEvent]
+
     log_dir: Optional[str] = None
     vms_dir: Optional[str] = None
     ova_dir: Optional[str] = None
 
-    subject: Optional[Subject] = None
-
-    def import_vms(self, subject: Subject) -> None:
+    def import_vms(self) -> None:
         self.prepare_storage()
-        self.subject = subject
 
-        subject.notify(ObserverEvent.space(id='main'))
-        subject.notify(ObserverEvent.title(id='main', data='Importing VMS'))
+        self.str_event_bus.notify(StrEvent('main', StrEventTypes.SPACE, ''))
+        self.str_event_bus.notify(StrEvent('main', StrEventTypes.TITLE, 'Importing VMS'))
 
         for vm in self.virtual_machines_repository.get_all():
             ova_path = os.path.join(self.ova_dir, f"{vm.name}.ova")
@@ -42,7 +42,7 @@ class VBoxImportServiceImpl(VBoxImportService):
                 'vms_dir': self.vms_dir,
                 'log_file': log_file
             }
-            subject.notify(ObserverEvent.text(id=vm.name, data=f"Importing VM: {vm.name}"))
+            self.str_event_bus.notify(StrEvent(vm.name, StrEventTypes.TEXT, 'Importing VM'))
             self.parallel_tasks_service.add_task(self._import_task, args=args)
 
         self.parallel_tasks_service.run()
@@ -104,13 +104,7 @@ class VBoxImportServiceImpl(VBoxImportService):
         vm_name = task_data.args.get('vm_name')
 
         if task_data.is_completed:
-            self.subject.notify(ObserverEvent.success(id=vm_name, data=f"{vm_name} successfully imported."))
+            self.str_event_bus.notify(StrEvent(vm_name, StrEventTypes.SUCCESS, 'Successfully imported.'))
         else:
-            self.subject.notify(ObserverEvent.error(id=vm_name, data=f"{vm_name} failed to import."))
-            self.subject.notify(ObserverEvent.title(id='main', data=f"Log files at {self.log_dir}"))
-            # if task_data.error:
-            #     self.subject.notify(ObserverEvent.error(
-            #         id='main',
-            #         data=f"Reason for failure importing {vm_name}: {task_data.error}"
-            #     ))
-            # self.subject.notify(ObserverEvent.text(id='main', data=f"Log file: {task_data.args.get('log_file')}"))
+            self.str_event_bus.notify(StrEvent(vm_name, StrEventTypes.ERROR, 'Failed to import.'))
+            self.str_event_bus.notify(StrEvent('main', StrEventTypes.TITLE, f'Log files at {self.log_dir}'))

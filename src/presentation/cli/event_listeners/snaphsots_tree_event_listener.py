@@ -3,20 +3,19 @@ from typing import List
 from colorama.ansi import Fore
 
 from src.core.entities.Snapshot import Snapshot
-from src.core.entities.observer import ObserverEvent
-from src.presentation.cli.observers.cli_observer_invoker import CLIObserverInvoker
+from src.core.entities.event_bus import EventListener
+from src.core.entities.event_bus.events import SnapshotsTreeEvent
 
 
-class SnapshotTreeCLIObserver(CLIObserverInvoker):
-    def __init__(self):
-        super().__init__()
+class SnapshotsTreeEventListener(EventListener[SnapshotsTreeEvent]):
+    def on_attach(self) -> None:
+        pass
 
-        self.add_event_handlers({
-            'display_snapshot_tree': self.display_snapshots_tree_event
-        })
+    def on_detach(self) -> None:
+        pass
 
-    def display_snapshots_tree_event(self, event: ObserverEvent):
-        formatted_snapshots = self._format_snapshots_tree([event.data])
+    def on_event(self, event: SnapshotsTreeEvent) -> None:
+        formatted_snapshots = self._format_snapshots_tree([event.root_snapshot])
 
         for line in formatted_snapshots:
             print(line)
@@ -25,7 +24,10 @@ class SnapshotTreeCLIObserver(CLIObserverInvoker):
         result = []
         for node in nodes:
             indent = '    ' * level
-            line = f"{indent}{node.name} ({node.description})"
+            line = f"{indent}{node.name}"
+            if node.description != '':
+                line += f" ({node.description})"
+
             if node.is_current:
                 line += f" {Fore.GREEN}<- current snapshot"
             result.append(line)

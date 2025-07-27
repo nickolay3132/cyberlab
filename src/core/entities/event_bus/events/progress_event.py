@@ -5,7 +5,7 @@ from typing import Optional
 from src.core.entities.event_bus import Event
 
 
-class ProgressEventTypes(Enum):
+class ProgressEventStates(Enum):
     INIT = 'init'
     IN_PROGRESS = 'in_progress'
     COMPLETED = 'completed'
@@ -14,7 +14,7 @@ class ProgressEventTypes(Enum):
 @dataclass
 class ProgressEvent(Event):
     id: str
-    type: ProgressEventTypes
+    type: ProgressEventStates
     total: int = 0
     actual: int = 0
     error_message: Optional[str] = None

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 import hashlib
 import os
@@ -5,18 +6,23 @@ import sys
 from pathlib import Path
 import requests
 
-from src.core.entities.observer import Subject, ObserverEvent
-from src.core.entities.progress_bar_data import ProgressBarData, ProgressBarStates
+from src.core.entities.event_bus import EventBus
+from src.core.entities.event_bus.events import ProgressEvent, ProgressEventStates
 from src.core.exceptions.CantScanDirectory import CantScanDirectoryError, CantScanDirectory
 from src.core.interfaces.services.FileSystemService import FileSystemService
 
-
+@dataclass
 class FileSystemServiceImpl(FileSystemService):
-    def download_file(self, url: str, download_path: str, download_id: str, subject: Subject) -> None:
+    progress_event_bus: EventBus[ProgressEvent]
+
+    def download_file(self, url: str, download_path: str, download_id: str) -> None:
         temp_file = f"{download_path}.tmp"
-        pb_data = ProgressBarData(
-            state=ProgressBarStates.INIT
+
+        pb_event = ProgressEvent(
+            id=download_id,
+            type=ProgressEventStates.INIT
         )
+
         last_notify_time = datetime.now()
         notify_interval = timedelta(seconds=0.5)
 
@@ -27,8 +33,8 @@ class FileSystemServiceImpl(FileSystemService):
             total_size = int(response.headers.get("content-length", 0))
             block_size = 8192
 
-            pb_data.total = total_size
-            subject.notify(ObserverEvent.progress(id=download_id, data=pb_data))
+            pb_event.total = total_size
+            self.progress_event_bus.notify(pb_event)
 
             with open(temp_file, "wb") as file:
                 downloaded = 0
@@ -38,33 +44,29 @@ class FileSystemServiceImpl(FileSystemService):
 
                     current_time = datetime.now()
                     if current_time - last_notify_time >= notify_interval:
-                        pb_data.state = ProgressBarStates.IN_PROGRESS
-                        pb_data.actual = downloaded
-                        subject.notify(ObserverEvent.progress(
-                            id=download_id,
-                            data=pb_data,
-                        ))
+                        pb_event.state = ProgressEventStates.IN_PROGRESS
+                        pb_event.actual = downloaded
+                        self.progress_event_bus.notify(pb_event)
+
                         last_notify_time = current_time
 
             os.rename(temp_file, download_path)
 
-            pb_data.state = ProgressBarStates.COMPLETED
-            subject.notify(ObserverEvent.progress(
-                id=download_id,
-                data=pb_data,
-            ))
+            pb_event.state = ProgressEventStates.COMPLETED
+            self.progress_event_bus.notify(pb_event)
 
         except KeyboardInterrupt as _:
-            pb_data.state = ProgressBarStates.ERROR
-            pb_data.error_msg = "Downloading has been interrupted."
-            subject.notify(ObserverEvent.progress(id=download_id, data=pb_data))
+            pb_event.state = ProgressEventStates.ERROR
+            pb_event.error_message = f"Download interrupted."
+            self.progress_event_bus.notify(pb_event)
+
             os.remove(temp_file)
             sys.exit(1)
 
         except Exception or ConnectionError as e:
-            pb_data.state = ProgressBarStates.ERROR
-            pb_data.error_msg = f"Cannot fetch url: {url}, Message: {str(e)}"
-            subject.notify(ObserverEvent.progress(id=download_id, data=pb_data))
+            pb_event.state = ProgressEventStates.ERROR
+            pb_event.error_message = f"Cannot fetch url: {url}, Message: {str(e)}"
+            self.progress_event_bus.notify(pb_event)
             os.remove(temp_file)
 
     def mkdirs(self, *paths: str):

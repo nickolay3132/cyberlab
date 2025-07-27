@@ -1,7 +1,7 @@
-from dataclasses import dataclass, field
-from typing import Any, List
+from dataclasses import dataclass
 
-from src.core.entities.observer import Subject, Observer, ObserverEvent
+from src.core.entities.event_bus import EventBus
+from src.core.entities.event_bus.events import StrEvent, StrEventTypes
 from src.core.interfaces.services.snapshots.VBoxSnapshotsService import VBoxSnapshotsService
 from src.core.interfaces.services.vbox.VBoxManageService import VBoxManageService
 from src.core.interfaces.services.VirtualMachinesInstallerService import VirtualMachinesInstallerService
@@ -17,23 +17,20 @@ class InstallUseCase:
     virtual_machines_installer_service: VirtualMachinesInstallerService
     vboxmanage_service: VBoxManageService
     vbox_snapshots_service: VBoxSnapshotsService
-    subject: Subject
+
+    str_event_bus: EventBus[StrEvent]
 
     def execute(self, dto: InstallUseCaseDTO):
-        # self.subject.notify(ObserverEvent.error(id="main", data="Could not create NAT network"))
-
         if not dto.skip_download:
-            self.virtual_machines_installer_service.set_subject(self.subject)
             self.virtual_machines_installer_service.install(no_verify_checksum=dto.no_verify)
 
         if not self.vboxmanage_service.networks().create_nat_net():
-            self.subject.notify(ObserverEvent.error(id="main", data="Could not create NAT network"))
+            self.str_event_bus.notify(StrEvent('main', StrEventTypes.ERROR, 'Could not create NAT network'))
 
-        self.vboxmanage_service.import_vms(self.subject)
+        self.vboxmanage_service.import_vms()
 
         if False in self.vboxmanage_service.networks().enable_networks():
-            self.subject.notify(ObserverEvent.error(id="main", data="Not all network adapters could be configured"))
-
+            self.str_event_bus.notify(StrEvent('main', StrEventTypes.ERROR, 'Not all network adapters could bo configured'))
         # self.vbox_snapshots_service.create_snapshot_for_all("initial-snapshot")
 
-        [self.subject.detach(observer) for observer in self.subject.observers]
+        # [self.subject.detach(observer) for observer in self.subject.observers]

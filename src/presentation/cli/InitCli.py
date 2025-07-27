@@ -10,6 +10,7 @@ from src.infrastructure.containers.Commands import Commands
 from src.infrastructure.containers.Repos import Repos
 from src.infrastructure.containers.Services import Services
 from src.infrastructure.containers.UseCases import UseCases
+from src.infrastructure.containers.cli_main_container import CliMainContainer
 from src.infrastructure.containers.observers import Observers
 from src.presentation.cli.subparsers.BaseSubparsers import BaseSubparsers
 from src.presentation.cli.subparsers.SnapshotSubparsers import SnapshotSubparsers
@@ -17,7 +18,7 @@ from src.presentation.cli.subparsers.SnapshotSubparsers import SnapshotSubparser
 
 class InitCli:
     def __init__(self):
-        self.containers = self._init_containers()
+        self.containers = CliMainContainer()
 
     def run(self):
         parser = argparse.ArgumentParser(description=self._show_cli_header(__version__))
@@ -73,5 +74,5 @@ class InitCli:
         for subparser_class in subparser_classes:
             subparser_class(
                 subparsers=subparsers,
-                commands=self.containers["commands"],
+                commands=self.containers.commands(),
             ).init()

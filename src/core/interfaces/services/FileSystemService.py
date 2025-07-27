@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.core.entities.observer import Subject
 
 
 class FileSystemService(ABC):
     @abstractmethod
-    def download_file(self, url: str, download_path: str, download_id: str, subject: Subject) -> None: pass
+    def download_file(self, url: str, download_path: str, download_id: str) -> None: pass
 
     @abstractmethod
     def mkdirs(self, *paths: str): pass

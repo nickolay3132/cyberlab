@@ -4,7 +4,8 @@ from typing import Optional
 from urllib.parse import urljoin
 
 from src.core.entities.VirtualMachine import VirtualMachine
-from src.core.entities.observer import Subject, ObserverEvent
+from src.core.entities.event_bus import EventBus
+from src.core.entities.event_bus.events import StrEvent, StrEventTypes
 from src.core.interfaces.repositories.StorageRepository import StorageRepository
 from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 from src.core.interfaces.services.FileSystemService import FileSystemService
@@ -15,15 +16,10 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
     storage_repository: StorageRepository
     virtual_machines_repository: VirtualMachinesRepository
     file_system_service: FileSystemService
+    str_event_bus: EventBus[StrEvent]
 
     _ova_repo: Optional[str] = None
     _ova_dir: Optional[str] = None
-
-    _subject: Optional[Subject] = None
-
-    def set_subject(self, subject: Subject) -> 'VirtualMachinesInstallerService':
-        self._subject = subject
-        return self
 
     def prepare(self) -> None:
         storage = self.storage_repository.get()
@@ -34,10 +30,7 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
     def install(self, no_verify_checksum: bool = False) -> None:
         self.prepare()
 
-        self._subject.notify(ObserverEvent.title(
-            id='main',
-            data="Downloading OVA files"
-        ))
+        self.str_event_bus.notify(StrEvent('main', StrEventTypes.TITLE, 'Downloading OVA files'))
 
         for vm in self.virtual_machines_repository.get_all():
             ova_url = urljoin(self._ova_repo, vm.ova_filename)
@@ -45,17 +38,17 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
             download_needed = self._is_download_needed(vm, download_path, no_verify_checksum)
 
             if download_needed:
-                # self._subject.notify(ObserverEvent.text(id=vm.name, data = f"Downloading {vm.name}",))
                 self.file_system_service.download_file(
                     url=ova_url,
                     download_path=download_path,
                     download_id=vm.name,
-                    subject=self._subject
                 )
             else:
-                self._subject.notify(ObserverEvent.warning(id=vm.name, data=f"{vm.name} already exists. Skipping..."))
-
-
+                self.str_event_bus.notify(StrEvent(
+                    vm.name,
+                    StrEventTypes.WARNING,
+                    'OVA file already exists. Skipping...',
+                ))
 
     def _is_download_needed(self,vm: VirtualMachine, download_path: str, no_verify_checksum: bool) -> bool:
         if not os.path.exists(download_path):
