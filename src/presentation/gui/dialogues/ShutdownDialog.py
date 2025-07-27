@@ -9,8 +9,8 @@ from src.presentation.gui.dialogues.Dialog import Dialog
 class ShutdownDialog(Dialog):
     shutdown_force: QtWidgets.QCheckBox
 
-    def __init__(self, use_cases, observers, parent=None):
-        super().__init__(use_cases, observers, parent)
+    def __init__(self, use_cases, parent=None):
+        super().__init__(use_cases, parent)
         self.setWindowTitle("Shutdown Parameters")
 
     def setup_ui(self):
@@ -25,7 +25,6 @@ class ShutdownDialog(Dialog):
             pass
 
         shutdown_use_case = self.use_cases.shutdown_use_case()
-        [shutdown_use_case.subject.attach(observer) for observer in self.observers]
         dto = ShutdownUseCaseDTO(
             force=self.shutdown_force.isChecked(),
         )

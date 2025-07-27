@@ -44,7 +44,7 @@ class FileSystemServiceImpl(FileSystemService):
 
                     current_time = datetime.now()
                     if current_time - last_notify_time >= notify_interval:
-                        pb_event.state = ProgressEventStates.IN_PROGRESS
+                        pb_event.type = ProgressEventStates.IN_PROGRESS
                         pb_event.actual = downloaded
                         self.progress_event_bus.notify(pb_event)
 

@@ -7,8 +7,8 @@ from src.presentation.gui.dialogues.Dialog import Dialog
 
 
 class StartupDialog(Dialog):
-    def __init__(self, use_cases, observers, parent=None):
-        super().__init__(use_cases, observers, parent)
+    def __init__(self, use_cases, parent=None):
+        super().__init__(use_cases, parent)
         self.setWindowTitle("Startup Parameters")
 
     def setup_ui(self):
@@ -17,7 +17,6 @@ class StartupDialog(Dialog):
 
     def execute(self):
         startup_use_case = self.use_cases.startup_use_case()
-        [startup_use_case.subject.attach(observer) for observer in self.observers]
         dto = StartupUseCaseDTO()
 
         def runner():

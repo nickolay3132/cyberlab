@@ -1,5 +1,10 @@
+import threading
+
 from PyQt6 import QtWidgets
 
+from src.core.use_cases.snapshots.CreateSnapshotUseCase import CreateSnapshotUseCaseDTO
+from src.core.use_cases.snapshots.ListSnapshotsUseCase import ListSnapshotsUseCaseDTO
+from src.core.use_cases.snapshots.RestoreSnapshotUseCase import RestoreSnapshotUseCaseDTO
 from src.presentation.gui.dialogues.Dialog import Dialog
 
 
@@ -17,9 +22,12 @@ class SnapshotDialog(Dialog):
     description_label: QtWidgets.QLabel
     description_input: QtWidgets.QLineEdit
 
-    def __init__(self, use_cases, observers, parent=None):
-        super().__init__(use_cases, observers, parent)
+    def __init__(self, use_cases, parent=None):
+        super().__init__(use_cases, parent)
         self.setWindowTitle("Manage Snapshots")
+
+        self.use_case = None
+        self.dto = None
 
     def setup_ui(self):
         layout = QtWidgets.QVBoxLayout(self)
@@ -49,23 +57,31 @@ class SnapshotDialog(Dialog):
     def execute(self):
         subcommand = self.subcommand_selector.currentText()
 
+        name = ''
         if subcommand in ["create", "restore"]:
             name = self.name_input.text().strip()
-            if name:
-                pass
-            else:
+            if not name:
                 QtWidgets.QMessageBox.warning(self, "Missing Name", "Please provide snapshot name.")
                 return
 
         if subcommand == "create":
             description = self.description_input.text().strip()
-            if description:
-                pass
+            self.use_case = self.use_cases.create_snapshot_use_case()
+            self.dto = CreateSnapshotUseCaseDTO(name, description)
+
+        if subcommand == "restore":
+            self.use_case = self.use_cases.restore_snapshot_use_case()
+            self.dto = RestoreSnapshotUseCaseDTO(name)
 
         if subcommand == "list":
-            pass
-        else:
-            pass
+            self.use_case = self.use_cases.list_snapshots_use_case()
+            self.dto = ListSnapshotsUseCaseDTO()
+
+        def runner():
+            self.use_case.execute(self.dto)
+
+        thread = threading.Thread(target=runner)
+        thread.start()
         self.accept()
 
     def setup_top_container(self) -> None:

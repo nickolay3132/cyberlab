@@ -10,8 +10,8 @@ class InstallDialog(Dialog):
     skip_download: QtWidgets.QCheckBox
     no_verify: QtWidgets.QCheckBox
 
-    def __init__(self, use_cases, observers, parent=None):
-        super().__init__(use_cases, observers, parent)
+    def __init__(self, use_cases, parent=None):
+        super().__init__(use_cases, parent)
         self.setWindowTitle("Install Parameters")
 
 
@@ -29,7 +29,6 @@ class InstallDialog(Dialog):
     def execute(self):
         install_use_case = self.use_cases.install_use_case()
 
-        [install_use_case.subject.attach(observer) for observer in self.observers]
         dto = InstallUseCaseDTO(
             skip_download=self.skip_download.isChecked(),
             no_verify=self.no_verify.isChecked(),

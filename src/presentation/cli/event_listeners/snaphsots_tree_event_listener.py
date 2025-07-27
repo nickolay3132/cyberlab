@@ -1,6 +1,6 @@
 from typing import List
 
-from colorama.ansi import Fore
+from colorama.ansi import Fore, Style
 
 from src.core.entities.Snapshot import Snapshot
 from src.core.entities.event_bus import EventListener
@@ -29,7 +29,7 @@ class SnapshotsTreeEventListener(EventListener[SnapshotsTreeEvent]):
                 line += f" ({node.description})"
 
             if node.is_current:
-                line += f" {Fore.GREEN}<- current snapshot"
+                line += f" {Fore.GREEN}<- current snapshot{Style.RESET_ALL}"
             result.append(line)
             result.extend(self._format_snapshots_tree(node.children, level + 1))
         return result

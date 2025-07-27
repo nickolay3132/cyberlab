@@ -48,6 +48,7 @@ class VBoxSnapshotsServiceImpl(VBoxSnapshotsService):
 
         if needed_to_create:
             for vm in self.virtual_machines_repository.get_all():
+                self.str_event_bus.notify(StrEvent(vm.name, StrEventTypes.TEXT, 'Creating snapshot'))
                 self.create_snapshot(vm, snapshot_name, description)
 
     def list_snapshots(self) -> None:
@@ -57,7 +58,12 @@ class VBoxSnapshotsServiceImpl(VBoxSnapshotsService):
     def restore_snapshot(self, name: str) -> None:
         snapshots = self.snapshots_repository.find_all_snapshots(name)
 
-        snapshot = self.get_snapshot_to_restore(snapshots)
+        try:
+            snapshot = self.get_snapshot_to_restore(snapshots)
+        except IndexError:
+            self.str_event_bus.notify(StrEvent('main', StrEventTypes.ERROR, 'Snapshot not found'))
+            return
+
         need_to_restore = self.snapshots_repository.restore_snapshot(snapshot)
         if need_to_restore:
             for vm in self.virtual_machines_repository.get_all():
@@ -77,6 +83,9 @@ class VBoxSnapshotsServiceImpl(VBoxSnapshotsService):
         return snapshots[index_to_restore]
 
     def select_snapshot(self, snapshots_data: List[str]):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
         async def select_snapshot_async():
             future = asyncio.get_event_loop().create_future()
 
