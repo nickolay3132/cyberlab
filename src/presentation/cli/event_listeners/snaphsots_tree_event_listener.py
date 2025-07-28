@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from colorama.ansi import Fore, Style
@@ -27,6 +28,8 @@ class SnapshotsTreeEventListener(EventListener[SnapshotsTreeEvent]):
             line = f"{indent}{node.name}"
             if node.description != '':
                 line += f" ({node.description})"
+
+            line += f" - {datetime.fromtimestamp(node.timestamp)}"
 
             if node.is_current:
                 line += f" {Fore.GREEN}<- current snapshot{Style.RESET_ALL}"

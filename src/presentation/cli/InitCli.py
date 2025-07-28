@@ -1,17 +1,10 @@
 import argparse
 import sys
-from typing import Any, Dict
 import pyfiglet
 from colorama.ansi import Fore
 from src import __version__
 
-
-from src.infrastructure.containers.Commands import Commands
-from src.infrastructure.containers.Repos import Repos
-from src.infrastructure.containers.Services import Services
-from src.infrastructure.containers.UseCases import UseCases
 from src.infrastructure.containers.cli_main_container import CliMainContainer
-from src.infrastructure.containers.observers import Observers
 from src.presentation.cli.subparsers.BaseSubparsers import BaseSubparsers
 from src.presentation.cli.subparsers.SnapshotSubparsers import SnapshotSubparsers
 
@@ -31,22 +24,6 @@ class InitCli:
             sys.exit(1)
 
         args.func(args)
-
-    @staticmethod
-    def _init_containers() -> Dict[str, Any]:
-        observers_container = Observers()
-        repos_container = Repos()
-        services_container = Services(repos=repos_container)
-        use_cases_container = UseCases(services=services_container, observers=observers_container)
-        commands_container = Commands(use_cases=use_cases_container)
-
-        return {
-            "observers": observers_container,
-            "repos": repos_container,
-            "services": services_container,
-            "use_cases": use_cases_container,
-            "commands": commands_container
-        }
 
     @staticmethod
     def _show_cli_header(version: str):

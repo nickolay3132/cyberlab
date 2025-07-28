@@ -32,5 +32,3 @@ class InstallUseCase:
         if False in self.vboxmanage_service.networks().enable_networks():
             self.str_event_bus.notify(StrEvent('main', StrEventTypes.ERROR, 'Not all network adapters could bo configured'))
         # self.vbox_snapshots_service.create_snapshot_for_all("initial-snapshot")
-
-        # [self.subject.detach(observer) for observer in self.subject.observers]

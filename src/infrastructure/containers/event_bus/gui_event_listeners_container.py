@@ -1,7 +1,6 @@
 from dependency_injector import containers, providers
 
-from src.presentation.cli.event_listeners import SnapshotsTreeEventListener
-from src.presentation.gui.event_listeners import StrEventListener, ProgressEventListener, SelectOptionEventListener
+from src.presentation.gui.event_listeners import StrEventListener, ProgressEventListener, SelectOptionEventListener, SnapshotsTreeEventListener
 
 
 class GuiEventListenersContainer(containers.DeclarativeContainer):
