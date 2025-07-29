@@ -4,6 +4,7 @@ import hashlib
 import os
 import sys
 from pathlib import Path
+
 import requests
 
 from src.core.entities.event_bus import EventBus
@@ -52,7 +53,7 @@ class FileSystemServiceImpl(FileSystemService):
 
             os.rename(temp_file, download_path)
 
-            pb_event.state = ProgressEventStates.COMPLETED
+            pb_event.type = ProgressEventStates.COMPLETED
             self.progress_event_bus.notify(pb_event)
 
         except KeyboardInterrupt as _:

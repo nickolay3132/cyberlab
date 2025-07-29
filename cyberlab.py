@@ -24,8 +24,13 @@ class Main:
     @staticmethod
     def main():
         app = QApplication(sys.argv)
-        Main.window = MainWindow(Main.buttons, Main.button_callback)
+        Main.window = MainWindow(
+            Main.containers.repositories.virtual_machines_repository(),
+            Main.buttons,
+            Main.button_callback
+        )
         Main.containers.layout_map.from_dict(Main.window.statuses_panel.vm_logs)
+        Main.containers.use_cases.cyberlab_info_use_case().execute()
         Main.window.show()
         sys.exit(app.exec())
 

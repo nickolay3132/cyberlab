@@ -12,6 +12,11 @@ def build_event_bus(event_listener: EventListener):
 class EventBusContainer(containers.DeclarativeContainer):
     event_listeners = providers.DependenciesContainer()
 
+    vms_info_event_bus = providers.Singleton(
+        build_event_bus,
+        event_listener=event_listeners.vms_info_event_listener,
+    )
+
     str_event_bus = providers.Singleton(
         build_event_bus,
         event_listener=event_listeners.str_event_listener

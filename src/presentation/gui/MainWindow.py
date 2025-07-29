@@ -6,16 +6,22 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSizePolicy, QScrollAr
 import pyfiglet
 
 import src
+from src.core.interfaces.repositories.VirtualMachinesRepository import VirtualMachinesRepository
 from src.presentation.gui.widgets.statuses_panel import StatusesPanel
 
 
 class MainWindow(QWidget):
-    def __init__(self, buttons: Dict[str, Any], callback: Callable[[str], None]):
+    def __init__(self,
+                 vms_repository: VirtualMachinesRepository,
+                 buttons: Dict[str, Any],
+                 callback: Callable[[str], None]):
         super().__init__()
         self.setWindowTitle("CyberLab Management Tool")
         self.setMinimumSize(600, 300)
 
-        self.statuses_panel = StatusesPanel(['Main', 'Firewall-1', 'Firewall-2', "Web-Server"], self)
+        self.vms_repository = vms_repository
+
+        self.statuses_panel = StatusesPanel(self._get_layout_fields(), self)
         self.app_version = src.__version__
         self.buttons = buttons
         self.callback = callback
@@ -68,3 +74,12 @@ class MainWindow(QWidget):
         """
 
         return header
+
+    def _get_layout_fields(self):
+        layout_fields = ['Main']
+
+        for vm in self.vms_repository.get_all():
+            layout_fields.append('-'.join(word.capitalize() for word in vm.name.split('-')))
+
+        return layout_fields
+

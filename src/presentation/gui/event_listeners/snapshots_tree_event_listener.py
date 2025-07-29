@@ -28,6 +28,8 @@ class SnapshotsTreeEventListener(EventListener[SnapshotsTreeEvent]):
 
         if event.id not in self.dialogs:
             dialog = SnapshotsTreeDialogWidget(event.root_snapshot, QApplication.activeWindow())
-            dialog.exec()
             self.dialogs[event.id] = dialog
+
+        dialog = self.dialogs[event.id]
+        dialog.show()
         return

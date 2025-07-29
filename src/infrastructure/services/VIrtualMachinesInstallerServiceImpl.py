@@ -1,4 +1,5 @@
 import os
+import time
 from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import urljoin
@@ -38,6 +39,7 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
             download_needed = self._is_download_needed(vm, download_path, no_verify_checksum)
 
             if download_needed:
+                time.sleep(0.5)
                 self.file_system_service.download_file(
                     url=ova_url,
                     download_path=download_path,

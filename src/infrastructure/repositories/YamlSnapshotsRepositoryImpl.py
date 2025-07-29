@@ -12,12 +12,14 @@ class YamlSnapshotsRepositoryImpl(SnapshotsRepository):
         self.root_snapshot = self._load_snapshots()
 
     def _load_snapshots(self) -> Optional[Snapshot]:
-        data = self.yaml_loader.read(create_if_not_exists=True)
+        data = self.yaml_loader.reread(create_if_not_exists=True)
         if not data:
             return None
         return Snapshot.from_dict(data)
 
     def add_snapshot(self, snapshot: Snapshot, parent_name: Optional[str] = None) -> bool:
+        self.root_snapshot = self._load_snapshots()
+
         if self._snapshot_exists(snapshot.name, snapshot.timestamp):
             return False
 
@@ -42,16 +44,22 @@ class YamlSnapshotsRepositoryImpl(SnapshotsRepository):
         return True
 
     def get_current_snapshot(self) -> Optional[Snapshot]:
+        self.root_snapshot = self._load_snapshots()
+
         if self.root_snapshot is None:
             return None
         return self._find_current(self.root_snapshot)
 
     def find_snapshot(self, name: str) -> Optional[Snapshot]:
+        self.root_snapshot = self._load_snapshots()
+
         if self.root_snapshot is None:
             return None
         return self._find_by_name(self.root_snapshot, name)
 
     def find_all_snapshots(self, name: str) -> List[Snapshot]:
+        self.root_snapshot = self._load_snapshots()
+
         if self.root_snapshot is None:
             return []
 
@@ -59,9 +67,13 @@ class YamlSnapshotsRepositoryImpl(SnapshotsRepository):
 
 
     def get_root_snapshot(self) -> Optional[Snapshot]:
+        self.root_snapshot = self._load_snapshots()
+
         return self.root_snapshot
 
     def get_snapshots_as_list(self) -> List[Snapshot]:
+        self.root_snapshot = self._load_snapshots()
+
         if self.root_snapshot is None:
             return []
 
@@ -83,6 +95,8 @@ class YamlSnapshotsRepositoryImpl(SnapshotsRepository):
         return flat_list
 
     def restore_snapshot(self, snapshot: Snapshot) -> bool:
+        self.root_snapshot = self._load_snapshots()
+
         if self.root_snapshot is None:
             return False
 

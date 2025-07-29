@@ -8,11 +8,14 @@ from src.infrastructure.containers.event_bus import CliEventListenerContainer, E
 
 
 class CliMainContainer(containers.DeclarativeContainer):
+    presentation_config = providers.Configuration()
+    presentation_config.mode.from_value('cli')
+
     event_listeners = providers.Container(CliEventListenerContainer)
     event_bus_container = providers.Container(EventBusContainer, event_listeners=event_listeners)
 
     repositories = providers.Container(Repos)
     services = providers.Container(Services, repos=repositories, event_buses=event_bus_container)
-    use_cases = providers.Container(UseCases, services=services, event_buses=event_bus_container)
+    use_cases = providers.Container(UseCases, services=services, event_buses=event_bus_container, repositories=repositories, presentation_config=presentation_config)
     commands = providers.Container(Commands, use_cases=use_cases)
 

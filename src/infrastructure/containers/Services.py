@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 
 from src.infrastructure.services.FileSystemServiceImpl import FileSystemServiceImpl
 from src.infrastructure.services.ParallelTasksServiceImpl import ParallelTasksServiceImpl
+from src.infrastructure.services.cyber_lab_info_service_impl import CyberLabInfoServiceImpl
 from src.infrastructure.services.snapshots.VBoxSnapshotsServiceImpl import VBoxSnapshotsServiceImpl
 from src.infrastructure.services.vbox.VBoxBootServiceImpl import VBoxBootServiceImpl
 from src.infrastructure.services.vbox.VBoxImportServiceImpl import VBoxImportServiceImpl
@@ -13,6 +14,8 @@ from src.infrastructure.services.VIrtualMachinesInstallerServiceImpl import Virt
 class Services (containers.DeclarativeContainer):
     repos = providers.DependenciesContainer()
     event_buses = providers.DependenciesContainer()
+
+    cyber_lab_info_service = providers.Singleton(CyberLabInfoServiceImpl)
 
     file_system_service = providers.Factory(
         FileSystemServiceImpl,

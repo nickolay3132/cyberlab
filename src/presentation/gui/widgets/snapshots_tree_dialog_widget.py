@@ -30,7 +30,7 @@ class SnapshotsTreeDialogWidget(QDialog):
         layout.addWidget(close_button)
 
         self.setLayout(layout)
-        self.setModal(True)
+        # self.setModal(False)
 
     def _populate_tree(self, snapshot: Snapshot, parent_item=None):
         text = snapshot.name

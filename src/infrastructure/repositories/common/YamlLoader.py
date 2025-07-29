@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import Any
 
 import yaml
@@ -14,6 +15,27 @@ class YamlLoader:
         if not self.data is None:
             return self.data
 
+        return self._read(create_if_not_exists)
+
+    def reread(self, create_if_not_exists: bool = False) -> Any:
+        return self._read(create_if_not_exists)
+
+    def write(self, data: Any) -> None:
+        try:
+            with open(self.file_path, "w", encoding="utf-8") as file:
+                yaml.safe_dump(data, file,
+                               default_flow_style=False,
+                               allow_unicode=True,
+                               sort_keys=False)
+
+        except (IOError, yaml.YAMLError) as e:
+            raise YamlLoaderError(YamlError(
+                message="Failed to write YAML file",
+                details=str(e),
+                file_path=self.file_path
+            ))
+
+    def _read(self, create_if_not_exists: bool = False) -> Any:
         try:
             with open(self.file_path, "r", encoding="utf-8") as file:
                 self.data = yaml.safe_load(file)
@@ -30,20 +52,6 @@ class YamlLoader:
         except yaml.YAMLError as e:
             raise YamlLoaderError(YamlError(
                 message="Invalid YAML syntax",
-                details=str(e),
-                file_path=self.file_path
-            ))
-    def write(self, data: Any) -> None:
-        try:
-            with open(self.file_path, "w", encoding="utf-8") as file:
-                yaml.safe_dump(data, file,
-                               default_flow_style=False,
-                               allow_unicode=True,
-                               sort_keys=False)
-
-        except (IOError, yaml.YAMLError) as e:
-            raise YamlLoaderError(YamlError(
-                message="Failed to write YAML file",
                 details=str(e),
                 file_path=self.file_path
             ))

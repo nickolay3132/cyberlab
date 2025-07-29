@@ -3,6 +3,7 @@ import subprocess
 import time
 from dataclasses import dataclass
 from datetime import datetime
+from pprint import pprint
 from typing import List
 
 from src.core.entities.Snapshot import Snapshot
@@ -28,7 +29,7 @@ class VBoxSnapshotsServiceImpl(VBoxSnapshotsService):
     def create_snapshot(self, vm: VirtualMachine, snapshot_name: str, description: str = '') -> None:
         cmd = [
             "VBoxManage", "snapshot", vm.name,
-            "take", f"{self.timestamp}-{snapshot_name.replace(' ', '')}",
+            "take", snapshot_name,
             "--description", description,
         ]
         process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -37,22 +38,29 @@ class VBoxSnapshotsServiceImpl(VBoxSnapshotsService):
         self.str_event_bus.notify(StrEvent(vm.name, StrEventTypes.SUCCESS, 'Snaphsot created'))
 
     def create_snapshot_for_all(self, snapshot_name: str, description: str = '') -> None:
+        timestamp = int(time.time())
+
         current_snapshot = self.snapshots_repository.get_current_snapshot()
+        snapshot_name = snapshot_name.replace(' ', '-')
         needed_to_create = self.snapshots_repository.add_snapshot(Snapshot(
             name=snapshot_name,
             description=description,
-            timestamp=self.timestamp,
+            timestamp=timestamp,
             is_current=True,
             children=[],
         ), current_snapshot.name if current_snapshot is not None else None)
 
         if needed_to_create:
+
             for vm in self.virtual_machines_repository.get_all():
                 self.str_event_bus.notify(StrEvent(vm.name, StrEventTypes.TEXT, 'Creating snapshot'))
-                self.create_snapshot(vm, snapshot_name, description)
+                self.create_snapshot(vm, f"{timestamp}-{snapshot_name}", description)
 
     def list_snapshots(self) -> None:
         snapshots = self.snapshots_repository.get_root_snapshot()
+        if not snapshots:
+            self.str_event_bus.notify(StrEvent('main', StrEventTypes.ERROR, 'No snapshots found'))
+            return
         self.snapshots_tree_event_bus.notify(SnapshotsTreeEvent('dialog', snapshots))
 
     def restore_snapshot(self, name: str) -> None:

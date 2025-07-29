@@ -27,9 +27,14 @@ class ProgressEventListener(BaseEventListener[ProgressEvent]):
     def init_progress(self, event: ProgressEvent):
         if not event.id in self.progress_bars:
             self.progress_bars[event.id] = ProgressBarWidget()
+            layout = self._layout_map[event.id]
+            self._clear_layout(layout)
+
         return self.progress_bars[event.id]
 
     def update_progress(self, event: ProgressEvent):
+        if not event.id in self.progress_bars:
+            self.progress_bars[event.id] = ProgressBarWidget()
         pb = self.progress_bars[event.id]
         pb.update_progress(event.total, event.actual)
         return pb
