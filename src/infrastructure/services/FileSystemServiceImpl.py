@@ -51,13 +51,15 @@ class FileSystemServiceImpl(FileSystemService):
 
                         last_notify_time = current_time
 
+            if os.path.exists(download_path):
+                os.remove(download_path)
             os.rename(temp_file, download_path)
 
             pb_event.type = ProgressEventStates.COMPLETED
             self.progress_event_bus.notify(pb_event)
 
         except KeyboardInterrupt as _:
-            pb_event.state = ProgressEventStates.ERROR
+            pb_event.type = ProgressEventStates.ERROR
             pb_event.error_message = f"Download interrupted."
             self.progress_event_bus.notify(pb_event)
 
@@ -65,7 +67,7 @@ class FileSystemServiceImpl(FileSystemService):
             sys.exit(1)
 
         except Exception or ConnectionError as e:
-            pb_event.state = ProgressEventStates.ERROR
+            pb_event.type = ProgressEventStates.ERROR
             pb_event.error_message = f"Cannot fetch url: {url}, Message: {str(e)}"
             self.progress_event_bus.notify(pb_event)
             os.remove(temp_file)

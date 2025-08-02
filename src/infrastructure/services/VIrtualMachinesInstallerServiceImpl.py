@@ -1,7 +1,7 @@
 import os
 import time
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 from urllib.parse import urljoin
 
 from src.core.entities.VirtualMachine import VirtualMachine
@@ -28,11 +28,12 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
         self._ova_dir = self.file_system_service.to_absolute_path(storage.ova_store_to)
         self.file_system_service.mkdirs(self._ova_dir)
 
-    def install(self, no_verify_checksum: bool = False) -> None:
+    def install(self, no_verify_checksum: bool = False) -> List[VirtualMachine]:
         self.prepare()
 
         self.str_event_bus.notify(StrEvent('main', StrEventTypes.TITLE, 'Downloading OVA files'))
 
+        reinstalled = []
         for vm in self.virtual_machines_repository.get_all():
             ova_url = urljoin(self._ova_repo, vm.ova_filename)
             download_path = os.path.join(self._ova_dir, f"{vm.name}.ova")
@@ -40,6 +41,7 @@ class VirtualMachinesInstallerServiceImpl(VirtualMachinesInstallerService):
 
             if download_needed:
                 time.sleep(0.5)
+                reinstalled.append(vm)
                 self.file_system_service.download_file(
                     url=ova_url,
                     download_path=download_path,

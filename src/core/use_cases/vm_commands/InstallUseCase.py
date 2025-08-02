@@ -1,6 +1,8 @@
 import time
 from dataclasses import dataclass
+from typing import List, Optional
 
+from src.core.entities.VirtualMachine import VirtualMachine
 from src.core.entities.event_bus import EventBus
 from src.core.entities.event_bus.events import StrEvent, StrEventTypes
 from src.core.interfaces.services.snapshots.VBoxSnapshotsService import VBoxSnapshotsService
@@ -25,13 +27,15 @@ class InstallUseCase:
     info_use_case: CyberLabInfoUseCase
 
     def execute(self, dto: InstallUseCaseDTO):
+        reinstalled: Optional[List[VirtualMachine]] = None
+
         if not dto.skip_download:
-            self.virtual_machines_installer_service.install(no_verify_checksum=dto.no_verify)
+            reinstalled = self.virtual_machines_installer_service.install(no_verify_checksum=dto.no_verify)
 
         if not self.vboxmanage_service.networks().create_nat_net():
             self.str_event_bus.notify(StrEvent('main', StrEventTypes.ERROR, 'Could not create NAT network'))
 
-        self.vboxmanage_service.import_vms()
+        self.vboxmanage_service.import_vms(reinstalled)
 
         if False in self.vboxmanage_service.networks().enable_networks():
             self.str_event_bus.notify(StrEvent('main', StrEventTypes.ERROR, 'Not all network adapters could bo configured'))

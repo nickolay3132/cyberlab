@@ -1,9 +1,10 @@
 import os
 import subprocess
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 from src.core.entities.ParrallelTask import ParallelTaskData
+from src.core.entities.VirtualMachine import VirtualMachine
 from src.core.entities.event_bus import EventBus
 from src.core.entities.event_bus.events import StrEvent, StrEventTypes
 from src.core.interfaces.repositories.StorageRepository import StorageRepository
@@ -26,11 +27,15 @@ class VBoxImportServiceImpl(VBoxImportService):
     vms_dir: Optional[str] = None
     ova_dir: Optional[str] = None
 
-    def import_vms(self) -> None:
+    def import_vms(self, reimport: Optional[List[VirtualMachine]]) -> None:
         self.prepare_storage()
 
         self.str_event_bus.notify(StrEvent('main', StrEventTypes.SPACE, ''))
         self.str_event_bus.notify(StrEvent('main', StrEventTypes.TITLE, 'Importing VMS'))
+
+        if reimport:
+            for vm in reimport:
+                os.remove(os.path.join(self.vms_dir, vm.name))
 
         for vm in self.virtual_machines_repository.get_all():
             ova_path = os.path.join(self.ova_dir, f"{vm.name}.ova")

@@ -18,15 +18,19 @@ class ProgressEventListener(EventListener[ProgressEvent]):
     def on_event(self, event: ProgressEvent) -> None:
         if event.type == ProgressEventStates.INIT:
             print(f"{event.id}: Downloading...")
-            self.pbar = tqdm(total=event.total, unit="B", unit_scale=True, ncols=100)
+            self.pbar = tqdm(total=event.total, unit="B", unit_scale=True, ncols=100, leave=False)
 
         if event.type == ProgressEventStates.IN_PROGRESS:
+            if not self.pbar:
+                return
             self.pbar.update(event.actual - self.pbar.n)
 
         if event.type == ProgressEventStates.COMPLETED:
             self.pbar.close()
+            # self.pbar = None
             print()
 
         if event.type == ProgressEventStates.ERROR:
             self.pbar.close()
+            # self.pbar = None
             print(f"{event.id}: {Fore.RED}Downloading error.{Style.RESET_ALL} {event.error_message}")

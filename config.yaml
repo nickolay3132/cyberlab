@@ -6,8 +6,8 @@ storage:
 
 virtual_machines:
   - name: firewall-1
-    ova_filename: firewall-1-001.ova
-    md5checksum: 90c2b8ad4f63c7dc9e67c033f17d2051
+    ova_filename: firewall-1-002.ova
+    md5checksum: e73bedad80f33ea6e1b3c2ccc3364176
     nics:
       - nic_index: 1
         type: natnetwork
@@ -17,22 +17,29 @@ virtual_machines:
       shutdown: savestate
 
   - name: firewall-2
-    ova_filename: firewall-2-001.ova
-    md5checksum: 84dee64515c4cc82ad79d0d1c433fbf3
+    ova_filename: firewall-2-002.ova
+    md5checksum: 099819778eb6eaa564f5a63ea7d57d00
     boot_policy:
       startup: headless
       shutdown: savestate
 
   - name: web-server
-    ova_filename: web-server-001.ova
-    md5checksum: 8e6f5eb76c464cec70fc9cdaccc84f4e
+    ova_filename: web-server-002.ova
+    md5checksum: f9ab5d8325693762bfb1dc7d86ea596f
+    boot_policy:
+      startup: headless
+      shutdown: acpipowerbutton
+
+  - name: php-server
+    ova_filename: php-server-001.ova
+    md5checksum: 1d6cb1fbde662323651bb52f9a1e9c3c
     boot_policy:
       startup: headless
       shutdown: acpipowerbutton
 
   - name: database-server
-    ova_filename: database-server-001.ova
-    md5checksum: 524125bfa0241fd63ea09ee3c83801c3
+    ova_filename: database-server-002.ova
+    md5checksum: 7ddafc398b60b208ebc54158a753dce6
     boot_policy:
       startup: headless
       shutdown: acpipowerbutton
