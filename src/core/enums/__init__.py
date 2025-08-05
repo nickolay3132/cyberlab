@@ -1,0 +1,1 @@
+from .vm import NicType, BootPolicyStartupType, BootPolicyShutdownType
