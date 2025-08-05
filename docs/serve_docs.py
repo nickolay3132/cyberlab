@@ -4,8 +4,11 @@ import mistune
 HOSTNAME = 'localhost'
 PORT = 8080
 
+css_style = ''
+
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        global css_style
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -15,14 +18,26 @@ class MyHandler(BaseHTTPRequestHandler):
             real_path = '/index.md'
 
         real_path = '.' + real_path
-
         if real_path.endswith('.md'):
-            markdown = None
+            markdown_data = None
             with open(real_path) as markdown_file:
-                markdown = markdown_file.read()
+                markdown_data = markdown_file.read()
 
-            html_text = mistune.html(markdown)
-            self.wfile.write(bytes(html_text, 'utf-8'))
+            html_text = mistune.html(markdown_data)
+            html_response = f"""
+            <DOCTYPE! HTML>
+            <html>
+                <head>
+                    <style>
+                        {css_style}
+                    </style>
+                </head>
+                <body>
+                    {html_text}
+                </body>
+            </html>
+            """
+            self.wfile.write(bytes(html_response, 'utf-8'))
         else:
             content = None
             with open(real_path) as file:
@@ -31,6 +46,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
+    with open('style.css') as f:
+        css_style = f.read()
+
     web_server = HTTPServer((HOSTNAME, PORT), MyHandler)
     print("Server started on http://%s:%5s" % (HOSTNAME, PORT))
 

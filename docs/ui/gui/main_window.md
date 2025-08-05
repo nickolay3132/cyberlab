@@ -7,29 +7,28 @@ Responsible for ...
 ---
 
 **Classes**
-- `MainWindow`
-    Does this and that, ...
+- `MainWindow` 
+Does this and that, ...
 
-    **Fields**
-    - `self.layout`
-        
-        Main layout of application
+ **Fields**
 
-    - `self.buttons_layout`
+| field | type | purpose |
+| :-- | :-- | :-- |
+| `self.layout` | `QVBoxLayout` | Main layout of the window |
+| `self.buttons_layout` | `QHBoxLayout` | Layout of buttons of the window, child of `self.layout` |
 
-        Layout which stores buttons
-    ...
+...
 
-    **Methods**
+**Methods**
 
-    - `def __init__(self, ...)`
+- `def __init__(self, ...)`
 
-         Constructor of a window class...
+     Constructor of a window class...
 
-    - `def start(self)`
+- `def start(self)`
 
-         Shows the main window application along with its child widgets.
-    ...
+     Shows the main window application along with its child widgets.
+...
 ...
 
 ---
