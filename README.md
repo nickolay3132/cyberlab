@@ -1,55 +1,67 @@
-# CyberLab Management Tool
+CyberLab Management Tool
+========================
 
-
+----
 
 ## 1. 🎯Project Goal
 
+Cyberlab Management Tool is an automation layer built on top of VBoxManage and VirtualBox, developed to
+enable users to easily manage CyberLab - an environment made of virtual machines designed for 
+cybersecurity training and experimentation. It provides the following features:
 
-CyberLab Management Tool is a powerful automation layer built on top of VBoxManage, designed to streamline the 
-deployment and management of CyberLab — a virtual training environment tailored for cybersecurity labs and 
-experimentation. It eliminates manual steps by providing:
+- **One-config-for-all!**
+    Testing environments are easily deployed on many machines. The only requirements are Cyberlab Management
+    Tool and configuration file.
 
-### 🔧 Core Automation Features
-- One-command OVA deployment: Download and import pre-configured virtual machine templates that simulate a real 
-corporate network from remote repositories.
-- Bulk operations: Start/stop/reset an entire CyberLab (multiple VMs) with a single CLI command.
-- Consistency: Ensure identical lab environments across teams via version-controlled OVA imports.
+- **Smooth workflow**
+    Install, Start, Stop and make Snapshots of machines with a single click. No need to manually
+    start every machine - just press a button.
 
-### 🧭 Interface Options
-CyberLab is available in two flavors:
-- cyberlab_cli: A command-line interface (CLI) that exposes the full power of VBoxManage-backed automation. Perfect 
-for scripting, integration into CI pipelines, and experienced operators.
-- cyberlab (GUI): A graphical user interface that simplifies usage and makes CyberLab accessible to non-technical 
-users. Under the hood, it wraps and delegates tasks to the CLI component — providing visual interaction with CLI features.
+- **Cloud integration**
+    Don't want to carry hard drives with hunders of GB worth of OVAs? Just upload them to whatever cloud
+    storage and provide the link in config file. Everything else will be handled by CyberLab Management Tool.
 
-✅ The GUI version is built directly atop the CLI, ensuring consistent behavior and compatibility across both modes of operation.
+### Interface options
 
-### 🚩 Use Cases
-Cybersecurity training: Rapidly deploy vulnerable VMs for pentesting practice.
+Cyberlab Management Tool is privded in two forms:
 
-Research/Development: Test exploits in isolated, reproducible environments.
+-   **GUI** which looks pretty (I hope) and provides everything you need for comfortable and efficient workflow.
 
-
+-   **CLI** which is great for scripting (if you feel the need to automate it even further).
 
 ## 2. 🖥️ System Requirements
 
+> NOTE: System requirements mentioned here are stated as such for the *CYBERPOLYGON*, not for the actual application :)
+> Of course one python executable wouldn't need 8GB of RAM. But we still recommend using 64-bit system unless you have some really
+> strong reason not to do so.
 
-Minimum
-- **RAM:** 8 GB
-- **CPU:** 4 cores / 8 threads
-- **Storage:** 70 GB free space or more
-- **OS:** 64-bit Windows/Linux/macOS with VirtualBox 6.0+
+> NOTE 2: "Minimum" requirements may not be the *actual* minimum, but we *really* do**n't** recommend you deploying 6+ VMs
+> on a computer which has 8GB of ram... Though, if you are indeed brave enough, please let us know what the real "minimum"
+> required specs are.
 
-Optimal (Recommended)
-- **RAM:** 16 GB
-- **CPU:** 6 cores / 12 threads
-- **Storage:** 80 GB free space or more
-- **Virtualization:** VT-x/AMD-V enabled in BIOS for better performance
+**Minimum**
+
+| Spec | Requirement |
+| :-- | --: |
+| RAM  | 8 GB               |
+| CPU  | 4 Cores |
+| Storage | +70GB Free |
+| OS | 64-bit |
+| VirtualBox | Version 6.0+ |
+
+**Optimal (Recommended)**
+
+| Spec | Requirement |
+| :-- | --: |
+| RAM | 16 GB |
+| CPU | 6 cores |
+| Storage |  +80GB Free |
+| OS | 64-bit |
+| Virtualization | **VT-X/AMD-V** enabled in *BIOS*
 
 
 
 ## 3. ⚙️ Dependencies
-
 
 Before using CyberLab CLI, ensure your system meets these requirements:
 
@@ -65,43 +77,67 @@ Before using CyberLab CLI, ensure your system meets these requirements:
 
 
 
-## 4. 📥 Installation Guide (Windows & Linux)
+## 4. 📥 Installation Guide
 
+### Linux
 
-This guide covers the installation process for both Windows and Linux (Ubuntu/Debian-based).
-### Clone the Repository
+1. Clone the repository
+``` bash
+git clone https://github.com/nickolay3132/cyberlab.git && cd cyberlab
+```
+
+2. Create and activate virtual environment for Python.
 ```bash
-git clone https://github.com/nickolay3132/cyberlab.git
-cd cyberlab
+python3 -m venv .venv && source .venv/bin/activate
 ```
 
-### Create & Activate a Virtual Environment
-🐧 Linux (Ubuntu/Debian-based)
-```bash
-python3 -m venv .venv          # Create virtual environment
-source .venv/bin/activate      # Activate it
-```
-
-🪟 Windows (PowerShell)
-```powershell
-python -m venv .venv         # Create virtual environment
-.venv\Scripts\activate       # Activate it (PowerShell)
-```
-
-### Install Dependencies
-🐧 Linux / 🪟 Windows (Same Command)
+3. Install Python dependencies
 ```bash
 pip install --upgrade pip
-pip install -r requirements.txt  # Install dependencies
+pip install -r requirements.txt
 ```
 
-### Run the Project
-🐧 Linux / 🪟 Windows (Same Command)
+4. Installation is complete! To run use:
+```
+python3 cyberlab.py # if python venv is activated
+.venv/bin/python3 cyberlab.py # if python venv is not activated
+```
+---
+
+### Windows
+
+1. Clone the repository (if git is in `%PATH%`) or download and extract sources
+
+    Using git:
+
+    ```powershell
+    git clone https://github.com/nickolay3132/cyberlab.git && cd cyberlab
+    ```
+
+    By downloading archive:
+
+    ```powershell
+    wget https://github.com/nickolay3132/cyberlab/archive/refs/heads/gui.zip -OutFile CLMT.zip
+    Expand-Archive -Path CLMT.zip -DestinationPath CyberLab
+    cd CyberLab
+    ```
+
+2. Create and activate python virtual environment
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate
+```
+
+3. Install Pyton dependencies
 ```bash
-python cyberlab.py  # See available commands
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-
+4. Installation is complete! To run use:
+```
+python cyberlab.py
+```
 
 ## 5. 🚀 Usage 
 
@@ -177,39 +213,11 @@ python cyberlab.py snapshot restore -n <NAME>
 |-------|----------|---------------------------------|----------|
 | `-n`  | `--name` | Name of the snapshot to restore | Yes      |
 
-[//]: # (---)
-
-[//]: # ()
-[//]: # (**Delete Snapshot**   )
-
-[//]: # (Remove a snapshot &#40;⚠️ child snapshots will be deleted recursively&#41;.)
-
-[//]: # (```bash)
-
-[//]: # (python cyberlab.py snapshot delete [-h] [--all] [-n NAME])
-
-[//]: # (```)
-
-[//]: # (| Short | Long     | Description              | Required |)
-
-[//]: # (|-------|----------|--------------------------|----------|)
-
-[//]: # (| `-n`  | `--name` | Delete specific snapshot | No*      |)
-
-[//]: # (|       | `--all`  | Delete ALL snapshots     | No*      |)
-
-[//]: # ()
-[//]: # (> *Either `--name` or `--all` must be specified)
 
 ### ⚙️ Configuration
-The tool uses the current working directory (`cwd`) to:
-1. Look for the config file (`config.yaml`).
-2. Store files by default in:
-   - OVA files: `./ova/`
-   - Virtual machines: `./vms/`
-   - Import Log: `./import_log/`
+The tool uses the current working directory (`cwd`) to look for the config file (`config.yaml`).
 
-To customize paths, modify these settings in `config.yaml` file:
+To customize storage paths, modify these settings in `config.yaml` file:
 ```yaml
 storage:
   ova_store_to: /custom/path/for/ova_files
@@ -235,61 +243,15 @@ using PyInstaller, run the following command:
 pip install pyinstaller
 python build.py
 ```
-
 ### 📂 Output Files
 * The executable will be in `./dist/`:
     - **Windows:** `dist\CyberLab.exe` and `dist\CyberLabCli.exe`
     - **Linux/macOS:** `dist/CyberLab` and `dist/CyberLabCli`
-* Temporary files (`./tmp`) can be deleted after building:
-```bash
-rm -rf ./tmp  # Linux/macOS
-rmdir /s /q tmp  # Windows (CMD)
-```
 
-### 🚀 How to Run the Executables
-CyberLab is distributed in two variants:
-- CyberLab CLI: A command-line interface for automation and scripting.
-- CyberLab GUI: A graphical user interface built on top of the CLI for visual interaction.
+> NOTE: To remove temporary build files, enter `y` when prompted if you
+> wnat to delete them.
 
-After building with PyInstaller, the executables will appear in the dist folder:
-
-🪟 Windows:
-```powershell
-# Run CLI
-.\dist\CyberLabCli.exe [command] [arguments]
-
-# Run GUI
-.\dist\CyberLab.exe
-```
-
-🐧 Linux / 🍎 macOS:
-```bash
-# Make both files executable
-chmod +x ./dist/CyberLabCli
-chmod +x ./dist/CyberLab
-
-# Run CLI
-./dist/CyberLabCli [command] [arguments]
-
-# Run GUI
-./dist/CyberLab
-```
-
-
-📌 The GUI wraps around the CLI — make sure both executables are present in the same directory so that GUI operations can invoke the CLI correctly.
-
-### ⚠️ Important Notes
-1. Platform-Specific Builds
-    - The executable is built for your current OS (Linux builds Linux binaries, Windows builds `.exe`).
-    - For cross-platform distribution, build on each target platform.
-2. File size
-    - The resulting binary may be large (10-50MB) as it embeds Python and dependencies.
-3. No Python Required
-    - The executable runs independently - no Python installation needed on target machines.
-4. Configuration Files
-    - CyberLab CLI uses current working directory (`cwd`) to look for config file (`config.yaml`)
-
-
+> NOTE 2: Cyberlab uses searches only current working directory (`cwd`) for config file (`config.yaml`)
 
 ## 7. 📜 License 
 
