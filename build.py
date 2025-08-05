@@ -75,13 +75,15 @@ if __name__ == "__main__":
     )
     build(gui_build_dto, [add_dependency_injector, add_hidden_imports, add_fonts, add_icon, hide_console])
 
-
     # waiting for all processes to finish running
     exit_codes = [p.wait() for p in procs]
     if exit_codes[0] != 0:
         print("GUI failed.")
     if exit_codes[1] != 0:
         print("CLI failed.")
+
+    if os.name == 'posix':
+        os.system('chmod +x dist/*')
 
     if prompt_user_yn("Do you want to delete temporary build files?"):
         shutil.rmtree('tmp')
