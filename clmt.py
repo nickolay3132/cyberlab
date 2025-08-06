@@ -6,7 +6,7 @@ import src
 from src.bootstrap import get, bootstrap
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository
 from src.core.interfaces.services import IFileSystemService
-from src.core.use_cases import InstallUseCase, InstallUseCaseDto, FetchConfigUseCase
+from src.core.use_cases import InstallUseCase, InstallUseCaseDto, FetchConfigUseCase, StartupUseCase, StartupUseCaseDto
 from src.core.use_cases.fetch_config_use_case import FetchConfigUseCaseDto
 from src.infrastructure.repositories import YamlLoader
 
@@ -30,25 +30,14 @@ if __name__ == "__main__":
     bootstrap()
     # main()
 
-    # yaml_loader = get(YamlLoader)('./config.yaml')
-    # storage_repo = get(IStorageRepository)(yaml_loader)
-    # vm_repo = get(IVMRepository)(yaml_loader)
+    # install_use_case = get(InstallUseCase)(f"{root_dir}/config.yaml", '')
     #
-    # install_use_case = get(InstallUseCase)(storage_repo, vm_repo)
-    #
-    # install_use_case.execute(InstallUseCaseDto(False, False))
-
-    # file_system_service = get(IFileSystemService)()
-    # fetch_config_use_case = get(FetchConfigUseCase)(file_system_service)
-    #
-    # fetch_config_use_case.execute(FetchConfigUseCaseDto(
-    #     str(root_dir), src.__version__, src.__repository__
+    # install_use_case.execute(InstallUseCaseDto(
+    #     src.__repository__,
+    #     False,
+    #     False,
     # ))
 
-    install_use_case = get(InstallUseCase)(f"{root_dir}/config.yaml", '')
+    startup_use_case = get(StartupUseCase)(f"{root_dir}/config.yaml")
 
-    install_use_case.execute(InstallUseCaseDto(
-        src.__repository__,
-        False,
-        False,
-    ))
+    startup_use_case.execute(StartupUseCaseDto())

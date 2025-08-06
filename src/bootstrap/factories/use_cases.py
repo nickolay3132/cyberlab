@@ -3,12 +3,12 @@ from src.bootstrap.binder import bind
 
 from src.core.entities.event_bus import IEventBus
 from src.core.entities.event_bus.events import ProgressEvent, TextEvent
-from src.core.use_cases import InstallUseCase, FetchConfigUseCase
+from src.core.use_cases import InstallUseCase, FetchConfigUseCase, StartupUseCase
 
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository
 
 from src.core.interfaces.services import IFileSystemService
-from src.core.interfaces.services.vms import IInstallVMService, IImportVMService, IVmNetworkService
+from src.core.interfaces.services.vms import IInstallVMService, IImportVMService, IVmNetworkService, IVmBootService
 
 from src.infrastructure.repositories import YamlLoader
 
@@ -38,4 +38,19 @@ def make_install_use_case(config_path: str, snapshots_path: str) -> InstallUseCa
         install_vm_service=install_vm_service,
         import_vm_service=import_vm_service,
         vm_network_service=vm_networks_service
+    )
+
+@bind
+def make_startup_use_case(config_path: str) -> StartupUseCase:
+    yaml_loader = get(YamlLoader)(config_path)
+    vms_repo = get(IVMRepository)(yaml_loader)
+
+    text_event_bus = get(IEventBus[TextEvent])()
+
+    vm_boot_service = get(IVmBootService)()
+
+    return StartupUseCase(
+        vms_repo=vms_repo,
+        vm_boot_service=vm_boot_service,
+        text_ev_bus=text_event_bus,
     )

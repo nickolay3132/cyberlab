@@ -1,6 +1,6 @@
 from src.bootstrap.binder import bind
-from src.core.interfaces.gateways import IVMsGateway, IVmsNetworkGateway
-from src.infrastructure.gateways import VmsGatewayImpl, VmsNetworkGatewayImpl
+from src.core.interfaces.gateways import IVMsGateway, IVmsNetworkGateway, IVmsBootGateway
+from src.infrastructure.gateways import VmsGatewayImpl, VmsNetworkGatewayImpl, VmsBootGatewayImpl
 
 
 @bind
@@ -10,3 +10,7 @@ def make_vms_gateway() -> IVMsGateway:
 @bind
 def make_vms_network_gateway() -> IVmsNetworkGateway:
     return VmsNetworkGatewayImpl()
+
+@bind
+def make_vms_boot_gateway() -> IVmsBootGateway:
+    return VmsBootGatewayImpl()
