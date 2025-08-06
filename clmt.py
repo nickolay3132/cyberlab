@@ -8,6 +8,7 @@ from src.core.interfaces.repositories import IStorageRepository, IVMRepository
 from src.core.interfaces.services import IFileSystemService
 from src.core.use_cases import InstallUseCase, InstallUseCaseDto, FetchConfigUseCase, StartupUseCase, StartupUseCaseDto
 from src.core.use_cases.fetch_config_use_case import FetchConfigUseCaseDto
+from src.core.use_cases.shutdown_use_case import ShutdownUseCase, ShutdownUseCaseDto
 from src.infrastructure.repositories import YamlLoader
 
 
@@ -38,6 +39,10 @@ if __name__ == "__main__":
     #     False,
     # ))
 
-    startup_use_case = get(StartupUseCase)(f"{root_dir}/config.yaml")
+    # startup_use_case = get(StartupUseCase)(f"{root_dir}/config.yaml")
+    #
+    # startup_use_case.execute(StartupUseCaseDto())
 
-    startup_use_case.execute(StartupUseCaseDto())
+    # shutdown_use_case = get(ShutdownUseCase)(f"{root_dir}/config.yaml")
+    #
+    # shutdown_use_case.execute(ShutdownUseCaseDto(True))

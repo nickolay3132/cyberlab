@@ -9,6 +9,7 @@ from src.core.interfaces.repositories import IStorageRepository, IVMRepository
 
 from src.core.interfaces.services import IFileSystemService
 from src.core.interfaces.services.vms import IInstallVMService, IImportVMService, IVmNetworkService, IVmBootService
+from src.core.use_cases.shutdown_use_case import ShutdownUseCase
 
 from src.infrastructure.repositories import YamlLoader
 
@@ -50,6 +51,21 @@ def make_startup_use_case(config_path: str) -> StartupUseCase:
     vm_boot_service = get(IVmBootService)()
 
     return StartupUseCase(
+        vms_repo=vms_repo,
+        vm_boot_service=vm_boot_service,
+        text_ev_bus=text_event_bus,
+    )
+
+@bind
+def make_shutdown_use_case(config_path: str) -> ShutdownUseCase:
+    yaml_loader = get(YamlLoader)(config_path)
+    vms_repo = get(IVMRepository)(yaml_loader)
+
+    text_event_bus = get(IEventBus[TextEvent])()
+
+    vm_boot_service = get(IVmBootService)()
+
+    return ShutdownUseCase(
         vms_repo=vms_repo,
         vm_boot_service=vm_boot_service,
         text_ev_bus=text_event_bus,

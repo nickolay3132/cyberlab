@@ -8,4 +8,4 @@ class IVmBootService(ABC):
     def startup(self, vm_name: str, startup_boot_policy: BootPolicyStartupType) -> bool: pass
 
     @abstractmethod
-    def shutdown(self, vm_name: str, startup_boot_policy: BootPolicyShutdownType) -> bool: pass
+    def shutdown(self, vm_name: str, startup_boot_policy: BootPolicyShutdownType, force: bool = False) -> bool: pass
