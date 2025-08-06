@@ -45,10 +45,10 @@ if __name__ == "__main__":
     #     str(root_dir), src.__version__, src.__repository__
     # ))
 
-    # install_use_case = get(InstallUseCase)(f"{root_dir}/config.yaml", '')
-    #
-    # install_use_case.execute(InstallUseCaseDto(
-    #     src.__repository__,
-    #     False,
-    #     False,
-    # ))
+    install_use_case = get(InstallUseCase)(f"{root_dir}/config.yaml", '')
+
+    install_use_case.execute(InstallUseCaseDto(
+        src.__repository__,
+        False,
+        False,
+    ))

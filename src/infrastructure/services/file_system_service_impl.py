@@ -38,7 +38,6 @@ class FileSystemServiceImpl(IFileSystemService):
             callback(DownloadingType.FAILED, 0, 0, f"Cannot fetch {url}, Message: {e}")
             return False
 
-
     def mkdirs(self, *paths: str) -> None:
         for p in paths:
             if not os.path.exists(p):
@@ -71,19 +70,24 @@ class FileSystemServiceImpl(IFileSystemService):
                    ):
         last_notify_time = datetime.now()
 
-        response = requests.get(url, stream=True)
+        headers = {}
+        downloaded = 0
+        if os.path.exists(temp_file):
+            downloaded = os.path.getsize(temp_file)
+            headers["Range"] = f"bytes={downloaded}-"
+
+        response = requests.get(url, stream=True, headers=headers, timeout=(5, 30))
         response.raise_for_status()
 
-        total_size = int(response.headers.get("content-length", 0))
+        total_size = int(response.headers.get("content-length", 0)) + downloaded
         block_size = 8192
 
-        with open(temp_file, "wb") as file:
-            downloaded = 0
+        with open(temp_file, "ab") as file:
             callback(DownloadingType.INIT, total_size, downloaded, None)
 
             for chunk in response.iter_content(chunk_size=block_size):
                 file.write(chunk)
-                downloaded += block_size
+                downloaded += len(chunk)
 
                 current_time = datetime.now()
                 if current_time - last_notify_time >= notify_interval:

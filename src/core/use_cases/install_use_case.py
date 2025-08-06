@@ -30,6 +30,7 @@ class InstallUseCase:
     install_vm_service: IInstallVMService
     import_vm_service: IImportVMService
 
+    is_downloading_failed: bool = False
     downloading_now: str = ''
     log_dir: str = ''
     ova_dir: str = ''
@@ -39,11 +40,11 @@ class InstallUseCase:
         vms = self.vm_repo.get_all()
 
         if not dto.skip_download:
-            print(1)
             self._install_ova_files(dto.no_verify, dto.repository, storage, vms)
-        else: print(2)
 
-        self._import_vms(storage, vms)
+        if not self.is_downloading_failed:
+            self._import_vms(storage, vms)
+        else: print("Downloading failed, skipping import")
 
     def _install_ova_files(self, no_verify: bool, repository: str, storage: Storage, vms: List[VM]):
         ova_dir = self.install_vm_service.prepare_storage(storage.ova_store_to)
@@ -92,26 +93,11 @@ class InstallUseCase:
                                actual: int,
                                error_msg: Optional[str]
                                ) -> None:
-        event = ProgressEvent(
-            self.downloading_now,
-            DownloadingType.INIT,
-            total,
-            0
-        )
-
-        if state == DownloadingType.IN_PROGRESS:
-            event.type = DownloadingType.IN_PROGRESS
-            event.actual = actual
-
-        if state == DownloadingType.COMPLETED:
-            event.type = DownloadingType.COMPLETED
-            event.actual = actual
+        event = ProgressEvent(self.downloading_now, state, total, actual, error_msg)
 
         if state == DownloadingType.FAILED:
             event.id = 'dialog'
-            event.type = DownloadingType.FAILED
-            event.actual = actual
-            event.error_msg = error_msg
+            self.is_downloading_failed = True
 
         self.progress_ev_bus.notify(event)
 
