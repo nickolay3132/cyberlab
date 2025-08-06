@@ -1,1 +1,2 @@
 from .file_system_service import IFileSystemService
+from .parallel_task_service import IParallelTaskService

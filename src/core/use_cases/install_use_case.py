@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from pprint import pprint
 from typing import Optional, List
 from urllib.parse import urljoin
 
@@ -11,7 +10,7 @@ from src.core.enums import DownloadingType
 from src.core.enums.events import TextEventType
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository
 from src.core.interfaces.services.vms import IInstallVMService
-from src.core.interfaces.services.vms.import_vm_service import IImportVMService
+from src.core.interfaces.services.vms import IImportVMService
 
 
 @dataclass
@@ -33,13 +32,16 @@ class InstallUseCase:
 
     downloading_now: str = ''
     log_dir: str = ''
+    ova_dir: str = ''
     
     def execute(self, dto: InstallUseCaseDto):
         storage = self.storage_repo.get()
         vms = self.vm_repo.get_all()
 
         if not dto.skip_download:
+            print(1)
             self._install_ova_files(dto.no_verify, dto.repository, storage, vms)
+        else: print(2)
 
         self._import_vms(storage, vms)
 
@@ -52,13 +54,13 @@ class InstallUseCase:
         self.text_ev_bus.notify(TextEvent('main', TextEventType.TITLE, "Downloading OVA files"))
 
         for vm in vms:
-            ova_url = urljoin(repository, f"{vm.name}.ova")
+            ova_url = urljoin(repository, f"{vm.ova_filename}")
             download_path = f"{ova_dir}/{vm.name}.ova"
+            self.downloading_now = vm.name
+
             is_downloading = self.install_vm_service.install(ova_url, download_path, vm.md5checksum)
 
-            if is_downloading:
-                self.downloading_now = vm.name
-            else:
+            if not is_downloading:
                 self.text_ev_bus.notify(TextEvent(
                     vm.name,
                     TextEventType.WARNING,
@@ -66,7 +68,8 @@ class InstallUseCase:
                 ))
 
     def _import_vms(self, storage: Storage, vms: List[VM]):
-        vms_dir, log_dir = self.import_vm_service.prepare_storage(
+        ova_dir, vms_dir, log_dir = self.import_vm_service.prepare_storage(
+            storage.ova_store_to,
             storage.vms_store_to,
             storage.import_log_store_to
         )
@@ -78,9 +81,10 @@ class InstallUseCase:
         self.text_ev_bus.notify(TextEvent('main', TextEventType.TITLE, "Importing OVA files"))
 
         for vm in vms:
-            self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "Importing OVA files"))
-            self.import_vm_service.import_vm(vm, vms_dir, log_dir)
+            self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "Importing VM"))
+            self.import_vm_service.import_vm(vm, ova_dir, vms_dir, log_dir)
 
+        self.import_vm_service.run()
 
     def _installation_callback(self,
                                state: DownloadingType,

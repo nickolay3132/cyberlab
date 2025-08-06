@@ -38,9 +38,17 @@ if __name__ == "__main__":
     #
     # install_use_case.execute(InstallUseCaseDto(False, False))
 
-    file_system_service = get(IFileSystemService)()
-    fetch_config_use_case = get(FetchConfigUseCase)(file_system_service)
+    # file_system_service = get(IFileSystemService)()
+    # fetch_config_use_case = get(FetchConfigUseCase)(file_system_service)
+    #
+    # fetch_config_use_case.execute(FetchConfigUseCaseDto(
+    #     str(root_dir), src.__version__, src.__repository__
+    # ))
 
-    fetch_config_use_case.execute(FetchConfigUseCaseDto(
-        str(root_dir), src.__version__, src.__repository__
-    ))
+    # install_use_case = get(InstallUseCase)(f"{root_dir}/config.yaml", '')
+    #
+    # install_use_case.execute(InstallUseCaseDto(
+    #     src.__repository__,
+    #     False,
+    #     False,
+    # ))
