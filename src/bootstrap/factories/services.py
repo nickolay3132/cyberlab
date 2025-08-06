@@ -1,10 +1,12 @@
 from src.bootstrap import get
 from src.bootstrap.binder import bind
-from src.core.interfaces.gateways import IVMsGateway
+
+from src.core.interfaces.gateways import IVMsGateway, IVmsNetworkGateway
 from src.core.interfaces.services import IFileSystemService, IParallelTaskService
-from src.core.interfaces.services.vms import IImportVMService, IInstallVMService
+from src.core.interfaces.services.vms import IImportVMService, IInstallVMService, IVmNetworkService
+
 from src.infrastructure.services import FileSystemServiceImpl, ParallelTaskServiceImpl
-from src.infrastructure.services.vms import ImportVMServiceImpl, InstallVMServiceImpl
+from src.infrastructure.services.vms import ImportVMServiceImpl, InstallVMServiceImpl, VmNetworkServiceImpl
 
 
 @bind
@@ -14,6 +16,12 @@ def make_file_system_service() -> IFileSystemService:
 @bind
 def make_parallel_task_service() -> IParallelTaskService:
     return ParallelTaskServiceImpl()
+
+@bind
+def make_vm_networks_service() -> IVmNetworkService:
+    vms_network_gateway = get(IVmsNetworkGateway)()
+
+    return VmNetworkServiceImpl(vms_network_gateway)
 
 @bind
 def make_import_vm_service() -> IImportVMService:

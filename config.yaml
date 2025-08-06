@@ -16,19 +16,19 @@ virtual_machines:
       startup: headless
       shutdown: savestate
 
-  - name: firewall-2
-    ova_filename: firewall-2-002.ova
-    md5checksum: 099819778eb6eaa564f5a63ea7d57d00
-    boot_policy:
-      startup: headless
-      shutdown: savestate
-
-  - name: web-server
-    ova_filename: web-server-002.ova
-    md5checksum: f9ab5d8325693762bfb1dc7d86ea596f
-    boot_policy:
-      startup: headless
-      shutdown: acpipowerbutton
+#  - name: firewall-2
+#    ova_filename: firewall-2-002.ova
+#    md5checksum: 099819778eb6eaa564f5a63ea7d57d00
+#    boot_policy:
+#      startup: headless
+#      shutdown: savestate
+#
+#  - name: web-server
+#    ova_filename: web-server-002.ova
+#    md5checksum: f9ab5d8325693762bfb1dc7d86ea596f
+#    boot_policy:
+#      startup: headless
+#      shutdown: acpipowerbutton
 
   - name: php-server
     ova_filename: php-server-001.ova
@@ -37,27 +37,27 @@ virtual_machines:
       startup: headless
       shutdown: acpipowerbutton
 
-  - name: database-server
-    ova_filename: database-server-002.ova
-    md5checksum: 7ddafc398b60b208ebc54158a753dce6
-    boot_policy:
-      startup: headless
-      shutdown: acpipowerbutton
-
-  - name: wan-client
-    ova_filename: wan-client-001.ova
-    md5checksum: 483f69ced2c1cff47e65e7984077adfd
-    nics:
-      - nic_index: 1
-        type: natnetwork
-        network_name: cyberlab
-    boot_policy:
-      startup: gui
-      shutdown: acpipowerbutton
-
-  - name: lan-client
-    ova_filename: lan-client-001.ova
-    md5checksum: 0d279be6454d75f8ec08fffcb7c130cb
-    boot_policy:
-      startup: gui
-      shutdown: acpipowerbutton
+#  - name: database-server
+#    ova_filename: database-server-002.ova
+#    md5checksum: 7ddafc398b60b208ebc54158a753dce6
+#    boot_policy:
+#      startup: headless
+#      shutdown: acpipowerbutton
+#
+#  - name: wan-client
+#    ova_filename: wan-client-001.ova
+#    md5checksum: 483f69ced2c1cff47e65e7984077adfd
+#    nics:
+#      - nic_index: 1
+#        type: natnetwork
+#        network_name: cyberlab
+#    boot_policy:
+#      startup: gui
+#      shutdown: acpipowerbutton
+#
+#  - name: lan-client
+#    ova_filename: lan-client-001.ova
+#    md5checksum: 0d279be6454d75f8ec08fffcb7c130cb
+#    boot_policy:
+#      startup: gui
+#      shutdown: acpipowerbutton

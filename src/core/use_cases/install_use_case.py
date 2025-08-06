@@ -9,7 +9,7 @@ from src.core.entities.event_bus.events.text_event import TextEvent
 from src.core.enums import DownloadingType
 from src.core.enums.events import TextEventType
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository
-from src.core.interfaces.services.vms import IInstallVMService
+from src.core.interfaces.services.vms import IInstallVMService, IVmNetworkService
 from src.core.interfaces.services.vms import IImportVMService
 
 
@@ -29,6 +29,7 @@ class InstallUseCase:
 
     install_vm_service: IInstallVMService
     import_vm_service: IImportVMService
+    vm_network_service: IVmNetworkService
 
     is_downloading_failed: bool = False
     downloading_now: str = ''
@@ -44,7 +45,7 @@ class InstallUseCase:
 
         if not self.is_downloading_failed:
             self._import_vms(storage, vms)
-        else: print("Downloading failed, skipping import")
+            self._enable_networks(vms)
 
     def _install_ova_files(self, no_verify: bool, repository: str, storage: Storage, vms: List[VM]):
         ova_dir = self.install_vm_service.prepare_storage(storage.ova_store_to)
@@ -86,6 +87,12 @@ class InstallUseCase:
             self.import_vm_service.import_vm(vm, ova_dir, vms_dir, log_dir)
 
         self.import_vm_service.run()
+
+    def _enable_networks(self, vms: List[VM]):
+        for vm in vms:
+            is_success = self.vm_network_service.enable_vm_nics(vm)
+            if not is_success:
+                self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "Failed to enable networks"))
 
     def _installation_callback(self,
                                state: DownloadingType,
