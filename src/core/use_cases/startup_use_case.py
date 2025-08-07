@@ -16,14 +16,14 @@ class StartupUseCase:
 
     vm_boot_service: IVmBootService
 
-    text_ev_bus: IEventBus[TextEvent]
+    ev_bus: IEventBus
 
     def execute(self, dto: StartupUseCaseDto) -> None:
         for vm in self.vms_repo.get_all():
-            self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "starting..."))
+            self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "starting..."))
             is_success = self.vm_boot_service.startup(vm.name, vm.boot_policy.startup)
 
             if is_success:
-                self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.SUCCESS, "stated successfully"))
+                self.ev_bus.notify(TextEvent(vm.name, TextEventType.SUCCESS, "stated successfully"))
             else:
-                self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "cannot start vm"))
+                self.ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "cannot start vm"))

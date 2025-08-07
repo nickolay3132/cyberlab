@@ -17,14 +17,14 @@ class ShutdownUseCase:
 
     vm_boot_service: IVmBootService
 
-    text_ev_bus: IEventBus[TextEvent]
+    ev_bus: IEventBus
 
     def execute(self, dto: ShutdownUseCaseDto) -> None:
         for vm in self.vms_repo.get_all():
-            self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "stopping..."))
+            self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "stopping..."))
             is_success = self.vm_boot_service.shutdown(vm.name, vm.boot_policy.shutdown, force=dto.force)
 
             if is_success:
-                self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.SUCCESS, "stopped successfully"))
+                self.ev_bus.notify(TextEvent(vm.name, TextEventType.SUCCESS, "stopped successfully"))
             else:
-                self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "cannot stop vm"))
+                self.ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "cannot stop vm"))

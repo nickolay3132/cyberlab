@@ -20,8 +20,7 @@ def make_fetch_config_use_case(file_system_service: IFileSystemService) -> Fetch
 
 @bind
 def make_install_use_case(config_path: str, snapshots_path: str) -> InstallUseCase:
-    text_event_bus = get(IEventBus[TextEvent])()
-    progress_event_bus = get(IEventBus[ProgressEvent])()
+    ev_bus = get(IEventBus)()
 
     yaml_loader = get(YamlLoader)(config_path)
     storage_repo = get(IStorageRepository)(yaml_loader)
@@ -32,8 +31,7 @@ def make_install_use_case(config_path: str, snapshots_path: str) -> InstallUseCa
     vm_networks_service = get(IVmNetworkService)()
 
     return InstallUseCase(
-        text_ev_bus=text_event_bus,
-        progress_ev_bus=progress_event_bus,
+        ev_bus=ev_bus,
         storage_repo=storage_repo,
         vm_repo=vms_repo,
         install_vm_service=install_vm_service,
@@ -46,14 +44,14 @@ def make_startup_use_case(config_path: str) -> StartupUseCase:
     yaml_loader = get(YamlLoader)(config_path)
     vms_repo = get(IVMRepository)(yaml_loader)
 
-    text_event_bus = get(IEventBus[TextEvent])()
+    ev_bus = get(IEventBus)()
 
     vm_boot_service = get(IVmBootService)()
 
     return StartupUseCase(
         vms_repo=vms_repo,
         vm_boot_service=vm_boot_service,
-        text_ev_bus=text_event_bus,
+        ev_bus=ev_bus,
     )
 
 @bind
@@ -61,12 +59,12 @@ def make_shutdown_use_case(config_path: str) -> ShutdownUseCase:
     yaml_loader = get(YamlLoader)(config_path)
     vms_repo = get(IVMRepository)(yaml_loader)
 
-    text_event_bus = get(IEventBus[TextEvent])()
+    ev_bus = get(IEventBus)()
 
     vm_boot_service = get(IVmBootService)()
 
     return ShutdownUseCase(
         vms_repo=vms_repo,
         vm_boot_service=vm_boot_service,
-        text_ev_bus=text_event_bus,
+        ev_bus=ev_bus,
     )

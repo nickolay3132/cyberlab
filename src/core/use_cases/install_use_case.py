@@ -21,8 +21,7 @@ class InstallUseCaseDto:
     
 @dataclass
 class InstallUseCase:
-    text_ev_bus: IEventBus[TextEvent]
-    progress_ev_bus: IEventBus[ProgressEvent]
+    ev_bus: IEventBus
 
     storage_repo: IStorageRepository
     vm_repo: IVMRepository
@@ -53,7 +52,7 @@ class InstallUseCase:
         self.install_vm_service.set_no_verify_checksum(no_verify)
         self.install_vm_service.set_callback(self._installation_callback)
 
-        self.text_ev_bus.notify(TextEvent('main', TextEventType.TITLE, "Downloading OVA files"))
+        self.ev_bus.notify(TextEvent('main', TextEventType.TITLE, "Downloading OVA files"))
 
         for vm in vms:
             ova_url = urljoin(repository, f"{vm.ova_filename}")
@@ -63,7 +62,7 @@ class InstallUseCase:
             is_downloading = self.install_vm_service.install(ova_url, download_path, vm.md5checksum)
 
             if not is_downloading:
-                self.text_ev_bus.notify(TextEvent(
+                self.ev_bus.notify(TextEvent(
                     vm.name,
                     TextEventType.WARNING,
                     "OVA file already exists. Skipping..."
@@ -79,11 +78,11 @@ class InstallUseCase:
 
         self.import_vm_service.set_callback(self._importing_callback)
 
-        self.text_ev_bus.notify(TextEvent('main', TextEventType.SPACE, ""))
-        self.text_ev_bus.notify(TextEvent('main', TextEventType.TITLE, "Importing OVA files"))
+        self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ""))
+        self.ev_bus.notify(TextEvent('main', TextEventType.TITLE, "Importing OVA files"))
 
         for vm in vms:
-            self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "Importing VM"))
+            self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "Importing VM"))
             self.import_vm_service.import_vm(vm, ova_dir, vms_dir, log_dir)
 
         self.import_vm_service.run()
@@ -92,7 +91,7 @@ class InstallUseCase:
         for vm in vms:
             is_success = self.vm_network_service.enable_vm_nics(vm)
             if not is_success:
-                self.text_ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "Failed to enable networks"))
+                self.ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "Failed to enable networks"))
 
     def _installation_callback(self,
                                state: DownloadingType,
@@ -106,11 +105,11 @@ class InstallUseCase:
             event.id = 'dialog'
             self.is_downloading_failed = True
 
-        self.progress_ev_bus.notify(event)
+        self.ev_bus.notify(event)
 
     def _importing_callback(self, vm_name: str, success: bool) -> None:
         if success:
-            self.text_ev_bus.notify(TextEvent(vm_name, TextEventType.SUCCESS, "Successfully imported"))
+            self.ev_bus.notify(TextEvent(vm_name, TextEventType.SUCCESS, "Successfully imported"))
         else:
-            self.text_ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"{vm_name.capitalize()} import failed"))
-            self.text_ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"Log files at {self.log_dir}"))
+            self.ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"{vm_name.capitalize()} import failed"))
+            self.ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"Log files at {self.log_dir}"))

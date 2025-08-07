@@ -1,20 +1,22 @@
-from pprint import pprint
-from typing import List
+from typing import List, Type, Callable, Dict
 
-from src.core.entities.event_bus import IEvent, IEventBus, IEventListener
+from src.core.entities.event_bus import IEvent, IEventBus
 
 
-class EventBusImpl[E: IEvent](IEventBus[E]):
+class EventBusImpl(IEventBus):
     def __init__(self):
-        self.listeners: List[IEventListener[E]] = []
+        self.listeners: Dict[Type[IEvent], List[Callable[[IEvent], None]]] = {}
 
-    def attach(self, event_listener: IEventListener[E]):
-        self.listeners.append(event_listener)
+    def attach(self, event_type: Type[IEvent], listener: Callable[[IEvent], None]) -> None:
+        if event_type not in self.listeners:
+            self.listeners[event_type] = []
+        self.listeners[event_type].append(listener)
 
-    def detach(self, event_listener: IEventListener[E]):
-        self.listeners.remove(event_listener)
+    def detach(self, event_type: Type[IEvent], listener: Callable[[IEvent], None]) -> None:
+        if event_type not in self.listeners:
+            self.listeners[event_type].remove(listener)
 
     def notify(self, event: IEvent):
-        pprint(event)
-        for listener in self.listeners:
-            listener.on_event(event)
+        event_type = type(event)
+        for listener in self.listeners.get(event_type, []):
+            listener(event)
