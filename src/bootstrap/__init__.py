@@ -3,6 +3,7 @@ import pkgutil
 
 from .registry import get
 
+global_vars = {}
 
 def bootstrap():
     import src.bootstrap.factories

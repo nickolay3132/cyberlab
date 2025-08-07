@@ -1,5 +1,9 @@
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QWidget, QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, \
     QLayout
+
+from src.presentation.gui.ui.controllers import MainController, StartupController
+from src.presentation.gui.ui.controllers.shutdown_controller import ShutdownController
 
 
 class MainWindow(QMainWindow):
@@ -16,6 +20,8 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
+
+        MainController(self.stack).show_main_page()
 
 
     def _layout(self) -> QLayout:
@@ -37,10 +43,16 @@ class MainWindow(QMainWindow):
         btn_startup.clicked.connect(self.on_startup_clicked)
         topbar_layout.addWidget(btn_startup)
 
-        #  other buttons
+        btn_shutdown = QPushButton("Shutdown")
+        btn_shutdown.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        btn_shutdown.clicked.connect(self.on_shutdown_clicked)
+        topbar_layout.addWidget(btn_shutdown)
 
         topbar.setLayout(topbar_layout)
         return topbar
 
     def on_startup_clicked(self):
-        print("startup clicked")
+        StartupController(self.stack).show_startup_page()
+
+    def on_shutdown_clicked(self):
+        ShutdownController(self.stack).show_shutdown_page()

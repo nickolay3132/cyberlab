@@ -5,14 +5,14 @@ from pathlib import Path
 from PyQt6.QtWidgets import QApplication
 
 import src
-from src.bootstrap import get, bootstrap
+from src.bootstrap import get, bootstrap, global_vars
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository
 from src.core.interfaces.services import IFileSystemService
 from src.core.use_cases import InstallUseCase, InstallUseCaseDto, FetchConfigUseCase, StartupUseCase, StartupUseCaseDto
 from src.core.use_cases.fetch_config_use_case import FetchConfigUseCaseDto
 from src.core.use_cases.shutdown_use_case import ShutdownUseCase, ShutdownUseCaseDto
 from src.infrastructure.repositories import YamlLoader
-from src.presentation.gui import MainWindow
+from src.presentation.gui.ui import MainWindow
 
 
 def main():
@@ -31,9 +31,9 @@ def main():
 
 if __name__ == "__main__":
     if getattr(sys, 'frozen', False):
-        root_dir = Path(sys.executable).parent
+        global_vars['root_dir'] = Path(sys.executable).parent
     else:
-        root_dir = Path(__file__).resolve().parent
+        global_vars['root_dir'] = Path(__file__).resolve().parent
 
     bootstrap()
     main()
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     #     False,
     # ))
 
-    # startup_use_case = get(StartupUseCase)(f"{root_dir}/config.yaml")
+    # startup_use_case = get(StartupUseCase)(f"{global_vars['root_dir']}/config.yaml")
     #
     # startup_use_case.execute(StartupUseCaseDto())
 
