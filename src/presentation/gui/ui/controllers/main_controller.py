@@ -8,21 +8,20 @@ from src.presentation.gui.ui.pages import VmsStatusesPage
 
 
 class MainController:
-    def __init__(self, set_central_widget: Callable[[QWidget], None]):
+    def __init__(self, set_central_widget: Callable[[QWidget], None], on_complete: Callable[[], None]):
         self.set_central_widget = set_central_widget
+        self.on_complete = on_complete
 
-    def show_main_page(self):
+    def run(self):
         page = VmsStatusesPage()
-
-        def execute():
-            print("Usecase running...")
-            time.sleep(5)
-
-        def on_complete():
-            print("Usecase complete")
-
-        # self.stack.addWidget(page)
-        # self.stack.setCurrentWidget(page)
         self.set_central_widget(page)
-
-        run_usecase_async(execute, on_complete)
+        self.on_complete()
+        # def execute():
+        #     print("Usecase running...")
+        #     time.sleep(5)
+        #
+        # # self.stack.addWidget(page)
+        # # self.stack.setCurrentWidget(page)
+        # self.set_central_widget(page)
+        #
+        # run_usecase_async(execute, self.on_complete)

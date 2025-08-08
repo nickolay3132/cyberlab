@@ -10,26 +10,16 @@ from src.presentation.gui.ui.pages import VmsStatusesPage
 
 
 class ShutdownController:
-    def __init__(self, set_central_widget: Callable[[QWidget], None]):
+    def __init__(self, set_central_widget: Callable[[QWidget], None], on_complete: Callable[[], None]):
         self.set_central_widget = set_central_widget
+        self.on_complete = on_complete
 
-    def show_shutdown_page(self):
+    def run(self):
         page = VmsStatusesPage()
-
-        def execute():
-            use_case = get(ShutdownUseCase)(f"{global_vars['root_dir']}/config.yaml")
-            ev_bus = use_case.ev_bus
-
-            ev_bus.attach(TextEvent, page.text_event_listener)
-
-            dto = ShutdownUseCaseDto(False)
-            use_case.execute(dto)
-
-        def on_complete():
-            print("shutdown complete")
-
-        # self.stack.addWidget(page)
-        # self.stack.setCurrentWidget(page)
         self.set_central_widget(page)
 
-        run_usecase_async(execute, on_complete)
+        use_case = get(ShutdownUseCase)(f"{global_vars['root_dir']}/config.yaml")
+        use_case.ev_bus.attach(TextEvent, page.text_event_listener)
+
+        dto = ShutdownUseCaseDto(False)
+        run_usecase_async(use_case, dto, self.on_complete)
