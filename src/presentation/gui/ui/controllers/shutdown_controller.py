@@ -3,7 +3,7 @@ from typing import Callable
 from PyQt6.QtWidgets import QStackedWidget, QWidget
 
 from src.bootstrap import get, global_vars
-from src.core.entities.event_bus.events import TextEvent
+from src.core.entities.event_bus.events import TextEvent, VmsListEvent
 from src.core.use_cases import ShutdownUseCase, ShutdownUseCaseDto
 from src.presentation.gui.ui.controllers import run_usecase_async, MainController
 from src.presentation.gui.ui.pages import VmsStatusesPage
@@ -19,6 +19,7 @@ class ShutdownController:
         self.set_central_widget(page)
 
         use_case = get(ShutdownUseCase)(f"{global_vars['root_dir']}/config.yaml")
+        use_case.ev_bus.attach(VmsListEvent, page.vms_list_event_listener)
         use_case.ev_bus.attach(TextEvent, page.text_event_listener)
 
         dto = ShutdownUseCaseDto(False)

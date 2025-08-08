@@ -37,7 +37,10 @@ class TopBarWidget(QWidget):
 
     def disable_buttons(self) -> None:
         for btn in self.buttons:
+            btn.setAttribute(Qt.WidgetAttribute.WA_UnderMouse, False)
+            btn.clearFocus()
             btn.setEnabled(False)
+            btn.repaint()
 
     def enable_buttons(self) -> None:
         for btn in self.buttons:

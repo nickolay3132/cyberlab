@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 
 from src.core.entities import Storage, VM
 from src.core.entities.event_bus import IEventBus
+from src.core.entities.event_bus.events import VmsListEvent
 from src.core.entities.event_bus.events.progress_event import ProgressEvent
 from src.core.entities.event_bus.events.text_event import TextEvent
 from src.core.enums import DownloadingType
@@ -38,6 +39,8 @@ class InstallUseCase:
     def execute(self, dto: InstallUseCaseDto):
         storage = self.storage_repo.get()
         vms = self.vm_repo.get_all()
+
+        self.ev_bus.notify(VmsListEvent(['main', *[vm.name for vm in vms]]))
 
         if not dto.skip_download:
             self._install_ova_files(dto.no_verify, dto.repository, storage, vms)

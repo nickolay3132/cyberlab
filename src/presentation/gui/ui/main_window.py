@@ -5,6 +5,7 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, QLayout
 
 from src.bootstrap import global_vars
+from src.presentation.gui import run_controller_async
 from src.presentation.gui.ui.controllers import MainController, StartupController
 from src.presentation.gui.ui.controllers.install_controller import InstallController
 from src.presentation.gui.ui.controllers.shutdown_controller import ShutdownController
@@ -68,4 +69,6 @@ class MainWindow(QMainWindow):
 
         if controller:
             self.topbar.disable_buttons()
+            # run_controller_async(controller, self._set_central_widget, self.topbar.enable_buttons)
             controller(self._set_central_widget, self.topbar.enable_buttons).run()
+
