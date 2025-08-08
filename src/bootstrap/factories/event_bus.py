@@ -6,4 +6,4 @@ ev_bus = EventBusImpl()
 
 @bind
 def make_event_bus() -> IEventBus:
-    return ev_bus
+    return EventBusImpl()

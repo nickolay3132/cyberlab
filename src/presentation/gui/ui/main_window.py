@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QTimer
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QPalette, QColor
 from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QWidget, QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, \
     QLayout
 
@@ -19,6 +19,7 @@ class MainWindow(QMainWindow):
 
         self.topbar = self._topbar()
         self.stack = QStackedWidget()
+        self.central_widget = QWidget()
 
         layout = self._layout()
 
@@ -26,15 +27,28 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        MainController(self.stack).show_main_page()
+        MainController(self._set_central_widget).show_main_page()
 
+    def _set_central_widget(self, widget: QWidget):
+        layout = self.central_widget.layout()
+
+        if layout is None:
+            layout = QVBoxLayout(self.central_widget)
+
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # Добавить новый виджет
+        layout.addWidget(widget)
 
     def _layout(self) -> QLayout:
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-        layout.addWidget(self.topbar)
-        layout.addWidget(self.stack)
+        layout.addWidget(self.topbar, stretch=0)
+        layout.addWidget(self.central_widget, stretch=1)
         return layout
 
     def _topbar(self) -> QWidget:
@@ -61,7 +75,7 @@ class MainWindow(QMainWindow):
         return topbar
 
     def on_startup_clicked(self):
-        StartupController(self.stack).show_startup_page()
+        StartupController(self._set_central_widget).show_startup_page()
 
     def on_shutdown_clicked(self):
-        ShutdownController(self.stack).show_shutdown_page()
+        ShutdownController(self._set_central_widget).show_shutdown_page()

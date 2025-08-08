@@ -2,7 +2,7 @@ from typing import Tuple, Dict, List
 
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
 
 from src.bootstrap import global_vars
 from src.core.entities.event_bus.events import TextEvent
@@ -15,8 +15,8 @@ class VmsStatusPanel(QWidget):
         super().__init__()
         self.layout = QVBoxLayout()
         self.layout.setSpacing(15)
-        self.layout.setContentsMargins(10, 10, 10, 10)  # необязательно, но красиво
-        self.layout.setAlignment(Qt.AlignmentFlag.AlignTop)  # ← к
+        self.layout.setContentsMargins(10, 10, 10, 10)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.setLayout(self.layout)
 
         # vm_name -> (row_layout, content_widget)
@@ -28,9 +28,9 @@ class VmsStatusPanel(QWidget):
     def initialize(self, vm_names: List[str]) -> None:
         for vm_name in vm_names:
             row_layout = QHBoxLayout()
-            row_layout.setSpacing(5)  # убираем промежутки между виджетами
+            row_layout.setSpacing(5)
             row_layout.setContentsMargins(0, 0, 0, 0)
-            row_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)  # прижимаем весь ряд влево
+            row_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
             formatted_vm_name = '-'.join(part.capitalize() for part in vm_name.split('-'))
             name_label = QLabel(f'{formatted_vm_name}: ')
