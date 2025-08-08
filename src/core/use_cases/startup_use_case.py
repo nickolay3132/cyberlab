@@ -24,6 +24,6 @@ class StartupUseCase:
             is_success = self.vm_boot_service.startup(vm.name, vm.boot_policy.startup)
 
             if is_success:
-                self.ev_bus.notify(TextEvent(vm.name, TextEventType.SUCCESS, "stated successfully"))
+                self.ev_bus.notify(TextEvent(vm.name, TextEventType.SUCCESS, "vm is running"))
             else:
                 self.ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "cannot start vm"))

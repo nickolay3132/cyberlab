@@ -3,7 +3,7 @@ import time
 from PyQt6.QtWidgets import QStackedWidget
 
 from src.presentation.gui.ui.controllers import run_usecase_async
-from src.presentation.gui.ui.pages import MainPage
+from src.presentation.gui.ui.pages import VmsStatusesPage
 
 
 class MainController:
@@ -11,7 +11,7 @@ class MainController:
         self.stack = stacked_widget
 
     def show_main_page(self):
-        page = MainPage()
+        page = VmsStatusesPage()
 
         def execute():
             print("Usecase running...")  # ← безопасно

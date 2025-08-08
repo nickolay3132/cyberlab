@@ -5,7 +5,7 @@ from src.core.entities.event_bus import IEventBus
 from src.core.entities.event_bus.events import TextEvent
 from src.core.use_cases import StartupUseCaseDto, StartupUseCase
 from src.presentation.gui.ui.controllers import run_usecase_async
-from src.presentation.gui.ui.pages import StartupPage
+from src.presentation.gui.ui.pages import VmsStatusesPage
 
 
 class StartupController:
@@ -13,7 +13,7 @@ class StartupController:
         self.stack = stacked_widget
 
     def show_startup_page(self):
-        page = StartupPage()
+        page = VmsStatusesPage()
 
         def execute():
             ev_bus = get(IEventBus)()

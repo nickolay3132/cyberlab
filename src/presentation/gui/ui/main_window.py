@@ -1,7 +1,9 @@
 from PyQt6.QtCore import QTimer
+from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QWidget, QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, \
     QLayout
 
+from src.bootstrap import global_vars
 from src.presentation.gui.ui.controllers import MainController, StartupController
 from src.presentation.gui.ui.controllers.shutdown_controller import ShutdownController
 
@@ -9,6 +11,9 @@ from src.presentation.gui.ui.controllers.shutdown_controller import ShutdownCont
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.font = global_vars.get('btn_font', QFont())
+
         self.setWindowTitle("CyberLab Management Tool")
         self.setMinimumSize(800, 600)
 
@@ -39,11 +44,15 @@ class MainWindow(QMainWindow):
         topbar_layout.setSpacing(15)
 
         btn_startup = QPushButton("Startup")
+        btn_startup.setFont(self.font)
+        btn_startup.setStyleSheet("padding: 8px 16px;")
         btn_startup.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         btn_startup.clicked.connect(self.on_startup_clicked)
         topbar_layout.addWidget(btn_startup)
 
         btn_shutdown = QPushButton("Shutdown")
+        btn_shutdown.setFont(self.font)
+        btn_shutdown.setStyleSheet("padding: 8px 16px;")
         btn_shutdown.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         btn_shutdown.clicked.connect(self.on_shutdown_clicked)
         topbar_layout.addWidget(btn_shutdown)

@@ -5,7 +5,7 @@ from src.core.entities.event_bus import IEventBus
 from src.core.entities.event_bus.events import TextEvent
 from src.core.use_cases import ShutdownUseCase, ShutdownUseCaseDto
 from src.presentation.gui.ui.controllers import run_usecase_async, MainController
-from src.presentation.gui.ui.pages.shutdown_page import ShutdownPage
+from src.presentation.gui.ui.pages import VmsStatusesPage
 
 
 class ShutdownController:
@@ -13,7 +13,7 @@ class ShutdownController:
         self.stack = stacked_widget
 
     def show_shutdown_page(self):
-        page = ShutdownPage()
+        page = VmsStatusesPage()
 
         def execute():
             ev_bus = get(IEventBus)()

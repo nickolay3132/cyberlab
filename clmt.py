@@ -2,6 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from PyQt6.QtGui import QFontDatabase, QFont
 from PyQt6.QtWidgets import QApplication
 
 import src
@@ -25,8 +26,15 @@ def main():
         print(sys.argv)
     else:
         app = QApplication([])
+
+        font_id = QFontDatabase.addApplicationFont(f"{global_vars['root_dir']}/static/fonts/FragmentMono-Regular.ttf")
+        font_name = QFontDatabase.applicationFontFamilies(font_id)[0]
+        global_vars['font'] = QFont(font_name, 11)
+        global_vars['btn_font'] = QFont(font_name, 9)
+
         window = MainWindow()
         window.show()
+
         sys.exit(app.exec())
 
 if __name__ == "__main__":
