@@ -105,7 +105,6 @@ class InstallUseCase:
         event = ProgressEvent(self.downloading_now, state, total, actual, error_msg)
 
         if state == DownloadingType.FAILED:
-            event.id = 'dialog'
             self.is_downloading_failed = True
 
         self.ev_bus.notify(event)
@@ -114,5 +113,6 @@ class InstallUseCase:
         if success:
             self.ev_bus.notify(TextEvent(vm_name, TextEventType.SUCCESS, "Successfully imported"))
         else:
-            self.ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"{vm_name.capitalize()} import failed"))
-            self.ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"Log files at {self.log_dir}"))
+            self.ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"{vm_name.capitalize()} import failed\nLog files at {self.log_dir}"))
+            self.ev_bus.notify(TextEvent(vm_name, TextEventType.ERROR, "unable to import vm"))
+

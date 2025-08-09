@@ -3,7 +3,7 @@ from typing import Callable
 
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QWidget, QLayout, QHBoxLayout, QPushButton, QSizePolicy, QApplication
+from PyQt6.QtWidgets import QWidget, QLayout, QHBoxLayout, QPushButton, QSizePolicy
 
 from src.bootstrap import global_vars
 

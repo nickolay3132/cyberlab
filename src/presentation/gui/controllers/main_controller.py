@@ -1,9 +1,7 @@
-import time
 from typing import Callable
 
-from PyQt6.QtWidgets import QStackedWidget, QWidget
+from PyQt6.QtWidgets import QWidget
 
-from src.presentation.gui.ui.controllers import run_usecase_async
 from src.presentation.gui.ui.pages import VmsStatusesPage
 
 
