@@ -1,6 +1,7 @@
 from typing import Optional
 
 from src.core.entities import VM, Nic
+from src.core.enums import NicType
 from src.core.interfaces.gateways import IVmsNetworkGateway
 from src.core.interfaces.services.vms import IVmNetworkService
 
@@ -14,13 +15,14 @@ class VmNetworkServiceImpl(IVmNetworkService):
 
         for nic in vm.nics:
             match nic.type:
-                case "natnetwork":
+                case NicType.NAT_NETWORK:
                     is_success = self._enable_nat_network(vm.name, nic)
 
         return is_success
 
     def _enable_nat_network(self, vm_name: str, nic: Nic) -> bool:
         net_created: Optional[bool] = None
+
         if nic.network_name not in self.vms_network_gateway.get_nat_networks_str():
             net_created = self.vms_network_gateway.create_nat_network(nic.network_name, '10.0.2.0/24', True)
 

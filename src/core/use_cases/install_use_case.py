@@ -31,7 +31,7 @@ class InstallUseCase:
     import_vm_service: IImportVMService
     vm_network_service: IVmNetworkService
 
-    is_downloading_failed: bool = False
+    importing_needed: bool = True
     downloading_now: str = ''
     log_dir: str = ''
     ova_dir: str = ''
@@ -45,7 +45,7 @@ class InstallUseCase:
         if not dto.skip_download:
             self._install_ova_files(dto.no_verify, dto.repository, storage, vms)
 
-        if not self.is_downloading_failed:
+        if self.importing_needed:
             self._import_vms(storage, vms)
             self._enable_networks(vms)
 
@@ -105,7 +105,7 @@ class InstallUseCase:
         event = ProgressEvent(self.downloading_now, state, total, actual, error_msg)
 
         if state == DownloadingType.FAILED:
-            self.is_downloading_failed = True
+            self.importing_needed = False
 
         self.ev_bus.notify(event)
 
