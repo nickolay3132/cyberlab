@@ -20,15 +20,15 @@ def make_fetch_config_use_case(file_system_service: IFileSystemService) -> Fetch
 
 @bind
 def make_install_use_case(config_path: str, snapshots_path: str) -> InstallUseCase:
-    ev_bus = get(IEventBus)()
+    ev_bus = get(IEventBus)
 
-    yaml_loader = get(YamlLoader)(config_path)
-    storage_repo = get(IStorageRepository)(yaml_loader)
-    vms_repo = get(IVMRepository)(yaml_loader)
+    yaml_loader = get(YamlLoader, config_path)
+    storage_repo = get(IStorageRepository, yaml_loader)
+    vms_repo = get(IVMRepository, yaml_loader)
 
-    install_vm_service = get(IInstallVMService)()
-    import_vm_service = get(IImportVMService)()
-    vm_networks_service = get(IVmNetworkService)()
+    install_vm_service = get(IInstallVMService)
+    import_vm_service = get(IImportVMService)
+    vm_networks_service = get(IVmNetworkService)
 
     return InstallUseCase(
         ev_bus=ev_bus,
@@ -41,12 +41,12 @@ def make_install_use_case(config_path: str, snapshots_path: str) -> InstallUseCa
 
 @bind
 def make_startup_use_case(config_path: str) -> StartupUseCase:
-    yaml_loader = get(YamlLoader)(config_path)
-    vms_repo = get(IVMRepository)(yaml_loader)
+    yaml_loader = get(YamlLoader, config_path)
+    vms_repo = get(IVMRepository, yaml_loader)
 
-    ev_bus = get(IEventBus)()
+    ev_bus = get(IEventBus)
 
-    vm_boot_service = get(IVmBootService)()
+    vm_boot_service = get(IVmBootService)
 
     return StartupUseCase(
         vms_repo=vms_repo,
@@ -56,12 +56,12 @@ def make_startup_use_case(config_path: str) -> StartupUseCase:
 
 @bind
 def make_shutdown_use_case(config_path: str) -> ShutdownUseCase:
-    yaml_loader = get(YamlLoader)(config_path)
-    vms_repo = get(IVMRepository)(yaml_loader)
+    yaml_loader = get(YamlLoader, config_path)
+    vms_repo = get(IVMRepository, yaml_loader)
 
-    ev_bus = get(IEventBus)()
+    ev_bus = get(IEventBus)
 
-    vm_boot_service = get(IVmBootService)()
+    vm_boot_service = get(IVmBootService)
 
     return ShutdownUseCase(
         vms_repo=vms_repo,

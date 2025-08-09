@@ -4,18 +4,17 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLayout
 
 from src.bootstrap import global_vars
-from src.presentation.gui.controllers import MainController, StartupController
-from src.presentation.gui.controllers.install_controller import InstallController
-from src.presentation.gui.controllers.shutdown_controller import ShutdownController
+from src.presentation.gui.controllers import main_controller, startup_controller, install_controller, \
+    shutdown_controller
 from src.presentation.gui.ui.widgets import TopBarWidget
 
 
 class MainWindow(QMainWindow):
     controllers = {
-        'main': MainController,
-        'install': InstallController,
-        'startup': StartupController,
-        'shutdown': ShutdownController,
+        'main': main_controller,
+        'install': install_controller,
+        'startup': startup_controller,
+        'shutdown': shutdown_controller,
     }
 
     buttons = ['Install', 'Startup', 'Shutdown']
@@ -67,5 +66,5 @@ class MainWindow(QMainWindow):
 
         if controller:
             self.topbar.disable_buttons()
-            controller(self._set_central_widget, self.topbar.enable_buttons).run()
+            controller(self._set_central_widget, self.topbar.enable_buttons)
 

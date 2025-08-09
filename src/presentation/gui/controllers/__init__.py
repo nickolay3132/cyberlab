@@ -1,4 +1,4 @@
-from PyQt6.QtCore import QObject, pyqtSignal, QThread, pyqtSlot
+from PyQt6.QtCore import pyqtSignal, QThread
 
 
 running_threads = []
@@ -16,30 +16,13 @@ class UseCaseWorker(QThread):
         self.finished.emit()
 
 def run_usecase_async(usecase, dto, on_complete):
-    # thread = QThread()
-    # worker = UseCaseWorker(usecase, dto)
-    # worker.moveToThread(thread)
-    #
-    # thread.started.connect(worker.run)
-    # worker.finished.connect(on_complete)
-    # worker.finished.connect(thread.quit)
-    # worker.finished.connect(worker.deleteLater)
-    # worker.finished.connect(thread.deleteLater)
-
     worker = UseCaseWorker(usecase, dto)
     worker.finished.connect(on_complete)
     worker.start()
 
-    # thread.start()
-
-    # def cleanup():
-    #     if (thread, worker) in running_threads:
-    #         running_threads.remove((thread, worker))
-    #
-    # thread.finished.connect(cleanup)
-
     running_threads.append((None, worker))
 
-
-from .main_controller import MainController
-from .startup_controller import StartupController
+from .install_controller import install_controller
+from .main_controller import main_controller
+from .shutdown_controller import shutdown_controller
+from .startup_controller import startup_controller

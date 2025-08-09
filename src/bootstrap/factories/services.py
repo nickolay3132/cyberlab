@@ -25,26 +25,26 @@ def make_parallel_task_service() -> IParallelTaskService:
 
 @bind
 def make_vm_networks_service() -> IVmNetworkService:
-    vms_network_gateway = get(IVmsNetworkGateway)()
+    vms_network_gateway = get(IVmsNetworkGateway)
 
     return VmNetworkServiceImpl(vms_network_gateway)
 
 @bind
 def make_vm_boot_service() -> IVmBootService:
-    vms_boot_gateway = get(IVmsBootGateway)()
+    vms_boot_gateway = get(IVmsBootGateway)
 
     return VmBootServiceImpl(vms_boot_gateway)
 
 @bind
 def make_import_vm_service() -> IImportVMService:
-    file_system_service = get(IFileSystemService)()
-    parallel_task_service = get(IParallelTaskService)()
-    vms_gateway = get(IVMsGateway)()
+    file_system_service = get(IFileSystemService)
+    parallel_task_service = get(IParallelTaskService)
+    vms_gateway = get(IVMsGateway)
 
     return ImportVMServiceImpl(file_system_service, parallel_task_service, vms_gateway)
 
 @bind
 def make_install_vm_service() -> IInstallVMService:
-    file_system_service = get(IFileSystemService)()
+    file_system_service = get(IFileSystemService)
 
     return InstallVMServiceImpl(file_system_service)
