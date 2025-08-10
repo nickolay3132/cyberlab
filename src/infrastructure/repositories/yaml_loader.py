@@ -16,14 +16,15 @@ class YamlLoader:
 
     def write(self, data: Any) -> None:
         try:
+            dumped = yaml.safe_dump(data,
+                                    default_flow_style=False,
+                                    allow_unicode=True,
+                                    sort_keys=False)
+
             with open(self.file_path, "w", encoding="utf-8") as file:
-                yaml.safe_dump(data, file,
-                               default_flow_style=False,
-                               allow_unicode=True,
-                               sort_keys=False)
+                file.write(dumped)
 
-                self.data = yaml.safe_load(file)
-
+            self.data = yaml.safe_load(dumped)
         except (IOError, yaml.YAMLError) as e:
             raise yaml.YAMLError(f"Failed to write to {self.file_path}. Message: {e}")
 

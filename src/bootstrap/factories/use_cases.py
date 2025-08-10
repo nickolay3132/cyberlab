@@ -5,11 +5,12 @@ from src.core.entities.event_bus import IEventBus
 from src.core.entities.event_bus.events import ProgressEvent, TextEvent
 from src.core.use_cases import InstallUseCase, FetchConfigUseCase, StartupUseCase
 
-from src.core.interfaces.repositories import IStorageRepository, IVMRepository
+from src.core.interfaces.repositories import IStorageRepository, IVMRepository, ISnapshotsRepository
 
 from src.core.interfaces.services import IFileSystemService
 from src.core.interfaces.services.vms import IInstallVMService, IImportVMService, IVmNetworkService, IVmBootService
 from src.core.use_cases.shutdown_use_case import ShutdownUseCase
+from src.core.use_cases.snapshots.create_snapshot_use_case import CreateSnapshotUseCase
 
 from src.infrastructure.repositories import YamlLoader
 
@@ -68,3 +69,20 @@ def make_shutdown_use_case(config_path: str) -> ShutdownUseCase:
         vm_boot_service=vm_boot_service,
         ev_bus=ev_bus,
     )
+
+@bind
+def make_create_snapshot_use_case(config_path: str, snapshots_path: str) -> CreateSnapshotUseCase:
+    config_yaml_loader = get(YamlLoader, config_path)
+    snaphsots_yaml_loader = get(YamlLoader, snapshots_path)
+
+    vms_repo = get(IVMRepository, config_yaml_loader)
+    snapshots_repo = get(ISnapshotsRepository, snaphsots_yaml_loader)
+
+    ev_bus = get(IEventBus)
+
+    return CreateSnapshotUseCase(
+        ev_bus=ev_bus,
+        vms_repo=vms_repo,
+        snapshots_repo=snapshots_repo,
+    )
+

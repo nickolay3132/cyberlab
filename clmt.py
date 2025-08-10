@@ -12,6 +12,7 @@ from src.core.interfaces.services import IFileSystemService
 from src.core.use_cases import InstallUseCase, InstallUseCaseDto, FetchConfigUseCase, StartupUseCase, StartupUseCaseDto
 from src.core.use_cases.fetch_config_use_case import FetchConfigUseCaseDto
 from src.core.use_cases.shutdown_use_case import ShutdownUseCase, ShutdownUseCaseDto
+from src.core.use_cases.snapshots.create_snapshot_use_case import CreateSnapshotUseCase, CreateSnapshotUseCaseDto
 from src.infrastructure.repositories import YamlLoader
 from src.presentation.gui.ui import MainWindow
 
@@ -24,6 +25,11 @@ def main():
     if 'cli' in sys.argv:
         print('CLI mode')
         print(sys.argv)
+        # create_snapshot_use_case = get(CreateSnapshotUseCase, f"{global_vars['root_dir']}/config.yaml", f"{global_vars['root_dir']}/snapshots.yaml")
+        # create_snapshot_use_case.execute(CreateSnapshotUseCaseDto(
+        #     snapshot_name='test3',
+        #     description='testing snapshot'
+        # ))
     else:
         app = QApplication([])
 

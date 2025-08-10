@@ -5,164 +5,121 @@ from src.core.interfaces.repositories import ISnapshotsRepository
 from src.infrastructure.repositories import YamlLoader
 
 
+def recursive(func):
+    func._is_recursive = True
+    func.__doc__ = (func.__doc__ or "") + "\n\nNote: This function is recursive."
+    return func
+
+@recursive
+def _find_current(root: Snapshot) -> Optional[Snapshot]:
+    if root.is_current:
+        return root
+    for child in root.children:
+        found = _find_current(child)
+        if found:
+            return found
+    return None
+
+@recursive
+def _find_by_identity(root: Snapshot, name: str, timestamp: int) -> Optional[Snapshot]:
+    if root.name == name and root.timestamp == timestamp:
+        return root
+    for child in root.children:
+        found = _find_by_identity(child, name, timestamp)
+        if found:
+            return found
+    return None
+
+@recursive
+def _find_all_by_name(root: Snapshot, name: str) -> List[Snapshot]:
+    result = []
+    if root.name == name:
+        result.append(root)
+    for child in root.children:
+        result.extend(_find_all_by_name(child, name))
+    return result
+
+@recursive
+def _mark_all_non_current(root: Optional[Snapshot]) -> None:
+    if not root:
+        return
+
+    root.is_current = False
+    for child in root.children:
+        _mark_all_non_current(child)
+
+
 class YamlSnapshotRepository(ISnapshotsRepository):
     def __init__(self, yaml_loader: YamlLoader):
         self.yaml_loader = yaml_loader
-        self.root_snapshot = self._load_snapshots()
+        self.root_snapshot = self._load()
 
-    def _load_snapshots(self) -> Optional[Snapshot]:
+    def _load(self) -> Optional[Snapshot]:
         data = self.yaml_loader.read(create_if_not_exists=True)
-        if not data:
-            return None
-        return Snapshot.from_dict(data)
+        return Snapshot.from_dict(data) if data else None
 
-    def add_snapshot(self, snapshot: Snapshot, parent_name: Optional[str] = None) -> bool:
-        self.root_snapshot = self._load_snapshots()
+    def _save(self) -> None:
+        self.yaml_loader.write(self.root_snapshot.to_dict() if self.root_snapshot else {})
 
-        if self._snapshot_exists(snapshot.name, snapshot.timestamp):
-            return False
+    def add_snapshot(self, snapshot: Snapshot, parent_snapshot: Optional[Snapshot]) -> bool:
+        self.root_snapshot = self._load()
 
-        if parent_name is None:
-            snapshot.is_current = True
-            self._mark_all_non_current(self.root_snapshot)
-            if self.root_snapshot is None:
-                self.root_snapshot = snapshot
-            else:
-                snapshot.children.append(self.root_snapshot)
-                self.root_snapshot = snapshot
-        else:
-            parent = self.find_snapshot(parent_name)
-            if not parent:
+        # Skip if root exists and an identical snapshot (by name and timestamp) is already present
+        if self.root_snapshot:
+            existing = _find_by_identity(self.root_snapshot, snapshot.name, snapshot.timestamp)
+            if existing:
                 return False
 
-            snapshot.is_current = True
-            self._mark_all_non_current(self.root_snapshot)
+        _mark_all_non_current(self.root_snapshot)
+        snapshot.is_current = True
+
+        if parent_snapshot is None:
+            if self.root_snapshot:
+                snapshot.children.append(self.root_snapshot)
+            self.root_snapshot = snapshot
+        else:
+            parent = _find_by_identity(self.root_snapshot, parent_snapshot.name, parent_snapshot.timestamp)
+            if not parent:
+                return False
             parent.children.append(snapshot)
 
         self._save()
         return True
 
     def get_current_snapshot(self) -> Optional[Snapshot]:
-        self.root_snapshot = self._load_snapshots()
-
-        if self.root_snapshot is None:
-            return None
-        return self._find_current(self.root_snapshot)
+        self.root_snapshot = self._load()
+        return _find_current(self.root_snapshot) if self.root_snapshot else None
 
     def find_snapshot(self, name: str) -> Optional[Snapshot]:
-        self.root_snapshot = self._load_snapshots()
-
-        if self.root_snapshot is None:
+        self.root_snapshot = self._load()
+        if not self.root_snapshot:
             return None
-        return self._find_by_name(self.root_snapshot, name)
+        snapshots = _find_all_by_name(self.root_snapshot, name)
+        return max(snapshots, key=lambda s: s.timestamp, default=None)
 
     def find_all_snapshots(self, name: str) -> List[Snapshot]:
-        self.root_snapshot = self._load_snapshots()
-
-        if self.root_snapshot is None:
-            return []
-
-        return self._find_all_by_name(self.root_snapshot, name)
-
+        self.root_snapshot = self._load()
+        return _find_all_by_name(self.root_snapshot, name) if self.root_snapshot else []
 
     def get_root_snapshot(self) -> Optional[Snapshot]:
-        self.root_snapshot = self._load_snapshots()
-
+        self.root_snapshot = self._load()
         return self.root_snapshot
 
-    def get_snapshots_as_list(self) -> List[Snapshot]:
-        self.root_snapshot = self._load_snapshots()
-
-        if self.root_snapshot is None:
-            return []
-
-        flat_list: List[Snapshot] = []
-        stack: List[Snapshot] = [self.root_snapshot]
-
-        while stack:
-            current = stack.pop()
-            snapshot_copy = Snapshot(
-                name=current.name,
-                description=current.description,
-                timestamp=current.timestamp,
-                is_current=current.is_current,
-                children=[]
-            )
-            flat_list.append(snapshot_copy)
-            stack.extend(reversed(current.children))
-
-        return flat_list
-
     def restore_snapshot(self, snapshot: Snapshot) -> bool:
-        self.root_snapshot = self._load_snapshots()
-
-        if self.root_snapshot is None:
+        self.root_snapshot = self._load()
+        if not self.root_snapshot:
             return False
 
-        snapshot_names = [f"{s.timestamp}-{s.name}" for s in self.get_snapshots_as_list()]
-        if f"{snapshot.timestamp}-{snapshot.name}" not in snapshot_names:
+        target = _find_by_identity(self.root_snapshot, snapshot.name, snapshot.timestamp)
+        if not target:
             return False
 
-        self._mark_all_non_current(self.root_snapshot)
-
-        snapshot.is_current = True
-
+        _mark_all_non_current(self.root_snapshot)
+        target.is_current = True
         self._save()
         return True
 
-    def _mark_all_non_current(self, snapshot: Optional[Snapshot]) -> None:
-        if snapshot is None:
-            return
-        snapshot.is_current = False
-        for child in snapshot.children:
-            self._mark_all_non_current(child)
+    def _find_latest_by_name(self, name: str) -> Optional[Snapshot]:
+        snapshots = _find_all_by_name(self.root_snapshot, name)
+        return max(snapshots, key=lambda s: s.timestamp, default=None)
 
-    def _find_current(self, snapshot: Snapshot) -> Optional[Snapshot]:
-        if snapshot.is_current:
-            return snapshot
-        for child in snapshot.children:
-            found = self._find_current(child)
-            if found:
-                return found
-        return None
-
-    def _find_by_name(self, snapshot: Snapshot, name: str) -> Optional[Snapshot]:
-        if snapshot.name == name:
-            return snapshot
-        for child in snapshot.children:
-            found = self._find_by_name(child, name)
-            if found:
-                return found
-        return None
-
-    def _find_all_by_name(self, snapshot: Snapshot, name: str) -> List[Snapshot]:
-        result = []
-
-        if snapshot.name == name:
-            result.append(snapshot)
-
-        for child in snapshot.children:
-            result.extend(self._find_all_by_name(child, name))
-
-        return result
-
-    def _save(self) -> None:
-        if self.root_snapshot is None:
-            self.yaml_loader.write({})
-        else:
-            self.yaml_loader.write(self.root_snapshot.to_dict())
-
-    def _snapshot_exists(self, name: str, timestamp: int) -> bool:
-        if self.root_snapshot is None:
-            return False
-        return self._check_snapshot_exists(self.root_snapshot, name, timestamp)
-
-    def _check_snapshot_exists(self, snapshot: Snapshot, name: str, timestamp: int) -> bool:
-        if snapshot.name == name and snapshot.timestamp == timestamp:
-            return True
-
-        for child in snapshot.children:
-            if self._check_snapshot_exists(child, name, timestamp):
-                return True
-
-        return False

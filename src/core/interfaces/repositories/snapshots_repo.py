@@ -6,7 +6,7 @@ from src.core.entities import Snapshot
 
 class ISnapshotsRepository(ABC):
     @abstractmethod
-    def add_snapshot(self, snapshot: Snapshot, parent_name: Optional[str] = None) -> bool: pass
+    def add_snapshot(self, snapshot: Snapshot, parent_snapshot: Optional[Snapshot]) -> bool: pass
 
     @abstractmethod
     def get_current_snapshot(self) -> Optional[Snapshot]: pass
