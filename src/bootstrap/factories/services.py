@@ -1,18 +1,18 @@
 from src.bootstrap import get
 from src.bootstrap.binder import bind
 
-from src.core.interfaces.gateways import IVMsGateway, IVmsNetworkGateway, IVmsBootGateway
+from src.core.interfaces.gateways import IVMsGateway, IVmsNetworkGateway, IVmsBootGateway, IVmsSnapshotsGateway
 from src.core.interfaces.services import IFileSystemService, IParallelTaskService
 from src.core.interfaces.services.vms import (IImportVMService,
                                               IInstallVMService,
                                               IVmNetworkService,
-                                              IVmBootService)
+                                              IVmBootService, IVmSnapshotsService)
 
 from src.infrastructure.services import FileSystemServiceImpl, ParallelTaskServiceImpl
 from src.infrastructure.services.vms import (ImportVMServiceImpl,
                                              InstallVMServiceImpl,
                                              VmNetworkServiceImpl,
-                                             VmBootServiceImpl)
+                                             VmBootServiceImpl, VmSnapshotsServiceImpl)
 
 
 @bind
@@ -48,3 +48,9 @@ def make_install_vm_service() -> IInstallVMService:
     file_system_service = get(IFileSystemService)
 
     return InstallVMServiceImpl(file_system_service)
+
+@bind
+def make_vm_snapshots_service() -> IVmSnapshotsService:
+    vms_snapshots_gateway = get(IVmsSnapshotsGateway)
+
+    return VmSnapshotsServiceImpl(vms_snapshots_gateway)

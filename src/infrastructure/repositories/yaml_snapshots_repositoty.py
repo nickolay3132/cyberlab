@@ -90,12 +90,11 @@ class YamlSnapshotRepository(ISnapshotsRepository):
         self.root_snapshot = self._load()
         return _find_current(self.root_snapshot) if self.root_snapshot else None
 
-    def find_snapshot(self, name: str) -> Optional[Snapshot]:
-        self.root_snapshot = self._load()
-        if not self.root_snapshot:
-            return None
-        snapshots = _find_all_by_name(self.root_snapshot, name)
-        return max(snapshots, key=lambda s: s.timestamp, default=None)
+    # def find_snapshot(self, target: Snapshot) -> Optional[Snapshot]:
+    #     self.root_snapshot = self._load()
+    #     if not self.root_snapshot:
+    #         return None
+    #     return _find_by_identity(self.root_snapshot, target.name, target.timestamp)
 
     def find_all_snapshots(self, name: str) -> List[Snapshot]:
         self.root_snapshot = self._load()
@@ -118,8 +117,4 @@ class YamlSnapshotRepository(ISnapshotsRepository):
         target.is_current = True
         self._save()
         return True
-
-    def _find_latest_by_name(self, name: str) -> Optional[Snapshot]:
-        snapshots = _find_all_by_name(self.root_snapshot, name)
-        return max(snapshots, key=lambda s: s.timestamp, default=None)
 

@@ -11,8 +11,8 @@ class ISnapshotsRepository(ABC):
     @abstractmethod
     def get_current_snapshot(self) -> Optional[Snapshot]: pass
 
-    @abstractmethod
-    def find_snapshot(self, name: str) -> Optional[Snapshot]: pass
+    # @abstractmethod
+    # def find_snapshot(self, target: Snapshot) -> Optional[Snapshot]: pass
 
     @abstractmethod
     def find_all_snapshots(self, name: str) -> List[Snapshot]: pass

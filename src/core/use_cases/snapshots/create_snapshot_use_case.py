@@ -6,7 +6,7 @@ from src.core.entities import Snapshot
 from src.core.entities.event_bus import IEventBus
 from src.core.enums.events import TextEventType
 from src.core.interfaces.repositories import ISnapshotsRepository, IVMRepository
-from src.core.interfaces.services.vms import IVmSnapshotsSnapshotsService
+from src.core.interfaces.services.vms import IVmSnapshotsService
 
 
 @dataclass
@@ -21,7 +21,7 @@ class CreateSnapshotUseCase:
     snapshots_repo: ISnapshotsRepository
     vms_repo: IVMRepository
 
-    # snapshots_service: IVmSnapshotsSnapshotsService
+    snapshots_service: IVmSnapshotsService
 
     def execute(self, dto: CreateSnapshotUseCaseDto) -> None:
         current_snapshot = self.snapshots_repo.get_current_snapshot()
@@ -39,8 +39,8 @@ class CreateSnapshotUseCase:
         if needed_to_create:
             self.ev_bus.notify(TextEvent('main', TextEventType.TITLE, f'Creating snapshot {snapshot_name} for each vm'))
 
-            # for vm in self.vms_repo.get_all():
-                # self.snapshots_service.create_snapshot(vm, new_snapshot)
+            for vm in self.vms_repo.get_all():
+                self.snapshots_service.create_snapshot(vm, new_snapshot)
 
             self.ev_bus.notify(TextEvent('main', TextEventType.SUCCESS, f'Snapshot {snapshot_name} created successfully'))
 

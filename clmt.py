@@ -1,18 +1,21 @@
 import argparse
 import sys
 from pathlib import Path
+from pprint import pprint
 
 from PyQt6.QtGui import QFontDatabase, QFont
 from PyQt6.QtWidgets import QApplication
 
 import src
+from src.core.entities.event_bus.events import SnapshotsTreeEvent
 from src.bootstrap import get, bootstrap, global_vars
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository
 from src.core.interfaces.services import IFileSystemService
 from src.core.use_cases import InstallUseCase, InstallUseCaseDto, FetchConfigUseCase, StartupUseCase, StartupUseCaseDto
 from src.core.use_cases.fetch_config_use_case import FetchConfigUseCaseDto
 from src.core.use_cases.shutdown_use_case import ShutdownUseCase, ShutdownUseCaseDto
-from src.core.use_cases.snapshots.create_snapshot_use_case import CreateSnapshotUseCase, CreateSnapshotUseCaseDto
+from src.core.use_cases.snapshots import CreateSnapshotUseCase, CreateSnapshotUseCaseDto, ListSnapshotsUseCase, \
+    ListSnapshotsUseCaseDto
 from src.infrastructure.repositories import YamlLoader
 from src.presentation.gui.ui import MainWindow
 
@@ -27,9 +30,13 @@ def main():
         print(sys.argv)
         # create_snapshot_use_case = get(CreateSnapshotUseCase, f"{global_vars['root_dir']}/config.yaml", f"{global_vars['root_dir']}/snapshots.yaml")
         # create_snapshot_use_case.execute(CreateSnapshotUseCaseDto(
-        #     snapshot_name='test3',
+        #     snapshot_name='testing',
         #     description='testing snapshot'
         # ))
+
+        list_snapshots_use_case = get(ListSnapshotsUseCase, f"{global_vars['root_dir']}/snapshots.yaml")
+        list_snapshots_use_case.ev_bus.attach(SnapshotsTreeEvent, lambda tree: pprint(tree))
+        list_snapshots_use_case.execute(ListSnapshotsUseCaseDto())
     else:
         app = QApplication([])
 
