@@ -2,8 +2,8 @@ from src.bootstrap import get
 from src.bootstrap.binder import bind
 
 from src.core.entities.event_bus import IEventBus
-from src.core.entities.event_bus.events import ProgressEvent, TextEvent
-from src.core.use_cases import InstallUseCase, FetchConfigUseCase, StartupUseCase
+from src.core.interfaces.gateways import IVMsGateway
+from src.core.use_cases import InstallUseCase, FetchConfigUseCase, StartupUseCase, CyberLabStateUseCase
 
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository, ISnapshotsRepository
 
@@ -19,6 +19,25 @@ from src.infrastructure.repositories import YamlLoader
 @bind
 def make_fetch_config_use_case(file_system_service: IFileSystemService) -> FetchConfigUseCase:
     return FetchConfigUseCase(file_system_service)
+
+@bind
+def make_cyber_lab_info_use_case(config_path: str) -> CyberLabStateUseCase:
+    vm_gateway = get(IVMsGateway)
+    ev_bus = get(IEventBus)
+
+    yaml_loader = get(YamlLoader, config_path)
+    vms_repo = get(IVMRepository, yaml_loader)
+    storage_repo = get(IStorageRepository, yaml_loader)
+
+    file_system_service = get(IFileSystemService)
+
+    return CyberLabStateUseCase(
+        vm_gateway=vm_gateway,
+        ev_bus=ev_bus,
+        vms_repo=vms_repo,
+        storage_repo=storage_repo,
+        filesystem_service=file_system_service,
+    )
 
 @bind
 def make_install_use_case(config_path: str, snapshots_path: str) -> InstallUseCase:

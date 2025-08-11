@@ -1,5 +1,6 @@
 import subprocess
 
+from src.core.entities import VM
 from src.core.interfaces.gateways import IVMsGateway
 
 
@@ -23,3 +24,22 @@ class VmsGatewayImpl(IVMsGateway):
         )
         process.wait()
         return process.returncode
+
+    def is_running(self, vm: VM) -> bool:
+        try:
+            result = subprocess.run(
+                ["VBoxManage", "showvminfo", vm.name, "--machinereadable"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8"
+            )
+            if result.returncode != 0:
+                return False
+
+            for line in result.stdout.splitlines():
+                if line.startswith("VMState="):
+                    state = line.split("=")[1].strip().strip('"')
+                    return state == "running"
+            return False
+        except Exception:
+            return False

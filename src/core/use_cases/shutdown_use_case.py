@@ -29,6 +29,6 @@ class ShutdownUseCase:
             is_success = self.vm_boot_service.shutdown(vm.name, vm.boot_policy.shutdown, force=dto.force)
 
             if is_success:
-                self.ev_bus.notify(TextEvent(vm.name, TextEventType.SUCCESS, "vm is stopped"))
+                self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "vm is stopped"))
             else:
                 self.ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "unable to stop VM (it may already be stopped)"))

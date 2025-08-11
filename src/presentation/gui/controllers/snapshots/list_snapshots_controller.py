@@ -31,9 +31,15 @@ def list_snapshots_controller(set_central_widget: Callable[[QWidget], None], on_
         rerender_tree_controller,
     )
 
+    back_home_controller = functools.partial(
+        src.presentation.gui.controllers.main_controller,
+        set_central_widget,
+        on_complete
+    )
+
     page.add_create_button(create_snapshot_controller)
     page.add_rollback_button(restore_controller)
-    page.add_back_home_button(lambda: print('back home'))
+    page.add_back_home_button(back_home_controller)
 
     set_central_widget(page)
 
