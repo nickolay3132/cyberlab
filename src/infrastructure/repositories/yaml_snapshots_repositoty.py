@@ -12,41 +12,44 @@ def recursive(func):
 
 @recursive
 def _find_current(root: Snapshot) -> Optional[Snapshot]:
-    if root.is_current:
-        return root
-    for child in root.children:
-        found = _find_current(child)
-        if found:
-            return found
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node.is_current:
+            return node
+        stack.extend(reversed(node.children))
     return None
 
 @recursive
 def _find_by_identity(root: Snapshot, name: str, timestamp: int) -> Optional[Snapshot]:
-    if root.name == name and root.timestamp == timestamp:
-        return root
-    for child in root.children:
-        found = _find_by_identity(child, name, timestamp)
-        if found:
-            return found
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node.name == name and node.timestamp == timestamp:
+            return node
+        stack.extend(reversed(node.children))
     return None
 
 @recursive
 def _find_all_by_name(root: Snapshot, name: str) -> List[Snapshot]:
     result = []
-    if root.name == name:
-        result.append(root)
-    for child in root.children:
-        result.extend(_find_all_by_name(child, name))
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node.name == name:
+            result.append(node)
+        stack.extend(reversed(node.children))
     return result
 
 @recursive
 def _mark_all_non_current(root: Optional[Snapshot]) -> None:
     if not root:
         return
-
-    root.is_current = False
-    for child in root.children:
-        _mark_all_non_current(child)
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        node.is_current = False
+        stack.extend(reversed(node.children))
 
 
 class YamlSnapshotRepository(ISnapshotsRepository):

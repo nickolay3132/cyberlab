@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLayout
 from src.bootstrap import global_vars
 from src.presentation.gui.controllers import main_controller, startup_controller, install_controller, \
     shutdown_controller
+from src.presentation.gui.controllers.snapshots import list_snapshots_controller
 from src.presentation.gui.ui.widgets import TopBarWidget
 
 
@@ -15,9 +16,10 @@ class MainWindow(QMainWindow):
         'install': install_controller,
         'startup': startup_controller,
         'shutdown': shutdown_controller,
+        'snapshots': list_snapshots_controller
     }
 
-    buttons = ['Install', 'Startup', 'Shutdown']
+    buttons = ['Install', 'Startup', 'Shutdown', 'Snapshots']
     font = global_vars.get('btn_font', QFont())
 
     def __init__(self):
