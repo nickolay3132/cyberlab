@@ -1,2 +1,4 @@
 from .list_snapshots_controller import list_snapshots_controller
 from .create_snapshot import create_snapshot_controller
+from .restore_snapshot_controller import restore_snapshot_controller
+from .rerender_tree_controller import rerender_tree_controller

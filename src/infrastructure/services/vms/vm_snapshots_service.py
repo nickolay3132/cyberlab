@@ -12,8 +12,5 @@ class VmSnapshotsServiceImpl(IVmSnapshotsService):
     def create_snapshot(self, vm: VM, snapshot: Snapshot) -> bool:
         return self.vms_snapshots_gateway.create_snapshot(vm, snapshot)
 
-    def restore_snapshot(self, snapshot: Snapshot) -> bool:
-        pass
-
-    def select_snapshot(self, snapshots: List[Snapshot], callback: Callable[[int], None]) -> Snapshot:
-        pass
+    def restore_snapshot(self, vm: VM, snapshot: Snapshot) -> bool:
+        return self.vms_snapshots_gateway.restore_snapshot(vm, snapshot)

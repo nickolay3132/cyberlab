@@ -9,9 +9,4 @@ class IVmSnapshotsService(ABC):
     def create_snapshot(self, vm: VM, snapshot: Snapshot) -> bool: pass
 
     @abstractmethod
-    def restore_snapshot(self, snapshot: Snapshot) -> bool: pass
-
-    @abstractmethod
-    def select_snapshot(self, snapshots: List[Snapshot], callback: Callable[[int], None]) -> Snapshot: pass
-
-    # TODO: Implement interface and create factory
+    def restore_snapshot(self, vm: VM, snapshot: Snapshot) -> bool: pass

@@ -1,2 +1,3 @@
 from .create_snapshot_use_case import CreateSnapshotUseCase, CreateSnapshotUseCaseDto
 from .list_snapshots_use_case import ListSnapshotsUseCase, ListSnapshotsUseCaseDto
+from .restore_snapshot_use_case import RestoreSnapshotUseCase, RestoreSnapshotUseCaseDto

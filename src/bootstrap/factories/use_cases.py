@@ -11,7 +11,7 @@ from src.core.interfaces.services import IFileSystemService
 from src.core.interfaces.services.vms import IInstallVMService, IImportVMService, IVmNetworkService, IVmBootService, \
     IVmSnapshotsService
 from src.core.use_cases.shutdown_use_case import ShutdownUseCase
-from src.core.use_cases.snapshots import CreateSnapshotUseCase, ListSnapshotsUseCase
+from src.core.use_cases.snapshots import CreateSnapshotUseCase, ListSnapshotsUseCase, RestoreSnapshotUseCase
 
 from src.infrastructure.repositories import YamlLoader
 
@@ -100,4 +100,23 @@ def make_list_snapshots_use_case(snapshots_path: str) -> ListSnapshotsUseCase:
     return ListSnapshotsUseCase(
         snapshots_repo=snapshots_repo,
         ev_bus=ev_bus,
+    )
+
+@bind
+def make_restore_snapshot_use_case(config_path: str, snapshots_path: str) -> RestoreSnapshotUseCase:
+    config_yaml_loader = get(YamlLoader, config_path)
+    snapshots_yaml_loader = get(YamlLoader, snapshots_path)
+
+    vms_repo = get(IVMRepository, config_yaml_loader)
+    snapshots_repo = get(ISnapshotsRepository, snapshots_yaml_loader)
+
+    ev_bus = get(IEventBus)
+
+    vm_snapshots_service = get(IVmSnapshotsService)
+
+    return RestoreSnapshotUseCase(
+        ev_bus=ev_bus,
+        vms_repo=vms_repo,
+        snapshots_repo=snapshots_repo,
+        snapshots_service=vm_snapshots_service,
     )

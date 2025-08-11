@@ -18,6 +18,9 @@ class ISnapshotsRepository(ABC):
     def find_all_snapshots(self, name: str) -> List[Snapshot]: pass
 
     @abstractmethod
+    def find_by_identity(self, name: str, timestamp: int) -> Optional[Snapshot]: pass
+
+    @abstractmethod
     def get_root_snapshot(self) -> Optional[Snapshot]: pass
 
     @abstractmethod

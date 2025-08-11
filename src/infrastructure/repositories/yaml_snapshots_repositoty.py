@@ -103,6 +103,9 @@ class YamlSnapshotRepository(ISnapshotsRepository):
         self.root_snapshot = self._load()
         return _find_all_by_name(self.root_snapshot, name) if self.root_snapshot else []
 
+    def find_by_identity(self, name: str, timestamp: int) -> Optional[Snapshot]:
+        return _find_by_identity(self.root_snapshot, name, timestamp) if self.root_snapshot else None
+
     def get_root_snapshot(self) -> Optional[Snapshot]:
         self.root_snapshot = self._load()
         return self.root_snapshot
