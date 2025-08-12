@@ -88,6 +88,7 @@ class InstallUseCase:
             self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "Importing VM"))
             self.import_vm_service.import_vm(vm, ova_dir, vms_dir, log_dir)
 
+        self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ""))
         self.import_vm_service.run()
 
     def _enable_networks(self, vms: List[VM]):
@@ -115,4 +116,5 @@ class InstallUseCase:
         else:
             self.ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"{vm_name.capitalize()} import failed\nLog files at {self.log_dir}"))
             self.ev_bus.notify(TextEvent(vm_name, TextEventType.ERROR, "unable to import vm"))
+            self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ''))
 
