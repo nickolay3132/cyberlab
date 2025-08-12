@@ -21,13 +21,11 @@ def snapshots_tree_event_listener(event: SnapshotsTreeEvent):
         connector = "|-- "
         line = f"{format_timestamp(snapshot.timestamp)} - {snapshot.name} ({snapshot.description})"
         if snapshot.is_current:
-            line = f"{GREEN}{line}{RESET}"
+            line = f"{GREEN}{line} <- current snapshot {RESET}"
         print(f"{prefix}{connector}{line}" if prefix else line)
 
-        # Построим префикс для детей
         child_prefix = prefix + ("    " if is_last else "|   ")
 
-        # Добавим детей в стек в обратном порядке
         children = snapshot.children
         for i in reversed(range(len(children))):
             child = children[i]

@@ -1,3 +1,4 @@
 from .text_event_listener import text_event_listener
 from .progress_event_listener import progress_event_listener
 from .snapshots_tree_event_listener import snapshots_tree_event_listener
+from .select_snapshot_event_listener import select_snapshot_event_listener
