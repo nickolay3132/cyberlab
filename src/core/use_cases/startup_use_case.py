@@ -30,3 +30,5 @@ class StartupUseCase:
                 self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "vm is running"))
             else:
                 self.ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "unable to start VM (it may already be running)"))
+
+            self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ""))

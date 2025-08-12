@@ -32,3 +32,5 @@ class ShutdownUseCase:
                 self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "vm is stopped"))
             else:
                 self.ev_bus.notify(TextEvent(vm.name, TextEventType.WARNING, "unable to stop VM (it may already be stopped)"))
+
+            self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ""))

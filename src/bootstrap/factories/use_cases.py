@@ -3,7 +3,7 @@ from src.bootstrap.binder import bind
 
 from src.core.entities.event_bus import IEventBus
 from src.core.interfaces.gateways import IVMsGateway
-from src.core.use_cases import InstallUseCase, FetchConfigUseCase, StartupUseCase, CyberLabStateUseCase
+from src.core.use_cases import InstallUseCase, StartupUseCase, CyberLabStateUseCase
 
 from src.core.interfaces.repositories import IStorageRepository, IVMRepository, ISnapshotsRepository
 
@@ -15,10 +15,6 @@ from src.core.use_cases.snapshots import CreateSnapshotUseCase, ListSnapshotsUse
 
 from src.infrastructure.repositories import YamlLoader
 
-
-@bind
-def make_fetch_config_use_case(file_system_service: IFileSystemService) -> FetchConfigUseCase:
-    return FetchConfigUseCase(file_system_service)
 
 @bind
 def make_cyber_lab_info_use_case(config_path: str) -> CyberLabStateUseCase:

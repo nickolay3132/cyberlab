@@ -37,12 +37,12 @@ class CreateSnapshotUseCase:
 
         needed_to_create = self.snapshots_repo.add_snapshot(new_snapshot, current_snapshot)
         if needed_to_create:
-            self.ev_bus.notify(TextEvent('main', TextEventType.TITLE, f'Creating snapshot {snapshot_name} for each vm'))
+            self.ev_bus.notify(TextEvent('main', TextEventType.TITLE, f'Creating snapshot "{snapshot_name}" for each vm'))
 
             for vm in self.vms_repo.get_all():
                 self.snapshots_service.create_snapshot(vm, new_snapshot)
 
-            self.ev_bus.notify(TextEvent('main', TextEventType.SUCCESS, f'Snapshot {snapshot_name} created successfully'))
+            self.ev_bus.notify(TextEvent('main', TextEventType.SUCCESS, f'Snapshot "{snapshot_name}" created successfully'))
 
         else:
-            self.ev_bus.notify(TextEvent('main', TextEventType.WARNING, f'Snapshot {snapshot_name} already exists'))
+            self.ev_bus.notify(TextEvent('main', TextEventType.WARNING, f'Snapshot "{snapshot_name}" already exists'))
