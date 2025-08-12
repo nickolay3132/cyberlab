@@ -1,16 +1,17 @@
 from dataclasses import dataclass
+import time
 from typing import Optional, List
 from urllib.parse import urljoin
 
-from src.core.entities import Storage, VM
+from src.core.entities import Storage, VM, Snapshot
 from src.core.entities.event_bus import IEventBus
 from src.core.entities.event_bus.events import VmsListEvent
 from src.core.entities.event_bus.events.progress_event import ProgressEvent
 from src.core.entities.event_bus.events.text_event import TextEvent
 from src.core.enums import DownloadingType
 from src.core.enums.events import TextEventType
-from src.core.interfaces.repositories import IStorageRepository, IVMRepository
-from src.core.interfaces.services.vms import IInstallVMService, IVmNetworkService
+from src.core.interfaces.repositories import IStorageRepository, IVMRepository, ISnapshotsRepository
+from src.core.interfaces.services.vms import IInstallVMService, IVmNetworkService, IVmSnapshotsService
 from src.core.interfaces.services.vms import IImportVMService
 
 
@@ -26,10 +27,12 @@ class InstallUseCase:
 
     storage_repo: IStorageRepository
     vm_repo: IVMRepository
+    snapshots_repo: ISnapshotsRepository
 
     install_vm_service: IInstallVMService
     import_vm_service: IImportVMService
     vm_network_service: IVmNetworkService
+    snapshots_service: IVmSnapshotsService
 
     importing_needed: bool = True
     downloading_now: str = ''
@@ -48,6 +51,19 @@ class InstallUseCase:
         if self.importing_needed:
             self._import_vms(storage, vms)
             self._enable_networks(vms)
+
+            initial_snapshot = Snapshot(
+                name="initial-snapshot",
+                description="Initial state after OVA import.",
+                timestamp=int(time.time()),
+                is_current=True,
+                children=[]
+            )
+            self.snapshots_repo.add_snapshot(initial_snapshot, None)
+
+            for vm in vms:
+                self.snapshots_service.create_snapshot(vm, initial_snapshot)
+
 
     def _install_ova_files(self, no_verify: bool, repository: str, storage: Storage, vms: List[VM]):
         ova_dir = self.install_vm_service.prepare_storage(storage.ova_store_to)
@@ -81,14 +97,14 @@ class InstallUseCase:
 
         self.import_vm_service.set_callback(self._importing_callback)
 
-        self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ""))
+        self.ev_bus.notify(TextEvent('', TextEventType.SPACE, ""))
         self.ev_bus.notify(TextEvent('main', TextEventType.TITLE, "Importing OVA files"))
 
         for vm in vms:
             self.ev_bus.notify(TextEvent(vm.name, TextEventType.TEXT, "Importing VM"))
             self.import_vm_service.import_vm(vm, ova_dir, vms_dir, log_dir)
 
-        self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ""))
+        self.ev_bus.notify(TextEvent('', TextEventType.SPACE, ""))
         self.import_vm_service.run()
 
     def _enable_networks(self, vms: List[VM]):
@@ -116,5 +132,5 @@ class InstallUseCase:
         else:
             self.ev_bus.notify(TextEvent('dialog', TextEventType.ERROR, f"{vm_name.capitalize()} import failed\nLog files at {self.log_dir}"))
             self.ev_bus.notify(TextEvent(vm_name, TextEventType.ERROR, "unable to import vm"))
-            self.ev_bus.notify(TextEvent('main', TextEventType.SPACE, ''))
+            self.ev_bus.notify(TextEvent('', TextEventType.SPACE, ''))
 

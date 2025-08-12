@@ -39,21 +39,27 @@ def make_cyber_lab_info_use_case(config_path: str) -> CyberLabStateUseCase:
 def make_install_use_case(config_path: str, snapshots_path: str) -> InstallUseCase:
     ev_bus = get(IEventBus)
 
-    yaml_loader = get(YamlLoader, config_path)
-    storage_repo = get(IStorageRepository, yaml_loader)
-    vms_repo = get(IVMRepository, yaml_loader)
+    config_yaml_loader = get(YamlLoader, config_path)
+    snapshots_yaml_loader = get(YamlLoader, snapshots_path)
+
+    storage_repo = get(IStorageRepository, config_yaml_loader)
+    vms_repo = get(IVMRepository, config_yaml_loader)
+    snapshots_repo = get(ISnapshotsRepository, snapshots_yaml_loader)
 
     install_vm_service = get(IInstallVMService)
     import_vm_service = get(IImportVMService)
     vm_networks_service = get(IVmNetworkService)
+    snapshot_service = get(IVmSnapshotsService)
 
     return InstallUseCase(
         ev_bus=ev_bus,
         storage_repo=storage_repo,
         vm_repo=vms_repo,
+        snapshots_repo=snapshots_repo,
         install_vm_service=install_vm_service,
         import_vm_service=import_vm_service,
-        vm_network_service=vm_networks_service
+        vm_network_service=vm_networks_service,
+        snapshots_service=snapshot_service,
     )
 
 @bind

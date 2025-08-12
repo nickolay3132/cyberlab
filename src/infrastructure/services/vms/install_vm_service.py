@@ -27,7 +27,6 @@ class InstallVMServiceImpl(IInstallVMService):
 
     def install(self, ova_url: str, download_path: str, md5checksum: str) -> bool:
         download_needed = self._is_download_needed(md5checksum, download_path)
-
         if download_needed:
             time.sleep(0.5)
             self.file_system_service.download_file(ova_url, download_path, self.callback)
@@ -42,5 +41,7 @@ class InstallVMServiceImpl(IInstallVMService):
             if not self.no_verify_checksum:
                 if md5checksum != self.file_system_service.calc_md5(download_path):
                     return True
+            else:
+                return True
 
         return False

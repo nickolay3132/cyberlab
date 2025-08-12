@@ -15,7 +15,7 @@ def install_controller(set_central_widget: Callable[[QWidget], None], on_complet
     page = VmsStatusesPage()
     set_central_widget(page)
 
-    use_case = get(InstallUseCase, f"{global_vars['root_dir']}/config.yaml", "")
+    use_case = get(InstallUseCase, f"{global_vars['root_dir']}/config.yaml", f"{global_vars['root_dir']}/snapshots.yaml")
     use_case.ev_bus.attach(VmsListEvent, page.vms_list_event_listener)
     use_case.ev_bus.attach(TextEvent, page.text_event_listener)
     use_case.ev_bus.attach(ProgressEvent, page.progress_bar_event_listener)

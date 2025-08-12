@@ -1,5 +1,4 @@
 storage:
-  repository: https://files.techno-cyber-lab.store
   ova_store_to: './ova'
   vms_store_to: './vms'
   import_log_store_to: "./import_log"
@@ -43,21 +42,21 @@ virtual_machines:
     boot_policy:
       startup: headless
       shutdown: acpipowerbutton
-#
-#  - name: wan-client
-#    ova_filename: wan-client-001.ova
-#    md5checksum: 483f69ced2c1cff47e65e7984077adfd
-#    nics:
-#      - nic_index: 1
-#        type: natnetwork
-#        network_name: cyberlab
-#    boot_policy:
-#      startup: gui
-#      shutdown: acpipowerbutton
-#
-#  - name: lan-client
-#    ova_filename: lan-client-001.ova
-#    md5checksum: 0d279be6454d75f8ec08fffcb7c130cb
-#    boot_policy:
-#      startup: gui
-#      shutdown: acpipowerbutton
+
+  - name: wan-client
+    ova_filename: wan-client-001.ova
+    md5checksum: 483f69ced2c1cff47e65e7984077adfd
+    nics:
+      - nic_index: 1
+        type: natnetwork
+        network_name: cyberlab
+    boot_policy:
+      startup: gui
+      shutdown: acpipowerbutton
+
+  - name: lan-client
+    ova_filename: lan-client-001.ova
+    md5checksum: 0d279be6454d75f8ec08fffcb7c130cb
+    boot_policy:
+      startup: gui
+      shutdown: acpipowerbutton

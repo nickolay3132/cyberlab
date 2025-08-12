@@ -2,8 +2,19 @@ import argparse
 import sys
 from pathlib import Path
 
+from PyQt6.QtGui import QIcon
+
 from src.bootstrap import bootstrap, global_vars
 
+def hide_console():
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+            hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+            if hwnd:
+                ctypes.windll.user32.ShowWindow(hwnd, 0)  # SW_HIDE = 0
+        except Exception as e:
+            print("Cannot hide console:", e)
 
 def init_cli():
     from src.presentation.cli import (
@@ -36,8 +47,17 @@ def init_gui():
 
     app = QApplication([])
 
-    font_id = QFontDatabase.addApplicationFont(f"{global_vars['root_dir']}/static/fonts/FragmentMono-Regular.ttf")
-    font_name = QFontDatabase.applicationFontFamilies(font_id)[0]
+    icon_path = global_vars['root_dir'] / "static" / "clmt-icon.ico"
+    font_path = global_vars['root_dir'] / "static" / "fonts" / "FragmentMono-Regular.ttf"
+
+    if icon_path.exists():
+        app.setWindowIcon(QIcon(str(icon_path)))
+
+    font_name = 'Monospace'
+    if font_path.exists():
+        font_id = QFontDatabase.addApplicationFont(str(font_path))
+        font_name = QFontDatabase.applicationFontFamilies(font_id)[0]
+
     global_vars['font'] = QFont(font_name, 11)
     global_vars['btn_font'] = QFont(font_name, 9)
 
@@ -50,7 +70,8 @@ def main():
     if 'cli' in sys.argv:
         init_cli()
     else:
-       init_gui()
+        hide_console()
+        init_gui()
 
 if __name__ == "__main__":
     if getattr(sys, 'frozen', False):
